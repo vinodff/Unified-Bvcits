@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design system v2 — premium black/gold/ivory. See docs/DESIGN-SPEC.md.
+   Names keep historical provenance; values are the v2 palette. */
+:root {
+  --e-global-color-primary: #0b0b0c;
+  --e-global-color-accent: #f5b800;
+  --e-global-color-secondary: #0b0b0c;
+  --e-global-color-text: #6b6b6b;
+  --unicamp-button-bg: #f5b800;
+  --crest-crimson: #d89b00;
+  --crest-gold: #f5b800;
+  --header-height: 76px;
+
+  /* ---- 3D scroll experience: neumorphic depth stack ----
+     Six stacked outer shadows + one inset highlight. The stack (not any single
+     shadow) is what reads as physical depth; tinted black instead of navy so it
+     sits inside the v2 palette. See docs/3D-EXPERIENCE.md. */
+  --exp-bg: #f4f1e8;
+  --exp-card-bg: #ffffff;
+  --card-shadow:
+    0px 0.7px 0.7px -0.67px rgba(11, 11, 12, 0.10),
+    0px 1.8px 1.8px -1.33px rgba(11, 11, 12, 0.10),
+    0px 3.6px 3.6px -2px rgba(11, 11, 12, 0.09),
+    0px 6.9px 6.9px -2.67px rgba(11, 11, 12, 0.08),
+    0px 13.6px 13.6px -3.33px rgba(11, 11, 12, 0.06),
+    0px 30px 30px -4px rgba(11, 11, 12, 0.03),
+    inset 0px 3px 1px 0px rgba(255, 255, 255, 1);
+  --pill-shadow:
+    0px 0.7px 0.7px -0.67px rgba(11, 11, 12, 0.10),
+    0px 1.8px 1.8px -1.33px rgba(11, 11, 12, 0.10),
+    0px 3.6px 3.6px -2px rgba(11, 11, 12, 0.09),
+    0px 6.9px 6.9px -2.67px rgba(11, 11, 12, 0.08),
+    inset 0px 2px 1px 0px rgba(255, 255, 255, 1);
+  --inset-shadow:
+    inset 2px 2px 5px rgba(11, 11, 12, 0.08),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.85);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + 44px);
+  }
+  body {
+    @apply bg-white text-ink-soft antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display font-extrabold text-navy;
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold
+      transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+  /* v2 primary: signature gold, black text (≈10:1 contrast) */
+  .btn-primary {
+    @apply btn bg-gold text-black hover:bg-gold-600 focus-visible:ring-gold;
+  }
+  .btn-blue {
+    @apply btn bg-bvblue text-white hover:bg-ink focus-visible:ring-bvblue;
+  }
+  .btn-outline {
+    @apply btn border border-navy/25 bg-white text-navy hover:border-navy hover:bg-navy hover:text-white;
+  }
+  .section {
+    @apply py-14 md:py-20;
+  }
+  .eyebrow {
+    @apply font-display text-xs font-bold uppercase tracking-[0.2em] text-gold-600;
+  }
+  /* ---- 3D scroll experience surfaces ---- */
+  .card-surface {
+    background: var(--exp-card-bg);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(7, 33, 83, 0.06);
+  }
+  .card-surface-nested {
+    background: var(--exp-bg);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+  }
+  .pill-surface {
+    background: var(--exp-card-bg);
+    border-radius: 9999px;
+    box-shadow: var(--pill-shadow);
+  }
+  .inset-surface {
+    background: var(--exp-bg);
+    box-shadow: var(--inset-shadow);
+  }
+  .glass-light {
+    @apply border border-white/60 bg-white/45 backdrop-blur-xl backdrop-saturate-150;
+  }
+  .glass-dark {
+    @apply border border-white/10 bg-navy-900/60 backdrop-blur-xl backdrop-saturate-150;
+  }
+
+  .prose-page :where(p) { @apply my-4 leading-relaxed text-ink-soft; }
+  .prose-page :where(ul) { @apply my-4 list-disc space-y-2 pl-6 text-ink-soft; }
+  .prose-page :where(h2) { @apply mt-10 text-2xl; }
+  .prose-page :where(h3) { @apply mt-8 text-xl; }
+}
+
+/* ---- Scroll-driven canvas sections ----
+   The tall parent creates the scroll distance; its sticky child pins to the
+   viewport. Shorter on small screens so the animation doesn't overstay. */
+.scroll-animation { height: 400vh; }
+.scroll-animation-long { height: 500vh; }
+
+@media (max-width: 1024px) {
+  .scroll-animation { height: 350vh; }
+  .scroll-animation-long { height: 420vh; }
+}
+@media (max-width: 768px) {
+  .scroll-animation { height: 300vh; }
+  .scroll-animation-long { height: 360vh; }
+}
+
+/* ---- Circuit pulse ----
+   Paths carry pathLength="100", so one dash length works for every path
+   regardless of its real geometry. Animating stroke-dashoffset keeps the whole
+   effect on the compositor — no JS, no layout. */
+@keyframes circuitFlow {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+.circuit-pulse {
+  stroke-dasharray: 7 93;
+  animation: circuitFlow 3.6s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 34s linear infinite; }
+.animate-marquee:hover { animation-play-state: paused; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Ambient aurora drift behind hero / CTA */
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(40px, -30px, 0) scale(1.08); }
+  66% { transform: translate3d(-30px, 24px, 0) scale(0.95); }
+}
+.animate-drift { animation: drift 18s ease-in-out infinite; }
+.animate-drift-slow { animation: drift 26s ease-in-out infinite reverse; }
+
+/* Underline sweep for nav items */
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0.625rem;
+  right: 0.625rem;
+  bottom: 0.35rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, theme("colors.crimson.DEFAULT"), theme("colors.gold.400"));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-underline:hover::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-marquee, .fade-up { animation: none; }
+  .animate-drift, .animate-drift-slow { animation: none; }
+  .circuit-pulse { animation: none; opacity: 0; }
+  /* Collapse the scroll-scrub sections to a single static screen. */
+  .scroll-animation, .scroll-animation-long { height: 100vh; }
+}

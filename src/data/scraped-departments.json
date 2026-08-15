@@ -1,0 +1,1768 @@
+{
+  "computer-science-engineering": {
+    "slug": "computer-science-engineering",
+    "name": "Computer Science & Engineering",
+    "about": [
+      "The objective of this department is to strive persistently for achieving excellence in computing disciplines. It is being pursued through its spectrum of academic programmes in computing of contemporary standards. The main aim is to produce computing graduates with potential, to design and develop systems involving the integration of software and hardware devices; make innovative approaches to programming and solving problems; create Large Scale Software Systems; and computing infrastructure of an organization.",
+      "With an aim to carve a niche for itself in Computer Science and allied fields, the Department strives to:"
+    ],
+    "vision": "DM1 To offer state-of-art education in Computer Science and Engineering.",
+    "mission": [],
+    "hod": {
+      "name": "Dr. KATIKIREDDY SRINIVAS",
+      "designation": null,
+      "message": [
+        "Note: Ratified as Associate Professor in Department of IT(BVCE) by JNTU Kakinada in 2010.",
+        "At Under Graduate Level: Computer Organization, Software Project Management Software Testing Methodologies, OOAD, Neural Networks, Pattern Recognition, Telematics, Data Warehouse, and Data Mining, Biometrics, Computer Organization, and Architecture, Advanced Computer Architecture, Design Patterns, Principles of Programming Languages, Software Engineering, Software Testing, Statistics with R.",
+        "At Post Graduate Level: Data Warehouse and Data Mining, Computer Organization and Architecture, Requirements Engineering, Software Engineering."
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mr. GUDDATI TATAYYANAIDU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. DEVARAKONDA LAKSHMI PRASANNA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. RAPAKA SUMA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. PUTI SOWMYA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SRIKAKOLAPU NAGA VENKATA SATYA SURYA",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. KANGALA VIJAYKUMAR",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. CHILLA SANTHI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. YALLA NAGA SATISH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. PEYYETI BHANU LAKSHMI APARNA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BONTHU PADMA SRI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BONTHU UMA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. GOLLAPALLI MANIKANTA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SANTOSH KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KOTTA SIVA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KADALI RAVI KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ACHANTA SATYA PRASAD",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ACHANTA MANIKANTA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. BODDU SURESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. VASAMSETTI SAI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SURESH BABU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SATISH KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. PAVAN KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. VIJJAPU ANURAGH",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SUNKARA KARUNA NAGA LAKSHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. DAYANA DASARI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. TUMU NARESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SAPPA SURESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. K. Srinivas",
+        "designation": "HOD",
+        "qualification": "Ph.D"
+      },
+      {
+        "name": "Dr. K. Vijay Kumar",
+        "designation": "Professor",
+        "qualification": "Ph.D"
+      },
+      {
+        "name": "Mr. A. P.V.D. L. Kumar",
+        "designation": "Assoc Professor",
+        "qualification": "M.Tech(Ph.D)"
+      },
+      {
+        "name": "Mr. M. Tilak",
+        "designation": "Assoc Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. G. Tatayyanaidu",
+        "designation": "Assoc Professor",
+        "qualification": "M.Tech(Ph.D)"
+      },
+      {
+        "name": "Mr. S. N V. S.S. S. T. Murthy",
+        "designation": "Assoc Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs T. S. R Lakshmi",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs CH Santhi",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech(Ph.D)"
+      },
+      {
+        "name": "Mr. Sappa Suresh",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech(Ph.D)"
+      },
+      {
+        "name": "Mrs. P. Sowmya",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. M. Surya Kiran",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs G Lakshmi",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. G. Geetha Rani",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. B. S. R. D. Lakshmi",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech(Ph.D)"
+      },
+      {
+        "name": "Mr. K. Venkatesh",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. K. V. D. Padmavathi",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "M.Tech(Ph.D)",
+        "designation": "Asst. Professor",
+        "qualification": null
+      },
+      {
+        "name": "M.Tech",
+        "designation": "Asst. Professor",
+        "qualification": null
+      },
+      {
+        "name": "Mrs D Lakshmi Prassana",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs K S S Manasa",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs Gundumogula Siroja",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr Patchamatla S S N Prasad Varma",
+        "designation": "Asst. Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Dr. RAUSHAN KUMAR",
+        "designation": "Asst Professor",
+        "qualification": "Post Doc,P.hD,M.Tech,B.Tech"
+      },
+      {
+        "name": "M.Tech,B.Tech",
+        "designation": "Asst Professor",
+        "qualification": null
+      },
+      {
+        "name": "Dr. KATIKIREDDY SRINIVAS",
+        "designation": "Professor",
+        "qualification": "M. Tech, PhD"
+      },
+      {
+        "name": "Dr. Anuragh Vijjapu",
+        "designation": "Professor",
+        "qualification": "M. Tech, PhD"
+      },
+      {
+        "name": "SRI RAMA DURGA LAKSHMI BONAM",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      }
+    ],
+    "peos": [
+      "PEO 1 Graduates will be an efficient software developer in diverse fields and will be a successful professional and/or pursue higher studies.",
+      "PEO 2 Graduates will be capable to adapt to new computing technology for professional excellence and research and be a lifelong learner.",
+      "PEO 3 Graduates will work productively exhibiting ethical qualities for the betterment of society.",
+      "PEO 4 Graduates will possess leadership qualities, work harmoniously as a team member with effective communication skills."
+    ],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true,
+      "infrastructure": true
+    },
+    "aboutPoints": [
+      "Nurture effective capabilities for the development of high quality technical and scientific manpower to meet the challenges of the digital era.",
+      "Provide cost-effective Information and Communication Technology (ICT)-based solutions and value-added services to a variety of organizations to match the pace of digital transformation across industries ."
+    ]
+  },
+  "ai-ds-new": {
+    "slug": "ai-ds-new",
+    "name": "AI & DS New",
+    "about": [
+      "CSE – Artificial Intelligence and Data Science (CSE-AIDS) is the science and Engineering of making Intelligent Machines, especially intelligent computer Programs. CSE-AIDS is an interdisciplinary branch of science, engineering and technology creating a complete ecosystem and widely used in almost every sector of the technical industry, academics and research. Artificial Intelligence and Data Science is the future of technology which are rapidly changing the world at very high rate. The basic objectives of this course is to train students with the next age of Intelligence and analytics generated by machines, influencing the human lives to help improve efficiencies and augment human capabilities, influencing consumer products with significant breakthroughs in healthcare, manufacturing, finance and retail industries.",
+      "BONAM VENKATA CHALAMAYYA INSTITUTE OF TECHNOLOGY & SCIENCE has started this branch in the A.Y. 2020-21 with intake capacity of 66. The aims and objective of the branch is to develop a basic understanding of problem solving, knowledge representation, reasoning and learning methods of Artificial Intelligence. This course enables the students to develop their skill set to do intelligent data analysis which is a key component in the emerging Data Science careers in IT field. A major portion of AI involves Machine Learning, which trains the computer systems to understand and copy human behavior by finding data patterns. Machine learning is the link that connects Data Science and AI. AI is the tool that helps data science get results and the solutions for specific problems. The department is emphasized on research, design and development of next generation cutting-edge technologies in the area of Artificial Intelligence and Data Analytics.",
+      "CSE – Artificial Intelligence & Data Science department of the institute is equipped with well-set laboratories. A well-structured class rooms and highly configured computer systems are provided to the students to carry out the lab experiments. Well-qualified and experience faculty members with areas of specialization are disseminated in the department to guide the students to excel in their academic."
+    ],
+    "vision": "Envision to have Global recognition through innovation and research excellence in Artificial Intelligence and Data Science",
+    "mission": [],
+    "hod": {
+      "name": "Dr. Ravi Kishore Veluri is currently serving as",
+      "designation": "Professor and Head",
+      "message": [
+        "Dr. Ravi Kishore Veluri is currently serving as Professor and Head of the Department of AIML & CAD at Bonam Venkata Chalamayya Institute of Technology and Science (BVCITS), Amalapuram. He obtained his B.Tech degree from JNTUH and M.Tech (CSE) from Acharya Nagarjuna University, Guntur. He was awarded a Ph.D. in Computer Science and Engineering from Sri Satya Sai University in 2022. Presently, he is pursuing a Post-Doctoral Fellowship in Computer Science and Engineering from Singapore Institute of Technology, Singapore.",
+        "He possesses 20 years of teaching, research, and administrative experience and has served in various academic leadership positions including Associate Professor, Head of the Department, BOS Chairperson, BOS Member, Departmental Research Committee Panel Member, Research Supervisor, NBA and NAAC Coordinator.",
+        "His research interests include Cyber Secuity,Networks, Cloud Computing,Artificial Intelligence, Machine Learning, Explainable AI, Blockchain Technology, Computer Networks and Deep Learning"
+      ]
+    },
+    "faculty": [
+      {
+        "name": "B.Tech, M.Tech, (PhD)",
+        "designation": "Associate Professor & HOD",
+        "qualification": null
+      },
+      {
+        "name": "M.Tech, (PhD)",
+        "designation": "Associate Professor & HOD",
+        "qualification": null
+      },
+      {
+        "name": "K.Anandh Kumar",
+        "designation": "Associate Professor",
+        "qualification": null
+      },
+      {
+        "name": "S.Suresh",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "T.Anusha",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M.Surya Kiran",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "Y. Naga Satish",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Venkatesh",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M. Lakshmi Priyanka",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "P.Sowmya",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Nagendra Babu",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Venkata Chandran",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "G.Tulasi",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M.Tech",
+        "designation": "Assistant Professor",
+        "qualification": null
+      }
+    ],
+    "peos": [],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true
+    }
+  },
+  "cse-artificial-intelligence-machine-learning": {
+    "slug": "cse-artificial-intelligence-machine-learning",
+    "name": "Artificial Intelligence & Machine Learning",
+    "about": [
+      "The Department of Artificial Intelligence and Machine Learning (AIML) at BONAM VENKATA CHALAMAYYA INSTITUTE OF TECHNOLOGY & SCIENCE focuses on the science and engineering of developing intelligent machines and computer programs. AIML is an interdisciplinary field that creates a comprehensive ecosystem and finds applications in various sectors of the technical industry, academia, and research. Artificial Intelligence and Machine Learning are driving the future of technology, revolutionizing the world at an unprecedented pace. The primary objective of this course is to train students in the latest advancements in intelligence and analytics generated by machines, influencing human lives, improving efficiencies, and augmenting human capabilities. These breakthroughs extend to consumer products and have significant impacts on healthcare, manufacturing, finance, and retail industries.",
+      "The AIML branch was introduced at BONAM VENKATA CHALAMAYYA INSTITUTE OF TECHNOLOGY & SCIENCE in the academic year 2020-21, with an intake capacity of 66 students. The branch aims to develop students' fundamental understanding of problem-solving, knowledge representation, reasoning, and learning methods in Artificial Intelligence. The course empowers students to develop their skill set in intelligent data analysis, which is a key component in emerging Machine Learning careers within the IT field. Machine Learning plays a major role in AI, training computer systems to understand and replicate human behavior by identifying patterns in data. Machine Learning serves as the crucial link that connects AI and its outcomes, providing solutions to specific problems. The department places significant emphasis on research, design, and development of cutting-edge technologies in the field of Artificial Intelligence and Data Analytics.",
+      "The AIML department at the institute is equipped with well-established laboratories, providing students with well-structured classrooms and highly configured computer systems to carry out lab experiments. The department boasts a team of well-qualified and experienced faculty members specializing in various domains. They guide and mentor students, fostering an environment conducive to academic excellence."
+    ],
+    "vision": "VISION, MISSION AND PROGRAM EDUCATIONAL OBJECTIVES",
+    "mission": [
+      "VISION AND MISSION | BVC Institute Of Technology & Science VISION AND MISSION September 17, 2024 2025-09-26 17:20 VISION AND MISSION CSE - AI & ML VISION AND MISSION VISION, MISSION AND PROGRAM EDUCATIONAL OBJECTIVES VISION: To become a center of excellence in Artificial Intelligence and Machine Learning by nurturing innovative minds, fostering research, and creating socially responsible professionals to meet global technological challenges.",
+      "To impart quality education in Artificial Intelligence and Machine Learning through a well-designed curriculum, industry interaction, and hands-on experience.",
+      "To promote research and innovation by encouraging students and faculty to solve real-world problems using emerging AI/ML technologies.",
+      "To inculcate ethical values, leadership qualities, and a sense of social responsibility among students to contribute positively to society.",
+      "To build partnerships with industry and academia for collaborative learning, internships, and knowledge exchange to enhance employability and entrepreneurial skills."
+    ],
+    "hod": null,
+    "faculty": [
+      {
+        "name": "B.Tech, M.Tech, (PhD)",
+        "designation": "Associate Professor & HOD",
+        "qualification": null
+      },
+      {
+        "name": "M.Tech, (PhD)",
+        "designation": "Associate Professor & HOD",
+        "qualification": null
+      },
+      {
+        "name": "K.Anandh Kumar",
+        "designation": "Associate Professor",
+        "qualification": null
+      },
+      {
+        "name": "S.Suresh",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "T.Anusha",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M.Surya Kiran",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "Y. Naga Satish",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Venkatesh",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M. Lakshmi Priyanka",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "P.Sowmya",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Nagendra Babu",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K.Venkata Chandran",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "G.Tulasi",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "G. Vijaya Kumari",
+        "designation": "Associate Professor & HOD",
+        "qualification": "B.Tech, M.Tech, (PhD)"
+      },
+      {
+        "name": "B. Srinivas",
+        "designation": "Associate Professor",
+        "qualification": null
+      },
+      {
+        "name": "T. Sai Lakshmi",
+        "designation": "Assistant professor",
+        "qualification": "M .Tech,(PhD)"
+      },
+      {
+        "name": "G. Tulasi",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "M. Venkata Rao",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "B. Durga Prasad",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "K. Venkata Chandran",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "A. Rama Rao",
+        "designation": "Assistant professor",
+        "qualification": null
+      },
+      {
+        "name": "V. Sai Vasanthi",
+        "designation": "Assistant professor",
+        "qualification": null
+      }
+    ],
+    "peos": [
+      "PSO 1: Apply principles of Artificial Intelligence and Machine Learning, along with mathematics and programming skills, to design and develop intelligent systems for solving real-world problems. PSO 2: Demonstrate the ability to use modern AI/ML tools and technologies ethically and effectively in interdisciplinary domains, fostering innovation and continuous learning."
+    ],
+    "pos": [
+      "PSO 1: Apply principles of Artificial Intelligence and Machine Learning, along with mathematics and programming skills, to design and develop intelligent systems for solving real-world problems. PSO 2: Demonstrate the ability to use modern AI/ML tools and technologies ethically and effectively in interdisciplinary domains, fostering innovation and continuous learning."
+    ],
+    "psos": [
+      "PSO 1: Apply principles of Artificial Intelligence and Machine Learning, along with mathematics and programming skills, to design and develop intelligent systems for solving real-world problems. PSO 2: Demonstrate the ability to use modern AI/ML tools and technologies ethically and effectively in interdisciplinary domains, fostering innovation and continuous learning."
+    ],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "faculty": true,
+      "peo": true
+    }
+  },
+  "electronics-communication-engineering": {
+    "slug": "electronics-communication-engineering",
+    "name": "Electronics & Communication Engineering",
+    "about": [
+      "The Electronics and Communication Engineering (ECE) Department was set up in the year 2002.The department offers Undergraduate (UG), Postgraduate (PG) programmes that provide students with the knowledge and tools they need to succeed in this field.",
+      "The faculty members have published papers and journals which have been mentioned and acknowledged internationally, with an active ongoing involvement in the Texas Instruments Ltd. Project, with students getting ample exposure in these research activities. The department gives significant importance to high impact disciplines such as Signal and Image Processing, Microwave antennas, Optical communication and Photonics, Embedded systems and VLSI technologies."
+    ],
+    "vision": "DM1 To provide learner-centric Electronics and Communication Engineering education to overcome the professional challenges DM2 To pursue research and new technologies in Electronics & Communication Engineering and related disciplines to serve the society, industry, government and scientific community needs. DM3 To promote activities for overall development of stakeholder with ethical and professional responsibility Electronics & Communication Engineering ECE vision and mission Department Vision To become a recognised centre for quality electronics and communication engineering education and develop ethically sound, globally competent and socially responsible engineers",
+    "mission": [],
+    "hod": {
+      "name": "Dr. Siva Sankara Phani",
+      "designation": null,
+      "message": [
+        "Dr. Siva Sankara Phani .Tammireddy is currently working as professor in department of Electronics and Communications Engineering at Bonam Venkata Chalamayya Institute of Technology and Science [A], Amalapuram, AndhraPradesh, India. He has done his B.E in Electronics and Communications Engineering from SIPNA College of Engineering & Technology, Amaravati,Maharastra and M.Tech in Embedded System from Bonam Venkata Chalamayya Engineering College[A], Odalarevu. He completed Ph.D from K L Deemed to be University, Vaddeswaram, Guntur District, Andhra Pradesh, India. He is a life member of IETE. He guided more than 40 UG projects and 10 PG projects. He has been teaching for both under graduate, Post graduate students for more than 16 years. He has published 20 papers in International and National level Journals. He has published one book chapter and two patents. He attended more than 15 FDPs and Seminars/ workshops. His areas of interest are VLSI, Digital Electronics and Embedded System.",
+        "Electronic Devices and circuits, Pulse and Digital Circuits, Linear Integrated Circuits, Analog Communications ,Very Large Scale Integration ,Optical Communication, Digital Signal Processing, Digital Communication, Electronic Switching System, Switching Theory and Logic Design, Microprocessor and Microcontrollers.",
+        "Worked as a Asst.Prof, Assoc.Prof & Professor in BVC Engineering College, Odalarevu, for the past 16 years."
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mr. MUTYALA GANESWARA RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. PITHANI BHAGYA SWATHI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BONTHU UMA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. DULAM DURGA SURI BABU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. BHAVARAJU VEERA VENKATASIVARAMA PAVAN",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BONAM VIJAYA LAKSHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. RYALI SATISH KUMAR",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. SIRISHA KORIMILLI",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. LAXMI VAYARA PRASANNA",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ADITHE SARMA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. MOSES VARA VARA PRASAD",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SIRIPALLI RAGHAVA RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. VIPPARTHI RAMA DEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. DONGA MEENA NAGA MALLESWARI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. VANDRASI SIRISHA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KUMAR RAUSHAN",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. KANCHANAPALLY JYOTHIRMAI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SATYANARAYANA KONA VEERA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. DHULIPUDI VENKATA SATISH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. GHANCHI SAMPATHLAL",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. CHAPPIDI SATYA NARESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. MATTAPARTHI HIMALATHA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. MATTAPARTHI SWETHA MALLIKA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. TAMMIREDDY SIVA SANKARA PHANI",
+        "designation": "HOD",
+        "qualification": null
+      },
+      {
+        "name": "Dr. PADHEE SUBHRANSU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. HARIKA VADAMADULA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. TIKKIREDDY SURESH KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. PECHETTI GIRISH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. K. Sirisha",
+        "designation": "Professor",
+        "qualification": "M.Tech, Ph.D."
+      },
+      {
+        "name": "M.Tech, Ph.D.",
+        "designation": "Professor",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. V. Prasanna Laxmi",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "M.Tech",
+        "designation": "Assistant Professor",
+        "qualification": null
+      },
+      {
+        "name": "Mr. S. Raghava Rao",
+        "designation": "Assistant Professor",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mrs. G. Rama Devi",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. V. Sirisha",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech,Embedded System,B.Tech,E.C.E"
+      },
+      {
+        "name": "Dr. T.S.S. Phani",
+        "designation": "Professor, HOD",
+        "qualification": "M.Tech, Ph.D."
+      },
+      {
+        "name": "Dr. G.M.V. Prasad",
+        "designation": "Professor",
+        "qualification": "M.Tech, Ph.D."
+      },
+      {
+        "name": "Dr. Raushan Kumar",
+        "designation": "Professor",
+        "qualification": null
+      },
+      {
+        "name": "Mr. K.V.V. Satyanarayana",
+        "designation": "Assistant Professor",
+        "qualification": null
+      },
+      {
+        "name": "Mr. R. Satish Kumar",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. B. Vijaya Laxmi",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. P. Girish",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. A.S.S.V.S.S. R.S. Sarma",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. D.V. Satish",
+        "designation": "Assistant Professor",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mr. D. Dunga Suribabu",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. G. Sampath Lal",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Ms. M.S. Mallika",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mr. S.K. Jyothirmai",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. B. Umadevi",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. D.M.N. Malleswari",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. V. Harika",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Dr. SIVA SANKARA PHANI TAMMIREDDY",
+        "designation": "PROFESSOR",
+        "qualification": "M.TECH,Ph.D."
+      },
+      {
+        "name": "Dr. VARA PRASAD GUMMADI MOSES",
+        "designation": "PROFESSOR",
+        "qualification": "M.TECH,Ph.D."
+      },
+      {
+        "name": "Mr. SATISH KUMAR RYALI",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mrs. VAYARA PRASANNA LAKSHMI",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mr. RAGHAVARAO SIRIPALLI",
+        "designation": "ASSISTANT PROFESSOR",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mr. GIRISH PECHETTI",
+        "designation": "ASSISTANT PROFESSOR",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mrs. VIJAYALAXMI BONAM",
+        "designation": "ASSISTANT PROFESSOR",
+        "qualification": "M.TECH"
+      },
+      {
+        "name": "Mr. SARMA S S V S S R S ADITHE",
+        "designation": "ASSISTANT PROFESSOR",
+        "qualification": "M.TECH"
+      }
+    ],
+    "peos": [
+      "PEO 1 Adapt emerging technologies of Artificial Intelligence & Data Science and develop state of the art solutions in the fields of Manufacturing, Agriculture, Health-care, Education, and Cyber Security.",
+      "PEO 2 Exhibit professional leadership qualities to excel in interdisciplinary domains.",
+      "PEO 3 Possess human values, professional ethics, application-oriented skills, and engage in lifelong learning.",
+      "PEO 4 Contribute to the research community to meet the needs of public and private sectors.",
+      "PSO 1 Understand, analyze and develop innovative solutions for real world problems in industry and research establishments related to Artificial Intelligence and Data Science."
+    ],
+    "pos": [
+      "PSO 1 Understand, analyze and develop innovative solutions for real world problems in industry and research establishments related to Artificial Intelligence and Data Science.",
+      "PSO 2 Ability to choose or develop the right tool for Data analysis and develop high end intelligent systems"
+    ],
+    "psos": [
+      "PSO 1 Understand, analyze and develop innovative solutions for real world problems in industry and research establishments related to Artificial Intelligence and Data Science.",
+      "PSO 2 Ability to choose or develop the right tool for Data analysis and develop high end intelligent systems"
+    ],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true,
+      "infrastructure": true
+    }
+  },
+  "electrical-electronics-engineering": {
+    "slug": "electrical-electronics-engineering",
+    "name": "Electrical & Electronics Engineering",
+    "about": [
+      "The Department of Electrical & Electronics Engineering (EEE) was established in 2002, with a strong focus in continual research, engaging with International Conferences & Journals, as a part of the course material. The department fosters overall student development from an engineering purview, which is strengthened further by EESA, a student body engaged in skill development assignments, live projects, industrial visits, along with overlooking the upkeep and maintenance of 175 KW Grid Connected Solar Power Plant, under the guidance of a technically sound faculty."
+    ],
+    "vision": "DM1 Empower stakeholders with state of the art knowledge and technological skills DM2 Promote industry institute interaction through practical problem solving. DM3 To impart trainings for overall development. DM4 To develop the ability to function in multi-disciplinary teams with an emphasis on creativity and passion for the betterment of mankind.",
+    "mission": [],
+    "hod": {
+      "name": "Mr ANVJ Raja Gopal is a",
+      "designation": "Professor and Head",
+      "message": [
+        "Mr ANVJ Raja Gopal is a Professor and Head of the Department in Electrical and Electronics Engineering, BVCITS,Amalapuram with Overall Experience of 21 Years. He is Associated with BVCITS for the past 17 Years. He is graduated from JNT University College of Engineering, Kakinada and did his M.Tech from JNTUK with PSEHVE as Specialization. Presently Pursuing Ph.d from GIET,University-Gunupur, His area of interest is control systems, Networks, Electrical Machines,Digital Circuits etc. He has Published 9 Papers in International Journals. He is having fast learning Capability in any new cutting-edge technology. He is Self-motivated Workaholic. Under the Leadership of Mr ANVJ Raja Gopal the departments has excelled in achieving best results, Campus Placements, Pursuing Masters in both India and Abroad and Achieving Best GATE Scores etc.",
+        "Subjects Handled So far : E.M.F, STLD, ET, ALS, Electrical Circuits, Network Analysis, Basic Electrical Engineering, Control Systems, LSA, Advanced Control Systems, EM-I,EM-II, EM-III, PE,HVE,EMD,PS-II,PSA, Renewable Energy Sources, HVAC&DC, DLD,",
+        "Organized many guest lectures, student seminars ,Student Work Shops."
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mr. ILLA VAMSI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. MUTYALA ADILAKSHMI DEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. CHALADI SIVA GANGA BHAVANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. PANJA BHOGIRAJU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. MUTHUVEL BALASUBRAMANIYAN",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. KONA DURGA DEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ANNAMNEEDI DAIVAPRASAD",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. VAVILALA VENKATESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ANDE NAGA VENKATA JYOTHI RAJA GOPAL",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. JONNAKUTI VENKATA GANGADHARA RAMA RAO",
+        "designation": null,
+        "qualification": null
+      },
+      {
+        "name": "Mr. PONNAGANTI SIVA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BONTHU PADMASRI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SANABOINA SURYA CHANDRA PRAKASA RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "M.Tech",
+        "designation": "Assistant Professor",
+        "qualification": null
+      }
+    ],
+    "peos": [
+      "PEO 1 Graduates will be able to define, analyze and solve Electrical & Electronics engineering problems and employ necessary tools, techniques, hardware for modern Engineering applications.",
+      "PEO 2 Graduates will be able to pursue successful career in MNCs, private and government organizations.",
+      "PEO 3 Graduates will pursue higher studies to enhance their professional and inter-personal skills.",
+      "PEO 4 Graduates will be able to contribute to the development of the chosen field with continuous learning."
+    ],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true,
+      "infrastructure": true
+    }
+  },
+  "mechanical-engineering": {
+    "slug": "mechanical-engineering",
+    "name": "Mechanical Engineering",
+    "about": [
+      "The department of mechanical engineering established in BVCITS in the academic year 2012-13. The department has a team of well qualified, experienced, energetic and result oriented faculty members having wide exposure to the industry as well as academics.",
+      "Labs with state-of-the-art technology along with our student body SMS (Society of Mechanical Engineering Students) aids us in our vision in establishing the department as one of the prime departments in the Faculty of Engineering at JNTUK.",
+      "We also offer on-campus technical training programmes such as AutoCAD, Pro-E, Ansys & Catia along with multiple ISTE courses to help enhance the students’ technical know-how."
+    ],
+    "vision": "DM1 To practice high standard teaching-learning process with values. DM2 To inculcate a life-long learning attitude and meet the intellectual, ethical, and career challenges DM3 To provide state-of-the-art facilities to create, interpret, apply and disseminate knowledge. DM3 To involve in activities that improve the overall personality of the stakeholders DM4 To develop alliances with educational institutions, industry, alumni, and society for excellence in consultancy practices",
+    "mission": [],
+    "hod": {
+      "name": "Mr. B S S Phani Sankar",
+      "designation": "Head Of The Department",
+      "message": [
+        "Mr. B S S Phani Sankar is having a decade of experience in the both Industry and Teaching . He has very strong practical knowledge leading to number of innovative projects.",
+        "He is an active member of multiple professional bodies and institutions like:",
+        "Annual Membership in American Society of Mechanical Engineers (ASME)"
+      ]
+    },
+    "faculty": [],
+    "peos": [
+      "PEO 1 Graduates shall have the ability to pursue research by apply knowledge in basic sciences, engineering fundamentals to handle the realistic problems.",
+      "PEO 2 Graduates shall be competent in the areas of engineering design, modeling, manufacturing, thermal etc, to analyze data, formulate and undertake industrial problems and provide viable solutions.",
+      "PEO 3 Graduates shall have good sense of Social and ethical responsibility and protect the environment.",
+      "PEO 4 Graduates shall have academic excellence, soft and managerial skills, leadership qualities and become lifelong learner for a successful professional career"
+    ],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true,
+      "infrastructure": true
+    }
+  },
+  "civil-engineering": {
+    "slug": "civil-engineering",
+    "name": "Civil Engineering",
+    "about": [
+      "The Department of Civil Engineering was started in the year 2012 with an annual intake of 60 undergraduate students. The department provides extensive lab facilities in the areas of Structural Engineering, Transportation Engineering, Geotechnical Engineering, Environmental Engineering, Hydraulics, Remote Sensing, Engineering Geology and Surveying. With a qualified & experienced faculty body, the students will be exposed to research in the field of Geotechnical Engineering, Environmental / Wastewater Engineering, Concrete Technology, Transportation Engineering, Strength of materials and Estimation and Surveying work with its well-equipped laboratories. Our Civil engineering Students Association (TRACE) enables students to exhibit their scholastic and non-scholastic achievements via seminars, workshops and student led conferences.",
+      "All the required laboratories have been established with state-of-the-art technology to impart up-to-date, advance knowledge to our students so that they are well equipped with the skills required to give consistent and best quality performance in their endeavour. We aim to establish the department as one of the prime departments in the faculty of engineering at JNTUK."
+    ],
+    "vision": "To be a knowledge nerve center in Civil Engineering education, research, entrepreneurship and industry outreach services for creating sustainable infrastructure to enhance quality of life.",
+    "mission": [
+      "CE Vision & Mission | BVC Institute Of Technology & Science CE Vision & Mission February 12, 2022 2023-06-09 9:17 CE Vision & Mission Civil Engineering Department Vision To be a knowledge nerve center in Civil Engineering education, research, entrepreneurship and industry outreach services for creating sustainable infrastructure to enhance quality of life. Department Mission Impart quality education and trainings in Civil Engineering specialization.",
+      "Establish global linkages in teaching, research activities and consultancy.",
+      "Involve in activities for overall development of stakeholder in Civil Engineering profession.",
+      "Offer training in core civil engineering and recent technologies and to encourage need based research with an emphasis on societal considerations"
+    ],
+    "hod": {
+      "name": "Dr. M C S MADAN",
+      "designation": null,
+      "message": []
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mr. RAKESH KUMAR SINGH RAHUL KUMAR SINGH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. YALLA PAVANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. CHAITANYA BHUPATI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. YEDIDA GOPI VENKATA GIRI SESHU BABU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. GANTI RAM BABU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. MEDIDA ESWARA KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SIVANADH PENTAPATI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. MUDDAM CHANDRA SEKHAR MADAN",
+        "designation": "HEAD OF DEPT",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SATYA MAHESH KUDIPUDI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. SAMANTHAKURTHI BHAGYA SAI LAKSHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. A ANKIT RANJAN",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      }
+    ],
+    "peos": [],
+    "pos": [
+      "ENGINEERING KNOWLEDGE : Apply the knowledge of mathematics, science, engineering fundamentals, and an engineering specialization to the solution of complex engineering problems",
+      "PROBLEM ANALYSIS : Identify, formulate, research literature, and analyze complex engineering problems reaching substantiated conclusions using first principles of mathematics, natural sciences, and engineering sciences.",
+      "DESIGN/DEVELOPMENT OF SOLUTIONS : Design solutions for complex engineering problems and design system components or processes that meet the specified needs with appropriate consideration for the public health and safety, and the cultural, societal, and environmental considerations.",
+      "CONDUCT INVESTIGATIONS OF COMPLEX PROBLEMS : Use research-based knowledge and research methods including design of experiments, analysis and interpretation of data, and synthesis of the information to provide valid conclusions.",
+      "MODERN TOOL USAGE : Create, select, and apply appropriate techniques, resources, and modern engineering and IT tools including prediction and modelling to complex engineering activities with an understanding of the limitations.",
+      "THE ENGINEER AND SOCIETY : Apply reasoning informed by the contextual knowledge to assess societal, health, safety, legal and cultural issues and the consequent responsibilities relevant to the professional engineering practice.",
+      "ENVIRONMENT AND SUSTAINABILITY : Understand the impact of the professional engineering solutions in societal and environmental contexts, and demonstrate the knowledge of, and need for sustainable development.",
+      "ETHICS : Apply ethical principles and commit to professional ethics and responsibilities and norms of the engineering practice.",
+      "INDIVIDUAL AND TEAM WORK : Function effectively as an individual, and as a member or leader in diverse teams, and in multidisciplinary settings.",
+      "COMMUNICATION : Communicate effectively on complex engineering activities with the engineering community and with society at large, such as, being able to comprehend and write effective reports and design documentation, make effective presentations, give and receive clear instructions.",
+      "PROJECT MANAGEMENT AND FINANCE : Demonstrate knowledge and understanding of the engineering and management principles and apply these to one’s own work, as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+      "LIFE-LONG LEARNING : Recognize the need for, and have the preparation and ability to engage in independent and life-long learning in the broadest context of technological change."
+    ],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true
+    }
+  },
+  "master-of-business-administration": {
+    "slug": "master-of-business-administration",
+    "name": "Master of Business Administration",
+    "about": [
+      "Founded in 2009, our goal has been to provide students with an outwardly exposure to identifying, measuring and solutioning the existing gaps in the business and economic landscape. We are focussed on giving impetus to study and research material that cater to better the student’s potential, in the fields of Finance, Marketing & Human Resources, as specialisations. Seminars led by Business leaders and stalwarts, field trips to get a hands-on industry experience, Guest Lectures to enhance their corporate outlook, and a lot more,",
+      "Students are also encouraged to pursue publications in international journals, recognized as University Grants Commission’s care united journals."
+    ],
+    "vision": "To impart quality management education to the young minds suitable to industry and business needs. To train and motivate stakeholders to take up industrial projects in the areas connected with business administration and management. To facilitate students to encourage as Business Executives, Analysts, Entrepreneurs, Consultants and Job holders. To encourage research among students with a strong and continuous support of faculty.",
+    "mission": [],
+    "hod": {
+      "name": "Dr. Gokarakonda P S V S D Nagendra Rao.",
+      "designation": "Professor & Head",
+      "message": [
+        "Serving with passion, team player, good communication skills, strong inter personal relationships &cross cultural exposure, expert in counselling, mentoring & motivational services, enthusiastic, adaptive and committed.",
+        "Having good exposure of admin and managerial experience. Expert in research, training, interface, academics, soft skills, case studies etc. Participated as resource person in several faculty,/student and staff development programmes, participated in various fdps, workshops, seminars, webinars and guest lectures, had considerable publications in national and international journals",
+        "Title of the Invention : NEW STRATEGIC PLANNING FOR BUSINESS SYSTEM"
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Ms. AKULA RADHA ANANTA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. BHAGAVATHULA PADMASRI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. GUMMALLA KRISHNA CHAITANYA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. YERUBANDI VEERA VENKATA SATYANARAYANA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. GOKARAKONDA PURNA SATYA VENKATA SURYA",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. KOMMIREDDI SUREKHA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. ACHANTA SATYANARAYANA",
+        "designation": "HEAD OF DEPT",
+        "qualification": null
+      },
+      {
+        "name": "S.No.",
+        "designation": null,
+        "qualification": "Name of the Faculty"
+      },
+      {
+        "name": "Dr G P S V S D NAGENDRA RAO",
+        "designation": "HOD & Professor",
+        "qualification": "MIPRM, M.Com, M.Sc(Psy),B.L, Ph.D"
+      },
+      {
+        "name": "Mr. Y V V SATYANARAYANA",
+        "designation": "Assistant professor",
+        "qualification": "MBA, APSET, NET ( UGC )"
+      },
+      {
+        "name": "Mrs. VEMPARALA PADMASRI",
+        "designation": "Assistant professor",
+        "qualification": "M.COM, BEd, MBA, APSET"
+      },
+      {
+        "name": "Mrs. PAMARTHI K CHAITANYA",
+        "designation": "Assistant professor",
+        "qualification": "M.Com,MBA"
+      },
+      {
+        "name": "Mrs. MD. SHAKIRA BANU",
+        "designation": "Assistant Professor",
+        "qualification": "MBA"
+      },
+      {
+        "name": "Mr. PRADIP TRIPATHY",
+        "designation": "Assistant professor",
+        "qualification": "MBA"
+      },
+      {
+        "name": "Mrs. G HARITHA",
+        "designation": "Assistant professor",
+        "qualification": "MBA"
+      },
+      {
+        "name": "Ms. B ROOPA DEVI",
+        "designation": "Assistant professor",
+        "qualification": "MBA"
+      }
+    ],
+    "peos": [],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true
+    }
+  },
+  "masters-in-computer-application": {
+    "slug": "masters-in-computer-application",
+    "name": "Masters in Computer Application",
+    "about": [
+      "The Department of Computer Applications was established in the year 2007.",
+      "The Department of MCA was established in 2007. The courses offered by the department focuses on preparing students for a global career in computing by enriching the curriculum through a blended application-based learning. Students are trained in the fields of Application Software Development, Enterprise Resource Planning, Mobile development, Data Mining & Warehousing, amongst a few.",
+      "The Department also nurtures competent professionals through real-world project and foster continuous learning, thereby integrating both theoretical as well as practical knowledge amongst students."
+    ],
+    "vision": "To impart Technical skills in the field of Computers and IT to meet the current trends and future challenges. To offer high level skills and impart righteous attitude to succeed in the field of computer applications. To provide knowledge of emerging trends in computers and related sphere to bridge the gap between industry and academia to suit social needs. To produce well equipped professionals who can investigate, research and find feasible Solutions to complex industrial problems with an awareness and concern for the ever changing society.",
+    "mission": [],
+    "hod": {
+      "name": "Mr. AVSM Ganesh",
+      "designation": "Associate Professor and Head",
+      "message": [
+        "Professor AVSM Ganesh has been with us for the last 15 years as an Associate Professor and Head of Department of the MCA Department in the university. He is responsible for the Academic and Advisory Cell and IQAC committees in the university.",
+        "He has been instrumental in preparing and handling various courses for the department, such as:",
+        "He is a professional member of ISTE, and has the following Research Publications and Journals to his name:"
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mrs. AKULA JYOTHI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. KOLLA PRASANNA LAKSHMI VENKATA BALA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. PRANATHI PEDAMALLU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. DIVYA EETA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. PRASANNA PASALAPUDI LASHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. GUPTA PEDAMALLU S N V P S R CH M",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. LAKKARAJU PRIYA MAHATHI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. GUTTULA SATYADEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. AKULA SANKARA GANESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. YARRAMSETTY SIVA NAGA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. THOTA NAGA LAKSHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. GURLINKA LAKSHMI NAGA VENKATA SATYA KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. CHODE GANGADHARA RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr A V S M GANESH",
+        "designation": "ASSOC PROFESSOR & HEAD",
+        "qualification": "MCA,M.TECH"
+      },
+      {
+        "name": "Mr G L N V S KUMAR",
+        "designation": "ASSOC PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mrs Y S N CHANDRESWARI",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mr B SUBRAHMANYAM",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA,M.TECH"
+      },
+      {
+        "name": "Mr A SANKAR GANESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mrs T N L BHAVANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mrs P B L APARNA",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA,M.TECH"
+      },
+      {
+        "name": "Mr N SRINU",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mr CH GANGADHAR RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mr A KRISHNA MURTHY",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mrs. K P L VENKATA BALA",
+        "designation": "ASST PROFESSOR",
+        "qualification": "MCA"
+      }
+    ],
+    "peos": [
+      "PEO 1 Post Graduates will demonstrate and apply principles of Sciences, Mathematics, and computer application fundamentals to solve and analyze IT problems.",
+      "PEO 2 Post Graduates able to take up positions as system analysts, system engineers, software engineers and programmers or become entrepreneurs.",
+      "PEO 3 Post Graduates exhibit social, ethical and professional responsibility work in multi – disciplinary projects with their communication and soft skills."
+    ],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "visionMission": true,
+      "hod": true,
+      "faculty": true,
+      "peo": true,
+      "infrastructure": true
+    }
+  },
+  "science-humanities": {
+    "slug": "science-humanities",
+    "name": "Science & Humanities",
+    "about": [
+      "One of our most successful departments, the department of Science & Humanities offers interdisciplinary courses for students to choose from, namely Mathematics, Physics, Chemistry and English. Students are given access to a qualified team of professors and extensive research material to enhance their stronghold on these subjects, to aid them in their pursuit of Engineering, from an applications standpoint. The objective is to build a strong foundation of fundamental subjects, which will eventually sharpen their reasoning. Intellectual and analytical skills."
+    ],
+    "vision": null,
+    "mission": [],
+    "hod": {
+      "name": "Mr. Boddu Sesha Rao",
+      "designation": null,
+      "message": [
+        "Overview: Boddu Sesha Rao is a seasoned Associate Professor with over two decades of experience in the field of mathematics education. His commitment to academic excellence, coupled with his passion for teaching, has made him a highly respected figure in his field. With a strong foundation in mathematics and a comprehensive understanding of pedagogical principles, Boddu Sesha Rao excels in fostering a conducive learning environment that empowers students to excel.",
+        "Teaching Philosophy: Boddu Sesha Rao believes in nurturing a deep understanding of mathematical concepts rather than rote memorization. He emphasizes critical thinking, problem-solving skills, and practical applications to instill a lifelong love for mathematics in his students. His teaching philosophy revolves around creating an engaging and interactive classroom environment where students feel encouraged to explore, question, and collaborate.",
+        "Professional Achievements: Throughout his career, Boddu Sesha Rao has consistently demonstrated excellence in teaching and academic leadership. His contributions to the field of mathematics education include:"
+      ]
+    },
+    "faculty": [
+      {
+        "name": "S.No",
+        "designation": null,
+        "qualification": "Name"
+      },
+      {
+        "name": "Mr. CHELLUBOINA NARESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. NALLA VEERA VENKATA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. NIMMAKAYALA SRIDEVI KHADGAMALA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SALADI PRANAV SAGAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. THIKKIREDDY NAGENDRA KALKI BABU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. AKULA DURGA RAJ KUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. CHEGONDI SARVARAYUDU",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. BOKKA VENKATA RAMAN",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. RAMESH GUTTULA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. VADDY SAI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. THORAM SRILAKSHMI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. BULUSU VYAGHRESWARUDU",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. BASAVA SIMHADRI RAO",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. BODDU SESHA RAO",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. GAMINI NAGA VENKATA SRI RAMA",
+        "designation": "PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KATHULA DURGARAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. RUDRARAJU RAGHURAMA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. VANTEDDU SESHU KUMAR",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. SIRIPALLI PRABHA",
+        "designation": "ASSOCIATE PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. YAKKALADEVARA SURESHKUMAR",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. TATIPARTI VENKATA RAMESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. SANABOYINA NAGA PADMA VANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. NALLA KRISHNA VEERA SWAMI NEERAJA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. TATA USHA RAMANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. MEDISETTY SURESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. GANTI PRABHAVATHI DEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KANCHARLA VEERA NAGAVENKATA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. SRI ADDAGALLA SATYA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. RAAVI SUDHA RANI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. MATTA PARVATHI DEVI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Ms. KV VISHNUPRIYA",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SHAIK HUSSAIN",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. SHAIK GUNTUR MASTAN",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. MURUDUDLA KRISHNAIAH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. ADABALA DURGA RAO",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. KATAKAM RAJESH",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mr. BHIMANA JANAKIRAM",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Mrs. MEDICHARLA HARISRI",
+        "designation": "ASST PROFESSOR",
+        "qualification": null
+      },
+      {
+        "name": "Dr. NAGA VENKATA SRI RAMA CHANDRA MURTHY GAMINI",
+        "designation": "Professor",
+        "qualification": "M.Sc., M.Phil., M.Tech., Ph.D"
+      },
+      {
+        "name": "Mr. YAKKALADEVARA SURESH KUMAR",
+        "designation": "Associate Professor",
+        "qualification": "M.A, B.Ed."
+      },
+      {
+        "name": "Mr. DURGARAO KATHULA",
+        "designation": "Associate Professor",
+        "qualification": "M.A, B.Ed, NET, (Ph.D)"
+      },
+      {
+        "name": "Mr. TIKKIREDDY NAGENDRA KALIKI BABU",
+        "designation": "Assistant Professor",
+        "qualification": "MBA"
+      },
+      {
+        "name": "Mr. NALLA V V S N RAJU",
+        "designation": "Assistant Professor",
+        "qualification": "M.A"
+      },
+      {
+        "name": "Mr. CHEGONDI SARVA RAYUDU",
+        "designation": "Assistant Professor",
+        "qualification": "MBA"
+      },
+      {
+        "name": "Ms. THORAM SRI LAKSHMI KAVERI",
+        "designation": "Assistant Professor",
+        "qualification": "M.Sc"
+      },
+      {
+        "name": "Mrs. SANABOYINA NAGA PADMA GANGA VANI",
+        "designation": "Assistant Professor",
+        "qualification": "M.Sc, B.Ed"
+      },
+      {
+        "name": "Mr. D DHANA RAJU",
+        "designation": "Assistant Professor",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mrs. TATA USHA RAMANI",
+        "designation": "Assistant Professor",
+        "qualification": "M.A"
+      },
+      {
+        "name": "Mr. D S RAMA PRASAD",
+        "designation": "Assistant Professor",
+        "qualification": "MCA"
+      },
+      {
+        "name": "Mr. A SUDHEER KUMAR",
+        "designation": "Assistant Professor",
+        "qualification": "M.A, B.Ed"
+      },
+      {
+        "name": "Mrs. ADDAGALLA SATYA SRI",
+        "designation": "Assistant Professor",
+        "qualification": "M.Sc"
+      },
+      {
+        "name": "Mrs. OBILISETTI NAGA RATNAM",
+        "designation": "Assistant Professor",
+        "qualification": "M.Sc, M.A(ENG), B.Ed"
+      },
+      {
+        "name": "Mrs. MATTA PARVATHI DEVI",
+        "designation": "Assistant Professor",
+        "qualification": "M.A, B.Ed"
+      },
+      {
+        "name": "Mr. GUTTULA RAMESH",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. PEDDIREDDY SRI RAMA DURGA",
+        "designation": "Assistant Professor",
+        "qualification": "M.Tech"
+      },
+      {
+        "name": "Mrs. CHEDALLA PRABHA",
+        "designation": "Associate Professor",
+        "qualification": "M.Sc, B.Ed."
+      },
+      {
+        "name": "Mrs. MEDICHARLA HARI SRI PADMA",
+        "designation": "Associate Professor",
+        "qualification": "M.A"
+      },
+      {
+        "name": "M.Sc",
+        "designation": "Associate Prof.",
+        "qualification": null
+      },
+      {
+        "name": "SRI LAKSHMI KAVERI THORAM",
+        "designation": "Assistant Prof",
+        "qualification": "M.Sc"
+      }
+    ],
+    "peos": [],
+    "pos": [],
+    "psos": [],
+    "labs": [],
+    "_sources": {
+      "hod": true,
+      "faculty": true,
+      "infrastructure": true
+    }
+  }
+}

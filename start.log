@@ -1,0 +1,136 @@
+   ▲ Next.js 15.1.6
+   - Local:        http://localhost:3000
+   - Network:      http://10.64.119.171:3000
+
+ ✓ Starting...
+ ✓ Ready in 540ms
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:45.745: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:45.772: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:46.134: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:46.136: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:46.138: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:46.138: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:55.930: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:29:55.930: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:30:05.066: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.765: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.776: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.930: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.933: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.934: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:29.935: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:30.409: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:35:30.410: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:40:14.657: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:40:14.663: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:40:14.664: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+ ⨯ uncaughtException:  TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+ ⨯ uncaughtException:  TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+
+(process:19708): GLib-GObject-CRITICAL **: 22:50:32.806: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:50:32.811: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 22:50:32.812: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+ ⨯ uncaughtException:  TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+ ⨯ uncaughtException:  TypeError: t.mask is not a function
+    at e.exports.mask (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:1193)
+    at y.frame (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:20884)
+    at y.dispatch (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23777)
+    at y.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:32:23321)
+    at I.send (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:9490)
+    at I.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:4:5079)
+    at I.setSocket (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:7360)
+    at ClientRequest.<anonymous> (C:\Users\vinod\Downloads\BVCITS 2.0\.next\server\app\api\speech\telugu\route.js:33:5728)
+
+(process:19708): GLib-GObject-CRITICAL **: 23:06:28.683: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 07:47:41.165: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 07:53:53.737: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 07:54:07.414: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 07:54:34.526: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+
+(process:19708): GLib-GObject-CRITICAL **: 07:54:55.503: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
