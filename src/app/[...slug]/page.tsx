@@ -1,6 +1,5 @@
 import Link from "next/link";
 import PageBanner from "@/components/ui/PageBanner";
-import { ArrowRight } from "@/components/ui/icons";
 import { site } from "@/lib/site";
 
 const ACRONYMS: Record<string, string> = {
@@ -38,7 +37,6 @@ export default async function CatchAllPage({
   const segments = slug ?? [];
   const title = prettify(segments[segments.length - 1] ?? "Page");
   const crumbs = [{ label: "Others", href: "/others" }, ...segments.map((s) => ({ label: prettify(s) }))];
-  const liveHref = `${site.liveUrl}/${segments.join("/")}/`;
 
   return (
     <>
@@ -46,22 +44,9 @@ export default async function CatchAllPage({
       <div className="section">
         <div className="container-page max-w-3xl">
           <p className="leading-relaxed text-ink">
-            This is the <strong>{title}</strong> section of {site.shortName}. The full content for this page is part
-            of the institute&rsquo;s information architecture and is being migrated into this modern portal.
+            This is the <strong>{title}</strong> section of {site.shortName}. The full content for this page is
+            being written directly into this portal — it is not pulled from anywhere else.
           </p>
-          <div className="mt-6 rounded-xl border border-dashed border-surface-border bg-surface-grey p-6">
-            <p className="text-sm text-ink-soft">
-              Looking for the currently published version? View it on the live site:
-            </p>
-            <a
-              href={liveHref}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-crimson hover:text-navy"
-            >
-              {liveHref} <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
 
           <div className="mt-10">
             <h2 className="text-lg font-bold text-navy">Explore other sections</h2>

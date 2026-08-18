@@ -404,7 +404,16 @@ const others: Department[] = [
 // Real values always win over the seeded parity content.
 import realData from "./real-departments.json";
 
-type RealDept = {
+/**
+ * The shape of real-departments.json.
+ *
+ * Exported because it is the ONE description of that file. A second, looser
+ * copy in the blog grounding layer drifted from it — it declared
+ * `designation?: string` where the JSON actually holds `null` — and the cast
+ * against it was a hard type error that a stale tsbuildinfo hid for several
+ * sessions. Import this rather than re-describing the JSON.
+ */
+export type RealDept = {
   name: string | null;
   about: string[];
   vision: string | null;

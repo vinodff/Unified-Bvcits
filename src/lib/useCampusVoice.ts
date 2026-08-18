@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { chunkForSpeech } from "./speech-limits";
+
 /**
  * Voice loop for the campus assistant — listen, think, speak, listen again.
  *
@@ -34,8 +36,56 @@ const MAX_SILENT_TURNS = 2;
 /** Pause after playback before reopening the mic, so the audio tail is not captured. */
 const TURN_GAP_MS = 350;
 
-/** Longest chunk sent to the TTS route in one request. */
-const TTS_CHUNK_LIMIT = 200;
+/**
+ * Longest a single chunk may take to play before the loop gives up on it.
+ *
+ * `<audio>` fires neither `ended` nor `error` when a stream stalls — the element simply
+ * sits there. Without this ceiling the promise below never settles, `speak()` never
+ * returns, and the loop is stranded in "speaking" with the microphone shut: the
+ * conversation is dead but the UI still says the assistant is talking. Generous enough
+ * that a slow network is not mistaken for a stall.
+ */
+const CHUNK_PLAYBACK_TIMEOUT_MS = 20_000;
+
+/**
+ * Playback speed for the synthesised voice. The TTS services return audio at a flat,
+ * slow reading pace that sounds like a recorded announcement rather than a person, so
+ * playback is sped up on the client where we actually have the control.
+ *
+ * `PRESERVE_PITCH = false` lets pitch rise with the rate. That coupling is the point:
+ * it lifts the voice out of the dull low register and reads as livelier. Above about
+ * 1.3 it starts to sound comical, so keep changes small.
+ */
+const VOICE_RATE = 1.22;
+const PRESERVE_PITCH = false;
+
+/** Rate and pitch for the browser fallback voice, which takes both independently. */
+const BROWSER_VOICE_RATE = 1.15;
+const BROWSER_VOICE_PITCH = 1.15;
+
+/**
+ * Which engine speaks. Chosen once and then held, because the two engines have audibly
+ * different voices — switching between them mid-answer is heard as the assistant
+ * changing character partway through a sentence.
+ */
+type SpeechEngine = "route" | "browser";
+
+/** Applies playback tuning. `preservesPitch` is still prefixed on some engines. */
+function applyPlaybackTuning(audio: HTMLAudioElement): void {
+  audio.playbackRate = VOICE_RATE;
+  const tunable = audio as HTMLAudioElement & {
+    preservesPitch?: boolean;
+    mozPreservesPitch?: boolean;
+    webkitPreservesPitch?: boolean;
+  };
+  tunable.preservesPitch = PRESERVE_PITCH;
+  tunable.mozPreservesPitch = PRESERVE_PITCH;
+  tunable.webkitPreservesPitch = PRESERVE_PITCH;
+}
+
+function ttsUrl(chunk: string, lang: VoiceLang): string {
+  return `/api/speech/telugu?text=${encodeURIComponent(chunk)}&lang=${lang}`;
+}
 
 interface UseCampusVoiceOptions {
   /** Fired once per turn with the final transcript. */
@@ -57,36 +107,6 @@ interface SpeakOptions {
   continueConversation?: boolean;
 }
 
-/** Splits text into speakable chunks at sentence boundaries. */
-function chunkForSpeech(text: string): string[] {
-  const clean = text
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // markdown links → label
-    .replace(/[*_#`~>•]/g, "")
-    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "") // emoji
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (!clean) return [];
-  if (clean.length <= TTS_CHUNK_LIMIT) return [clean];
-
-  // Keep sentences intact; only split a sentence that is itself over the limit.
-  const sentences = clean.split(/(?<=[.!?।])\s+/);
-  const chunks: string[] = [];
-  let buffer = "";
-
-  for (const sentence of sentences) {
-    if ((buffer + " " + sentence).trim().length <= TTS_CHUNK_LIMIT) {
-      buffer = (buffer + " " + sentence).trim();
-      continue;
-    }
-    if (buffer) chunks.push(buffer);
-    buffer = sentence.length > TTS_CHUNK_LIMIT ? sentence.slice(0, TTS_CHUNK_LIMIT) : sentence;
-  }
-  if (buffer) chunks.push(buffer);
-
-  return chunks;
-}
-
 export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions) {
   const [state, setState] = useState<VoiceState>("idle");
   const [interimTranscript, setInterimTranscript] = useState("");
@@ -97,8 +117,15 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
   // Refs mirror state that callbacks registered once on the recogniser must read.
   // Reading React state there would capture the value from the first render.
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  /**
+   * Two elements, alternated: one plays while the other buffers the next chunk. A single
+   * element has to finish, load a new src, and buffer before it can speak again, which
+   * put an audible pause between every chunk and made the delivery sound halting.
+   */
+  const audioPoolRef = useRef<HTMLAudioElement[]>([]);
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  /** Held for the session so the voice never changes character between answers. */
+  const engineRef = useRef<SpeechEngine | null>(null);
 
   const conversationModeRef = useRef(false);
   const stateRef = useRef<VoiceState>("idle");
@@ -145,8 +172,7 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
 
   // ── Playback control ──────────────────────────────────────────────────────
   const stopSpeaking = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
+    for (const audio of audioPoolRef.current) {
       audio.pause();
       audio.removeAttribute("src");
       audio.load(); // release the previous stream so the next play() starts clean
@@ -214,9 +240,12 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
     mountedRef.current = true;
     if (typeof window === "undefined") return;
 
-    const audio = new Audio();
-    audio.preload = "auto";
-    audioRef.current = audio;
+    const pool = [new Audio(), new Audio()];
+    for (const audio of pool) {
+      audio.preload = "auto";
+      applyPlaybackTuning(audio);
+    }
+    audioPoolRef.current = pool;
 
     if ("speechSynthesis" in window) synthRef.current = window.speechSynthesis;
 
@@ -316,80 +345,119 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
       } catch {
         // ignore
       }
-      audio.pause();
-      audio.removeAttribute("src");
+      for (const audio of pool) {
+        audio.pause();
+        audio.removeAttribute("src");
+      }
       synthRef.current?.cancel();
     };
   }, [applyState, maybeScheduleNextTurn, startLevelAnimation, stopLevelAnimation]);
 
   // ── Speaking ──────────────────────────────────────────────────────────────
 
-  /** Browser voice fallback used when the TTS route cannot serve audio. */
+  /**
+   * Browser voice fallback used when the TTS route cannot serve audio.
+   *
+   * Resolves true when it actually spoke. False means this browser has no usable voice for
+   * the language, which matters because desktop Chrome commonly ships no Telugu voice at
+   * all — left unchecked it reads Telugu text with an English voice, which is worse than
+   * silence. The caller surfaces that as a notice rather than pretending it spoke.
+   *
+   * Timed for the same reason as route playback: `onend` is not guaranteed to fire.
+   */
   const speakWithSynthesis = useCallback(
     (text: string, lang: VoiceLang) =>
-      new Promise<void>((resolve) => {
+      new Promise<boolean>((resolve) => {
         const synth = synthRef.current;
         if (!synth) {
-          resolve();
+          resolve(false);
           return;
         }
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 0.95;
-        utterance.pitch = 1.05;
 
         const voices = synth.getVoices();
         const wanted = lang.startsWith("te")
           ? voices.find((v) => v.lang.toLowerCase().startsWith("te"))
           : voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en"));
-        if (wanted) utterance.voice = wanted;
 
-        utterance.onend = () => resolve();
-        utterance.onerror = () => resolve();
+        // No voice for this language: speaking anyway produces the wrong-accent gibberish
+        // described above, so report the failure instead.
+        if (!wanted) {
+          resolve(false);
+          return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = BROWSER_VOICE_RATE;
+        utterance.pitch = BROWSER_VOICE_PITCH;
+        utterance.voice = wanted;
+
+        let settled = false;
+        const settle = (ok: boolean) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve(ok);
+        };
+        const timer = setTimeout(() => settle(true), CHUNK_PLAYBACK_TIMEOUT_MS);
+
+        utterance.onend = () => settle(true);
+        utterance.onerror = () => settle(false);
         synth.speak(utterance);
       }),
     [],
   );
 
-  /** Plays one chunk through the neural TTS route, falling back to the browser voice. */
-  const playChunk = useCallback(
-    (chunk: string, lang: VoiceLang) =>
-      new Promise<void>((resolve) => {
-        const audio = audioRef.current;
-        if (!audio) {
-          void speakWithSynthesis(chunk, lang).then(resolve);
-          return;
-        }
-
+  /**
+   * Plays one chunk through the TTS route.
+   * Resolves true when it played, false when the route could not serve it.
+   * Never falls back on its own — that decision belongs to `speak`, so a fallback can
+   * never take effect halfway through an utterance and change the voice mid-sentence.
+   */
+  const playViaRoute = useCallback(
+    (element: HTMLAudioElement, chunk: string, lang: VoiceLang) =>
+      new Promise<boolean>((resolve) => {
         let settled = false;
-        const finish = () => {
+        const settle = (ok: boolean) => {
           if (settled) return;
           settled = true;
-          audio.onended = null;
-          audio.onerror = null;
-          resolve();
+          clearTimeout(timer);
+          element.onended = null;
+          element.onerror = null;
+          element.onstalled = null;
+          resolve(ok);
         };
 
-        audio.onended = finish;
-        audio.onerror = () => {
-          if (settled) return;
-          settled = true;
-          audio.onended = null;
-          audio.onerror = null;
-          void speakWithSynthesis(chunk, lang).then(resolve);
-        };
+        // A stalled stream fires neither `ended` nor `error`, so without this the loop
+        // hangs in "speaking" forever. See CHUNK_PLAYBACK_TIMEOUT_MS.
+        const timer = setTimeout(() => settle(false), CHUNK_PLAYBACK_TIMEOUT_MS);
 
-        audio.src = `/api/speech/telugu?text=${encodeURIComponent(chunk)}&lang=${lang}`;
-        audio.play().catch(() => {
-          if (settled) return;
-          settled = true;
-          audio.onended = null;
-          audio.onerror = null;
-          // Autoplay refusal or a failing route — fall back rather than go silent.
-          void speakWithSynthesis(chunk, lang).then(resolve);
-        });
+        element.onended = () => settle(true);
+        element.onerror = () => settle(false);
+        element.onstalled = () => settle(false);
+
+        // src may already be set by the prefetch below; only assign when it is not.
+        const wanted = ttsUrl(chunk, lang);
+        if (!element.src.endsWith(encodeURIComponent(chunk) + `&lang=${lang}`)) {
+          element.src = wanted;
+        }
+        applyPlaybackTuning(element);
+
+        element.play().then(
+          () => applyPlaybackTuning(element), // Chrome resets rate when a new src loads.
+          () => settle(false),
+        );
       }),
-    [speakWithSynthesis],
+    [],
+  );
+
+  /** Starts fetching the next chunk while the current one plays, to remove the gap. */
+  const prefetchChunk = useCallback(
+    (element: HTMLAudioElement, chunk: string, lang: VoiceLang) => {
+      element.src = ttsUrl(chunk, lang);
+      element.load();
+    },
+    [],
   );
 
   /**
@@ -415,11 +483,59 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
       await new Promise<void>((resolve) => {
         speakResolveRef.current = resolve;
         void (async () => {
-          for (const chunk of chunks) {
+          // The engine is chosen once per session and then held, so every chunk of every
+          // answer is spoken in the same voice. Only the very first chunk of the session
+          // may switch engines; after that the decision is fixed.
+          // Tracks whether any chunk of this answer reached the listener at all, so a
+          // total failure can be surfaced instead of passing as silence.
+          let spokeSomething = false;
+
+          for (let i = 0; i < chunks.length; i += 1) {
             // stopSpeaking() clears the resolver; that is the interrupt signal.
             if (speakResolveRef.current !== resolve || !mountedRef.current) break;
-            await playChunk(chunk, lang);
+
+            const chunk = chunks[i];
+            const next = chunks[i + 1];
+
+            const pool = audioPoolRef.current;
+            // Pool is empty until the mount effect runs; browser speech is the only
+            // option that early, and committing to it keeps the voice consistent.
+            if (engineRef.current === "browser" || pool.length < 2) {
+              if (await speakWithSynthesis(chunk, lang)) spokeSomething = true;
+              continue;
+            }
+
+            const active = pool[i % 2];
+            const standby = pool[(i + 1) % 2];
+            // Buffer the next chunk while this one plays, so playback is continuous.
+            if (next) prefetchChunk(standby, next, lang);
+
+            const played = await playViaRoute(active, chunk, lang);
+            if (played) {
+              engineRef.current = "route";
+              spokeSomething = true;
+              continue;
+            }
+
+            // The route failed. Commit to the browser voice for the rest of THIS answer
+            // and re-speak this chunk there, so no part of it is lost and the voice does
+            // not change character mid-sentence. The commitment is deliberately not
+            // permanent: a single transient failure used to downgrade every later answer
+            // in the session, even after the route recovered.
+            engineRef.current = "browser";
+            if (speakResolveRef.current !== resolve || !mountedRef.current) break;
+            if (await speakWithSynthesis(chunk, lang)) spokeSomething = true;
           }
+
+          // Nothing was audible: neither the route nor a browser voice could speak. Say so
+          // rather than leaving the visitor watching a reply they were meant to hear.
+          if (!spokeSomething && chunks.length > 0 && mountedRef.current) {
+            onNoticeRef.current?.("tts-failed");
+          }
+          // Re-probe the route on the next answer instead of staying on the browser voice
+          // for the rest of the page's life.
+          engineRef.current = null;
+
           if (speakResolveRef.current === resolve) {
             speakResolveRef.current = null;
             resolve();
@@ -435,7 +551,9 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
     [
       applyState,
       maybeScheduleNextTurn,
-      playChunk,
+      playViaRoute,
+      prefetchChunk,
+      speakWithSynthesis,
       startLevelAnimation,
       stopListening,
       stopLevelAnimation,
@@ -467,6 +585,23 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
     applyState("idle");
   }, [applyState, clearRestartTimer, stopListening, stopSpeaking]);
 
+  /**
+   * Closes a turn that produced no speech, handing the microphone back.
+   *
+   * Needed because `speak()` is what normally moves the loop out of "thinking" and
+   * reschedules the mic. Any path that answers without speaking — voice replies muted, or
+   * the panel closed before the answer arrived — must call this instead, or the loop is
+   * stranded in "thinking" with the mic shut and conversation mode only apparently on.
+   */
+  const endTurn = useCallback(
+    (continueConversation = true) => {
+      if (!mountedRef.current) return;
+      if (stateRef.current !== "idle") applyState("idle");
+      if (continueConversation) maybeScheduleNextTurn();
+    },
+    [applyState, maybeScheduleNextTurn],
+  );
+
   /** Updates the recognition language without tearing down the instance. */
   const setLanguage = useCallback((lang: VoiceLang) => {
     if (recognitionRef.current) recognitionRef.current.lang = lang;
@@ -487,6 +622,7 @@ export function useCampusVoice({ onUtterance, onNotice }: UseCampusVoiceOptions)
     stopListening,
     speak,
     stopSpeaking,
+    endTurn,
     setLanguage,
     /** Lets the consumer mark the thinking phase for a typed (non-voice) turn. */
     setThinking: useCallback(() => applyState("thinking"), [applyState]),

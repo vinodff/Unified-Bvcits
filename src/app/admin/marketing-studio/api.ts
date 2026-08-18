@@ -1,6 +1,13 @@
 // Typed fetch helpers for the Marketing Studio (client side only).
 
 import type { Campaign, Platform, CampaignFact } from "@/lib/marketing/domain";
+import type {
+  BlogAgentRun,
+  BlogImage,
+  BlogPost,
+  BlogQualityReport,
+  BlogTopic,
+} from "@/lib/marketing/blog/domain";
 
 async function req<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) } });
@@ -23,6 +30,40 @@ export interface CampaignDetail {
   audit: { id: string; actor: string; action: string; at: string; detail: Record<string, unknown> }[];
 }
 
+/** One question in the guided interview, as served by the intake route. */
+export interface IntakeStep {
+  field: string;
+  prompt: string;
+  help?: string;
+  kind: "text" | "longtext" | "date" | "time" | "number" | "list" | "photos";
+  placeholder?: string;
+  required: boolean;
+}
+
+export interface IntakeSummaryRow {
+  field: string;
+  label: string;
+  value: string | null;
+  required: boolean;
+  skipped: boolean;
+}
+
+export interface IntakePayload {
+  campaign: { id: string; title: string; type: string; status: string };
+  phase: "describe" | "gaps" | "photos" | "confirm";
+  step: IntakeStep | null;
+  answered: number;
+  total: number;
+  missingRequired: string[];
+  photosRequired: boolean;
+  photoCount: number;
+  canGenerate: boolean;
+  summary: IntakeSummaryRow[];
+  assetCount: number;
+  /** Field labels the opening brief answered — only present on a brief POST. */
+  understood?: string[];
+}
+
 export const api = {
   me: () => req<{ ok: boolean; dev: boolean }>("/api/marketing/auth/login"),
   login: (pin: string) => req<{ ok: boolean; dev: boolean }>("/api/marketing/auth/login", { method: "POST", body: JSON.stringify({ pin }) }),
@@ -34,8 +75,29 @@ export const api = {
   patch: (id: string, body: Record<string, unknown>) =>
     req<{ campaign: Campaign }>(`/api/marketing/campaigns/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
   del: (id: string) => req<{ ok: boolean }>(`/api/marketing/campaigns/${id}`, { method: "DELETE" }),
+  /**
+   * Explicit admin status move. The route only accepts CHANGES_REQUESTED (reject
+   * at review) and DRAFT (release a stalled run) — approving and publishing have
+   * their own routes so this cannot be used to skip the approval gate.
+   */
+  setStatus: (id: string, status: "CHANGES_REQUESTED" | "DRAFT", note?: string) =>
+    req<{ campaign: Campaign }>(`/api/marketing/campaigns/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status, note }),
+    }),
   generate: (id: string) =>
     req<{ campaign: Campaign; detail: CampaignDetail }>(`/api/marketing/campaigns/${id}/generate`, { method: "POST" }),
+  intake: (id: string) => req<IntakePayload>(`/api/marketing/campaigns/${id}/intake`),
+  /** Submit the opening free-text brief; extraction fills in what it recognises. */
+  intakeBrief: (id: string, brief: string) =>
+    req<IntakePayload>(`/api/marketing/campaigns/${id}/intake`, { method: "POST", body: JSON.stringify({ brief }) }),
+  intakeAnswer: (id: string, field: string, value: string) =>
+    req<IntakePayload>(`/api/marketing/campaigns/${id}/intake`, { method: "POST", body: JSON.stringify({ field, value }) }),
+  intakeSkip: (id: string, field: string) =>
+    req<IntakePayload>(`/api/marketing/campaigns/${id}/intake`, { method: "POST", body: JSON.stringify({ field, skip: true }) }),
+  /** Recompute quality + SEO for existing content, without regenerating copy. */
+  revalidate: (id: string) =>
+    req<{ ok: boolean; message: string; detail: CampaignDetail }>(`/api/marketing/campaigns/${id}/revalidate`, { method: "POST" }),
   ask: (id: string, message: string) =>
     req<{ reply: string; questions: string[]; facts: CampaignFact[] }>(`/api/marketing/campaigns/${id}/ask`, { method: "POST", body: JSON.stringify({ message }) }),
   approve: (id: string, platforms: Platform[], scheduledAt: string) =>
@@ -59,6 +121,39 @@ export const api = {
     req<{ account: unknown }>("/api/marketing/accounts", { method: "PATCH", body: JSON.stringify({ id, action }) }),
   audit: (limit = 200) => req<{ audit: { id: string; actor: string; action: string; at: string; entityId: string; detail: Record<string, unknown> }[] }>(`/api/marketing/worker?limit=${limit}`),
   tick: () => req<{ ok: boolean; processed: number; published: number; failed: number }>("/api/marketing/worker", { method: "POST" }),
+
+  // ---- Blog Agent --------------------------------------------------------
+  blogTopics: (batch?: string) =>
+    req<{ batch: string; topics: BlogTopic[]; runs: BlogAgentRun[] }>(
+      `/api/marketing/blog/topics${batch ? `?batch=${batch}` : ""}`
+    ),
+  /** Top the day's shortlist up, or force a completely fresh set. */
+  blogGenerateTopics: (force = false) =>
+    req<{ batch: string; topics: BlogTopic[]; created: number; reused: boolean; notes: string[] }>(
+      "/api/marketing/blog/topics",
+      { method: "POST", body: JSON.stringify({ action: "generate", force }) }
+    ),
+  blogCustomTopic: (title: string, category?: string, audience?: string) =>
+    req<{ topic: BlogTopic }>("/api/marketing/blog/topics", {
+      method: "POST",
+      body: JSON.stringify({ action: "custom", title, category, audience }),
+    }),
+  blogDecideTopic: (id: string, decision: "approved" | "rejected") =>
+    req<{ topic: BlogTopic }>(`/api/marketing/blog/topics/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ decision }),
+    }),
+  blogPosts: (status?: string) =>
+    req<{ posts: BlogPost[] }>(`/api/marketing/blog/posts${status ? `?status=${status}` : ""}`),
+  blogWrite: (topicId: string, autoPublish = true) =>
+    req<{ post: BlogPost; images: BlogImage[]; quality: BlogQualityReport; notes: string[] }>(
+      "/api/marketing/blog/posts",
+      { method: "POST", body: JSON.stringify({ topicId, autoPublish }) }
+    ),
+  blogPost: (id: string) =>
+    req<{ post: BlogPost; images: BlogImage[]; runs: BlogAgentRun[] }>(`/api/marketing/blog/posts/${id}`),
+  blogPostAction: (id: string, body: Record<string, unknown>) =>
+    req<{ post: BlogPost }>(`/api/marketing/blog/posts/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
 };
 
 export function fmtDate(iso: string | undefined | null): string {

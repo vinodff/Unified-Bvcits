@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
 import { primaryNav, site, type NavItem } from "@/lib/site";
 import { ChevronDown, CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/icons";
@@ -196,9 +197,12 @@ function MobilePanel({ onClose }: { onClose: () => void }) {
             </li>
           ))}
         </ul>
-        <div className="p-4">
+        <div className="space-y-2 p-4">
           <Link href={site.applyUrl} onClick={onClose} className="btn-primary w-full">
             Apply for Admissions
+          </Link>
+          <Link href="/login" onClick={onClose} className="btn-outline w-full justify-center">
+            Sign In
           </Link>
         </div>
       </nav>
@@ -246,6 +250,9 @@ export default function SiteHeader() {
             <span className="hidden sm:inline text-white/80">
               Counselling Code: <strong className="text-gold-300">{site.counsellingCode}</strong>
             </span>
+            <Link href="/login" className="font-medium text-white/80 hover:text-gold-200">
+              Sign In
+            </Link>
             <Link href={site.applyUrl} className="font-semibold text-gold-300 hover:text-gold-200">
               Apply for Admissions →
             </Link>
@@ -296,7 +303,18 @@ export default function SiteHeader() {
         </nav>
       </div>
 
-      {mobileOpen && <MobilePanel onClose={() => setMobileOpen(false)} />}
+      {/* Portaled to <body> on purpose. This header is a `motion.header` with
+          an animated `y`, so Motion keeps an inline `transform` on it even at
+          rest — and a transform (any value but `none`) makes the element the
+          containing block for `position: fixed` descendants. Rendered inline,
+          the drawer's `fixed inset-0` resolved against the ~76-120px header box
+          instead of the viewport, squashing the whole mobile menu into a strip
+          at the top of the screen on every page below `xl`. The portal moves it
+          out of the transformed subtree in the DOM, which is what actually
+          matters — where it's *called* from does not. */}
+      {mobileOpen &&
+        typeof document !== "undefined" &&
+        createPortal(<MobilePanel onClose={() => setMobileOpen(false)} />, document.body)}
     </motion.header>
   );
 }

@@ -53,12 +53,13 @@ export function CreateCampaign({ onCreated }: { onCreated: (id: string) => void 
           </Field>
           <ErrorNote message={error} />
           <Button onClick={() => void submit()} disabled={busy || !title.trim()} className="w-full">
-            {busy ? "Creating…" : "Create & Open in Studio"}
+            {busy ? "Creating…" : "Start the interview"}
           </Button>
         </div>
       </Card>
       <p className="mt-4 text-center text-xs text-white/40">
-        After creating, the AI Content Assistant will ask for the facts it needs (title, date, venue, winners…).
+        Next you&apos;ll describe the event in your own words. Nothing is generated until the
+        interview is complete — agents never write from a title alone.
       </p>
     </div>
   );

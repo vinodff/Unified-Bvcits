@@ -185,3 +185,37 @@
   /* Collapse the scroll-scrub sections to a single static screen. */
   .scroll-animation, .scroll-animation-long { height: 100vh; }
 }
+
+/* ---------------------------------------------------------------------------
+ * Resume print output.
+ *
+ * The Resume Optimizer's "Download PDF" is the browser's own print-to-PDF, so
+ * these rules ARE the exported document — a student sends whatever this
+ * produces. Everything except the resume node is hidden by visibility rather
+ * than `display:none` so the printed page keeps the document's own layout
+ * instead of reflowing when its ancestors collapse.
+ * ------------------------------------------------------------------------- */
+/* The document sets its own A4 padding, so the page margin must be zero or the
+   two stack and push content onto a second sheet. */
+@page { size: A4; margin: 0; }
+
+#resume-print-root { display: none; }
+
+@media print {
+  body * { visibility: hidden; }
+  #resume-print-root,
+  #resume-print-root * { visibility: visible; }
+  #resume-print-root {
+    display: block !important;
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    margin: 0;
+  }
+  .resume-doc {
+    box-shadow: none !important;
+    transform: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+}

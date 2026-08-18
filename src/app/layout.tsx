@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Manrope, Fraunces } from "next/font/google";
 import "./globals.css";
-import SiteHeader from "@/components/layout/SiteHeader";
-import SiteFooter from "@/components/layout/SiteFooter";
+import AppChrome from "@/components/layout/AppChrome";
 import SmoothScroll from "@/components/motion/SmoothScroll";
-import { ScrollProgress } from "@/components/motion/Primitives";
-import BvcitsAssistantLauncher from "@/components/chat/BvcitsAssistantLauncher";
 import { site } from "@/lib/site";
 
 // Design system v2 — docs/DESIGN-SPEC.md: Manrope (display) + Inter (body),
@@ -36,11 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <SmoothScroll />
-        <ScrollProgress />
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
-        <BvcitsAssistantLauncher />
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );

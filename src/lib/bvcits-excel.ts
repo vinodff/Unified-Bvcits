@@ -1,7 +1,6 @@
 // Real Excel (.xlsx) File Generator and Appointment Data Store
 // Powered by SheetJS (xlsx) for BVCITS College Administration
 
-import * as XLSX from "xlsx";
 
 export interface StoredAppointment {
   token: string;
@@ -84,10 +83,11 @@ export function saveAppointment(appointment: StoredAppointment): void {
   }
 }
 
-export function exportAppointmentsToExcel(appointments?: StoredAppointment[]): boolean {
+export async function exportAppointmentsToExcel(appointments?: StoredAppointment[]): Promise<boolean> {
   if (typeof window === "undefined") return false;
 
   try {
+    const XLSX = await import("xlsx");
     const dataToExport = appointments || getStoredAppointments();
 
     // Map to formatted readable columns for Excel
@@ -137,3 +137,4 @@ export function exportAppointmentsToExcel(appointments?: StoredAppointment[]): b
     return false;
   }
 }
+

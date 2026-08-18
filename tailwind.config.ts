@@ -62,6 +62,19 @@ const config: Config = {
           700: "#A97800",
           800: "#7D5A00",
         },
+        cyberOrange: {
+          DEFAULT: "#FF4500",
+          50: "#FFF0E6",
+          100: "#FFDBC2",
+          200: "#FFB885",
+          300: "#FF904D",
+          400: "#FF6A1A",
+          500: "#FF4500",
+          600: "#CC3700",
+          700: "#992900",
+          800: "#661C00",
+          900: "#330E00",
+        },
         // ---- Legacy alias: bvblue → brand black (button-blue becomes black) ----
         bvblue: {
           DEFAULT: "#0B0B0C",
@@ -99,6 +112,11 @@ const config: Config = {
           DEFAULT: "#ffffff",
           grey: "#F8F6F0", // warm ivory — main content backgrounds
           light: "#FAF8F2", // soft ivory
+          // Was referenced as `bg-surface-subtle` / `hover:bg-surface-subtle`
+          // across the dashboard before this token existed — Tailwind's JIT
+          // silently emits no CSS for an unknown utility, so those elements
+          // were rendering with no background at all rather than a visible bug.
+          subtle: "#FAF8F2",
           form: "#F4F1E8",
           border: "#E5E2D9", // thin editorial borders
         },

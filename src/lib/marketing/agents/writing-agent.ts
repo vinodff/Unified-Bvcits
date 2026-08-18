@@ -26,16 +26,32 @@ export async function writeContent(
   const factRecord = factsToRecord(facts);
   const brand = await store.getBrand();
 
-  const hashtags = [
-    ...brand.officialHashtags,
-    ...(factRecord.title
-      ? [`#${String(factRecord.title).replace(/[^a-z0-9]+/gi, "")}`]
-      : []),
-  ].slice(0, 6);
+  /*
+   * Hashtags belong on social feeds, not everywhere.
+   *
+   * They were previously supplied for all five platforms, so the writer put
+   * them into the blog article and the WhatsApp broadcast too — where the
+   * quality gate allows none, and where they read as spam to a human. Offering
+   * none for those platforms removes the temptation at source rather than
+   * asking the model not to use what it has been handed.
+   */
+  const HASHTAG_PLATFORMS = new Set(["instagram", "facebook", "linkedin"]);
+  const usesHashtags = HASHTAG_PLATFORMS.has(platform);
+  const hashtags = usesHashtags
+    ? [
+        ...brand.officialHashtags,
+        ...(factRecord.title ? [`#${String(factRecord.title).replace(/[^a-z0-9]+/gi, "")}`] : []),
+      ].slice(0, 6)
+    : [];
 
   const res = await llm.complete({
     kind: "writing",
-    instruction: `Write the ${platform} version for this BVCITS campaign. Assert ONLY facts present in context.facts (values may be re-worded, never changed). No invented names/dates/prizes. Tone: ${strategy.tone}.`,
+    instruction:
+      `Write the ${platform} version for this BVCITS campaign. Assert ONLY facts present in context.facts ` +
+      `(values may be re-worded, never changed). No invented names/dates/prizes. Tone: ${strategy.tone}. ` +
+      (usesHashtags
+        ? `End with the supplied hashtags.`
+        : `Do not use hashtags — they do not belong in this format.`),
     context: {
       facts: factRecord,
       platform,

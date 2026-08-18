@@ -79,4 +79,65 @@ describe("quality agent", () => {
     expect(summary).toContain("requires correction");
     expect(summary).toContain("date");
   });
+
+  const clean = [fact("title", "Dancing Event"), fact("date", "2026-08-16"), fact("winners", ["Team Alpha"])];
+
+  // Regression: the grounding check flagged every word capitalised by grammar.
+  // A real run produced 37 warnings for words like "This" and "August" and
+  // floored an otherwise good campaign to 0/100.
+  it("does not flag words capitalised by sentence position or heading", async () => {
+    const body = [
+      "# Dancing Event",
+      "",
+      "This was a celebration of talent. August was the month.",
+      "- Excellence throughout the evening",
+    ].join("\n");
+    const score = await runQualityCheck("camp_test", 1, clean, [version("website", body)], store, "event");
+    const flagged = score.issues.filter((i) => i.message.includes("capitalized term"));
+    expect(flagged).toEqual([]);
+  });
+
+  // Regression: social copy opens lines with an emoji and bold markers, e.g.
+  // "🎉 **Celebrating Talent at BVCITS!**". Those made the genuinely first word
+  // look mid-sentence, so it was flagged as a possibly-invented name.
+  it("ignores emoji and emphasis markers when judging sentence position", async () => {
+    const body = "🎉 **Celebrating Talent and Energy at BVCITS!** 🎉\n\n[Visit our website](https://bvcits.edu.in)";
+    const score = await runQualityCheck("camp_test", 1, clean, [version("facebook", body)], store, "event");
+    const flagged = score.issues.filter((i) => i.message.includes("capitalized term"));
+    expect(flagged).toEqual([]);
+  });
+
+  it("still flags an unexplained capitalised term mid-sentence", async () => {
+    const score = await runQualityCheck(
+      "camp_test",
+      1,
+      clean,
+      [version("website", "The event was sponsored by Zephyrantes Industries.")],
+      store,
+      "event"
+    );
+    expect(score.issues.some((i) => i.message.includes("Zephyrantes"))).toBe(true);
+  });
+
+  it("treats an invented guest name after an honorific as critical", async () => {
+    const score = await runQualityCheck(
+      "camp_test",
+      1,
+      clean,
+      [version("website", "The chief guest was Dr. Fabricated.")],
+      store,
+      "event"
+    );
+    expect(score.issues.some((i) => i.severity === "critical" && i.message.includes("Fabricated"))).toBe(true);
+  });
+
+  // Regression: warnings were uncapped while the verdict looked only at
+  // criticals, so a campaign could report "passed (0/100)".
+  it("never reports a passing verdict with a failing score", async () => {
+    const noisy = Array.from({ length: 40 }, (_, i) => `Sponsor Zephyrantes${i} joined us here.`).join(" ");
+    const score = await runQualityCheck("camp_test", 1, clean, [version("website", noisy)], store, "event");
+    expect(score.overall).toBeGreaterThanOrEqual(0);
+    if (score.verdict === "pass") expect(score.overall).toBeGreaterThanOrEqual(60);
+    expect(verdictSummary(score)).not.toMatch(/passed \(0\/100\)/);
+  });
 });

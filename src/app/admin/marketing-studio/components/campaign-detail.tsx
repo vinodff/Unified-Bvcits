@@ -3,9 +3,10 @@
 // Campaign detail — the heart of the Studio: facts, assistant chat, content
 // previews, media upload, quality/SEO, agent runs, approval & scheduling.
 
-import { useCallback, useMemo, useRef, useState } from "react";
-import { api, fmtDate, type CampaignDetail } from "../api";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { api, fmtDate, type CampaignDetail, type IntakePayload } from "../api";
 import { Button, Card, Empty, ErrorNote, Field, inputCls, Pill, SectionTitle, StatusPill, Modal, useBusy } from "../ui";
+import { ContentReview } from "./content-review";
 
 type Tab = "overview" | "facts" | "content" | "media" | "seo" | "agents";
 
@@ -25,7 +26,20 @@ export function mediaUrl(originalFile: string): string {
   return `/api/marketing/media?path=${encodeURIComponent(rel)}`;
 }
 
-export function CampaignDetailView({ id, detail, onBack, onReload }: { id: string; detail: CampaignDetail | null; onBack: () => void; onReload: () => void }) {
+export function CampaignDetailView({
+  id,
+  detail,
+  onBack,
+  onReload,
+  onOpenIntake,
+}: {
+  id: string;
+  detail: CampaignDetail | null;
+  onBack: () => void;
+  onReload: () => void;
+  /** Reopens the guided interview for this campaign, if the host provides it. */
+  onOpenIntake?: () => void;
+}) {
   const [tab, setTab] = useState<Tab>("overview");
   const [approveOpen, setApproveOpen] = useState(false);
   const { busy: genBusy, error: genError, setError: setGenError, wrap: wrapGen } = useBusy();
@@ -36,6 +50,25 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
   const [dirtyFacts, setDirtyFacts] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [revalidateMsg, setRevalidateMsg] = useState<string | null>(null);
+
+  /*
+   * Whether the interview is actually finished for this campaign.
+   *
+   * Most paths into this view already go through openCampaignSmart(), which
+   * redirects an incomplete campaign to the wizard before it ever gets here.
+   * But CampaignIntake itself offers "Open full campaign" as a deliberate
+   * escape hatch to peek at a work in progress — so this view can still be
+   * reached mid-interview, and without this check "Run Agent Pipeline" would
+   * dead-end on a raw 428 error with no way back to finish answering.
+   */
+  const [intake, setIntake] = useState<IntakePayload | null>(null);
+  const refreshIntake = useCallback(() => {
+    void api.intake(id).then(setIntake).catch(() => setIntake(null));
+  }, [id]);
+  useEffect(() => {
+    refreshIntake();
+  }, [refreshIntake]);
 
   const run = useCallback(() => {
     void wrapGen(async () => {
@@ -69,6 +102,7 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
       await api.patch(id, { facts: updated });
       setDirtyFacts(false);
       onReload();
+      refreshIntake();
     });
   };
 
@@ -79,6 +113,7 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
       try {
         await api.uploadAssets(id, Array.from(files));
         onReload();
+        refreshIntake();
       } catch (e) {
         setUploadError((e as Error).message);
       }
@@ -89,6 +124,39 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
     void wrapGen(async () => {
       await api.approve(id, platforms as never, scheduledAt);
       setApproveOpen(false);
+      onReload();
+    });
+  };
+
+  /**
+   * Re-score existing content. The quality and SEO panels show stored results,
+   * so a campaign generated before a scoring fix keeps displaying the old
+   * numbers with no way to refresh them short of rewriting all the copy.
+   */
+  const revalidate = () => {
+    void wrapGen(async () => {
+      const res = await api.revalidate(id);
+      setRevalidateMsg(res.message);
+      onReload();
+    });
+  };
+
+  /** Reject from the review screen — sends the campaign back to be regenerated. */
+  const requestChanges = () => {
+    void wrapGen(async () => {
+      await api.setStatus(id, "CHANGES_REQUESTED", "rejected at human review");
+      onReload();
+    });
+  };
+
+  /**
+   * Release a campaign a dead pipeline run left in GENERATING. Without this an
+   * interrupted run (crash, redeploy) leaves a card that can never be retried.
+   */
+  const resetStuck = () => {
+    if (!confirm("Reset this campaign to Draft so the pipeline can be run again?")) return;
+    void wrapGen(async () => {
+      await api.setStatus(id, "DRAFT", "released from a stalled generation run");
       onReload();
     });
   };
@@ -145,16 +213,45 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
             ) : (
               <Empty text="No pipeline state yet." />
             )}
+            {!isReviewable && intake && !intake.canGenerate && (
+              <p className="mt-4 rounded-lg border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+                The interview is not finished — {intake.answered} of {intake.total} answered
+                {intake.photosRequired && intake.photoCount === 0 ? ", and a photograph is still required" : ""}.
+                Agents run on what has been confirmed, so an incomplete interview produces boilerplate.
+              </p>
+            )}
+
             <div className="mt-4 flex flex-wrap gap-2">
               {isReviewable ? (
                 <Button onClick={() => setApproveOpen(true)}>Approve & Schedule</Button>
+              ) : intake && !intake.canGenerate && onOpenIntake ? (
+                // Route back to the wizard instead of letting the button hit the
+                // server's 428 and dead-end on a raw error string.
+                <Button onClick={onOpenIntake}>Finish guided setup</Button>
               ) : (
                 <Button onClick={() => void run()} disabled={genBusy || campaign.status === "GENERATING"}>
                   {genBusy ? "Running pipeline…" : "Run Agent Pipeline"}
                 </Button>
               )}
+              {/* Only shown once — when intake is incomplete, "Finish guided setup"
+                  above already covers this. */}
+              {onOpenIntake && (!intake || intake.canGenerate) && (
+                <Button variant="ghost" onClick={onOpenIntake}>
+                  Review guided-setup answers
+                </Button>
+              )}
+              {campaign.status === "GENERATING" && (
+                <Button variant="danger" onClick={resetStuck} disabled={genBusy}>
+                  Reset stalled run
+                </Button>
+              )}
               <Button variant="ghost" onClick={() => void api.tick()}>Run worker tick</Button>
             </div>
+            {campaign.status === "GENERATING" && (
+              <p className="mt-3 text-xs text-white/40">
+                Stuck on Generating? A run that died mid-flight cannot resume — reset it to Draft and run again.
+              </p>
+            )}
           </Card>
 
           {platformJobs.length > 0 && (
@@ -244,18 +341,15 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
       )}
 
       {tab === "content" && (
-        <div className="space-y-4">
-          {content.length === 0 && <Empty text="No content generated yet — run the pipeline." />}
-          {content.map((cv) => (
-            <Card key={cv.id}>
-              <div className="mb-2 flex items-center justify-between">
-                <p className="font-display text-sm font-bold text-brand-white">{cv.platform} <span className="ml-1 text-white/35">v{cv.version}</span></p>
-                <StatusPill status={cv.status} />
-              </div>
-              <pre className="max-h-64 overflow-y-auto whitespace-pre-wrap rounded-lg bg-white/[0.03] p-3 text-sm text-white/75">{cv.body}</pre>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <SectionTitle eyebrow="Human gate" title="Review before publishing" />
+          <ContentReview
+            detail={detail}
+            busy={genBusy}
+            onApprove={() => setApproveOpen(true)}
+            onRequestChanges={requestChanges}
+          />
+        </Card>
       )}
 
       {tab === "media" && (
@@ -333,6 +427,17 @@ export function CampaignDetailView({ id, detail, onBack, onReload }: { id: strin
               </div>
             ) : (
               <Empty text="Run the pipeline to run the quality gate." />
+            )}
+            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
+              <Button variant="ghost" onClick={revalidate} disabled={genBusy || content.length === 0}>
+                {genBusy ? "Re-checking…" : "Re-check quality & SEO"}
+              </Button>
+              <p className="text-xs text-white/35">
+                Scores are stored from the last run. Re-check to score the current content again.
+              </p>
+            </div>
+            {revalidateMsg && (
+              <p className="mt-2 rounded-lg border border-brand-gold/25 bg-brand-gold/10 px-3 py-2 text-xs text-brand-gold">{revalidateMsg}</p>
             )}
           </Card>
         </div>

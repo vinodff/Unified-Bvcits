@@ -22,7 +22,14 @@ export const CAMPAIGN_STATUSES: CampaignStatus[] = [
 const TRANSITIONS: Record<CampaignStatus, CampaignStatus[]> = {
   DRAFT: ["NEEDS_INFORMATION", "GENERATING", "GENERATION_FAILED"],
   NEEDS_INFORMATION: ["NEEDS_INFORMATION", "GENERATING", "GENERATION_FAILED", "DRAFT"],
-  GENERATING: ["READY_FOR_REVIEW", "NEEDS_INFORMATION", "GENERATION_FAILED"],
+  // CHANGES_REQUESTED is reachable from GENERATING because that is exactly what
+  // the quality gate does when it finds critical issues: content exists, but it
+  // needs work. Omitting it stranded campaigns — the gate threw an
+  // IllegalTransitionError mid-pipeline, the run aborted, and GENERATING had no
+  // outbound path an admin could take, so the campaign was unrecoverable.
+  // DRAFT is the manual escape hatch for a run that died without reaching any
+  // terminal state (process killed, deploy mid-run).
+  GENERATING: ["READY_FOR_REVIEW", "CHANGES_REQUESTED", "NEEDS_INFORMATION", "GENERATION_FAILED", "DRAFT"],
   READY_FOR_REVIEW: ["CHANGES_REQUESTED", "APPROVED", "GENERATING", "GENERATION_FAILED"],
   CHANGES_REQUESTED: ["GENERATING", "READY_FOR_REVIEW", "APPROVED"],
   APPROVED: ["SCHEDULED", "PUBLISHING", "PUBLISHED", "READY_FOR_REVIEW", "PUBLISH_FAILED"],

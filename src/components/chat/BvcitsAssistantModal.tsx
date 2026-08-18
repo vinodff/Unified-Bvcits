@@ -201,6 +201,12 @@ export default function BvcitsAssistantModal({
   /** Read inside the voice callback, which is registered once. */
   const langRef = useRef(preferredLang);
   const voiceEnabledRef = useRef(voiceEnabled);
+  /**
+   * Read after the awaited answer returns. Answering can take several seconds, and the
+   * panel may have been closed in the meantime — without this the assistant started
+   * talking into a closed window.
+   */
+  const isOpenRef = useRef(isOpen);
 
   useEffect(() => {
     langRef.current = preferredLang;
@@ -208,6 +214,9 @@ export default function BvcitsAssistantModal({
   useEffect(() => {
     voiceEnabledRef.current = voiceEnabled;
   }, [voiceEnabled]);
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
 
   /** Declared before the voice hook so the utterance callback can reach it. */
   const handleSendRef = useRef<(text: string) => Promise<void>>(async () => {});
@@ -232,6 +241,7 @@ export default function BvcitsAssistantModal({
     stopConversation,
     speak,
     stopSpeaking,
+    endTurn,
     setLanguage,
   } = useCampusVoice({ onUtterance: handleUtterance, onNotice: handleNotice });
 
@@ -363,13 +373,24 @@ export default function BvcitsAssistantModal({
         },
       ]);
 
-      if (!voiceEnabledRef.current) return;
+      // Both of these answer without speaking, so the turn has to be closed explicitly.
+      // `speak()` is what normally returns the loop to idle and reopens the mic; skipping
+      // it silently left conversation mode stuck on "thinking" with the mic shut.
+      if (!isOpenRef.current) {
+        // Panel closed while the answer was in flight — do not talk to an empty room.
+        endTurn(false);
+        return;
+      }
+      if (!voiceEnabledRef.current) {
+        endTurn();
+        return;
+      }
 
       // Awaiting this is what makes turn-taking work: the hook reopens the mic
       // only once playback has actually finished.
       await speak(spoken, { lang: lang === "te" ? "te-IN" : "en-IN" });
     },
-    [resolveAnswer, speak, stopSpeaking],
+    [endTurn, resolveAnswer, speak, stopSpeaking],
   );
 
   useEffect(() => {

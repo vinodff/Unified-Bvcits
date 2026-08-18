@@ -41,6 +41,19 @@ export async function createCampaign(store: StorageProvider, input: { title: str
     updatedAt: now,
   };
   await store.saveCampaign(campaign);
+
+  // Seed the title as an admin fact. The create form already asked for it, so
+  // without this the intake wizard would open by asking for it a second time —
+  // and detectMissingFields() would report it missing even though it is on the
+  // campaign record.
+  await store.setFact(campaign.id, {
+    field: "title",
+    value: input.title,
+    source: "admin",
+    confidence: 1,
+    verified: true,
+  });
+
   await store.appendAudit({
     id: newId("audit"),
     at: now,
@@ -61,8 +74,12 @@ export async function runCampaignPipeline(store: StorageProvider, campaignId: st
   const actor = opts.actor ?? "supervisor";
   const stages = opts.stages ?? ALL_STAGES;
 
-  if (!["DRAFT", "CHANGES_REQUESTED", "GENERATING"].includes(campaign.status)) {
-    throw new Error(`Pipeline cannot run from status ${campaign.status}; only DRAFT / CHANGES_REQUESTED / GENERATING.`);
+  // GENERATION_FAILED must be retryable, or a single bad model response ends the
+  // campaign permanently: the state machine allows GENERATION_FAILED → GENERATING,
+  // but this guard used to reject it, so "Run Agent Pipeline" answered 409 forever.
+  const RUNNABLE_FROM = ["DRAFT", "CHANGES_REQUESTED", "GENERATING", "GENERATION_FAILED", "NEEDS_INFORMATION"];
+  if (!RUNNABLE_FROM.includes(campaign.status)) {
+    throw new Error(`Pipeline cannot run from status ${campaign.status}; only ${RUNNABLE_FROM.join(" / ")}.`);
   }
 
   await setCampaignStatus(store, campaign, "GENERATING", actor, { note: "pipeline started" });
@@ -96,12 +113,24 @@ export async function runCampaignPipeline(store: StorageProvider, campaignId: st
     if (stages.includes("strategy")) {
       const started = nowIso();
       try {
-        const strategy = await generateStrategy(campaignId, campaign.type, store);
+        const { strategy, repaired } = await generateStrategy(campaignId, campaign.type, store);
         campaign.strategy = strategy as unknown as Record<string, unknown>;
         campaign.updatedAt = nowIso();
         await store.saveCampaign(campaign);
         status.steps.strategy = "done";
-        await recordRun(store, campaignId, "Content Strategy Agent", "success", `Objective: ${strategy.objective}`, { startedAt: started });
+        // Surface a malformed model response instead of letting it look clean.
+        // Previously an unusable strategy still recorded "success", and the
+        // first sign of trouble was the writing agent crashing.
+        await recordRun(
+          store,
+          campaignId,
+          "Content Strategy Agent",
+          "success",
+          repaired.length
+            ? `Objective: ${strategy.objective} — model output was incomplete, fell back on: ${repaired.join(", ")}.`
+            : `Objective: ${strategy.objective}`,
+          { startedAt: started }
+        );
       } catch (e) {
         status.steps.strategy = "failed";
         await recordRun(store, campaignId, "Content Strategy Agent", "failed", "Strategy generation failed", { startedAt: started, error: (e as Error).message });
@@ -151,7 +180,15 @@ export async function runCampaignPipeline(store: StorageProvider, campaignId: st
         const seo = await generateSeo(campaignId, status.contentVersion, await store.listFacts(campaignId), store);
         await store.saveSeo(seo.metadata);
         status.steps.seo = "done";
-        await recordRun(store, campaignId, "SEO Agent", "success", `SEO score ${seo.score}/100 — ${JSON.stringify(seo.breakdown)}`);
+        await recordRun(
+          store,
+          campaignId,
+          "SEO Agent",
+          "success",
+          seo.repaired.length
+            ? `SEO score ${seo.score}/100 — model output was incomplete, fell back on: ${seo.repaired.join(", ")}.`
+            : `SEO score ${seo.score}/100 — ${JSON.stringify(seo.breakdown)}`
+        );
         void started;
       } catch (e) {
         status.steps.seo = "failed";
@@ -175,16 +212,35 @@ export async function runCampaignPipeline(store: StorageProvider, campaignId: st
     }
 
     // 7. Quality gate — the only road to READY_FOR_REVIEW.
+    //
+    // Wrapped like every other stage. It previously ran bare, so a throw here
+    // aborted the pipeline *after* the campaign was already GENERATING and left
+    // it stranded there with no outbound transition an admin could take.
     if (stages.includes("quality")) {
       const started = nowIso();
-      const score = await runQualityCheck(campaignId, status.contentVersion, await store.listFacts(campaignId), await store.listContentVersions(campaignId), store, campaign.type);
-      await store.saveQuality(score);
-      status.steps.quality = score.verdict === "pass" ? "done" : "failed";
-      await recordRun(store, campaignId, "Quality Control Agent", "success", verdictSummary(score), { startedAt: started });
-      if (score.verdict === "pass") {
-        await setCampaignStatus(store, campaign, "READY_FOR_REVIEW", "quality-control-agent", { note: `quality ${score.overall}/100` });
-      } else {
-        await setCampaignStatus(store, campaign, "CHANGES_REQUESTED", "quality-control-agent", { note: "critical issues found" });
+      try {
+        // No content version means writing failed upstream. Scoring it would
+        // violate quality_scores_content_version_check (version must be >= 1),
+        // and a score over nothing is meaningless anyway — fail honestly.
+        if (status.contentVersion < 1) {
+          status.steps.quality = "failed";
+          await recordRun(store, campaignId, "Quality Control Agent", "failed", "Skipped — no content was generated to assess.", { startedAt: started });
+          await setCampaignStatus(store, campaign, "GENERATION_FAILED", "quality-control-agent", { note: "no content produced" });
+        } else {
+          const score = await runQualityCheck(campaignId, status.contentVersion, await store.listFacts(campaignId), await store.listContentVersions(campaignId), store, campaign.type);
+          await store.saveQuality(score);
+          status.steps.quality = score.verdict === "pass" ? "done" : "failed";
+          await recordRun(store, campaignId, "Quality Control Agent", "success", verdictSummary(score), { startedAt: started });
+          if (score.verdict === "pass") {
+            await setCampaignStatus(store, campaign, "READY_FOR_REVIEW", "quality-control-agent", { note: `quality ${score.overall}/100` });
+          } else {
+            await setCampaignStatus(store, campaign, "CHANGES_REQUESTED", "quality-control-agent", { note: "critical issues found" });
+          }
+        }
+      } catch (e) {
+        status.steps.quality = "failed";
+        await recordRun(store, campaignId, "Quality Control Agent", "failed", "Quality gate errored", { startedAt: started, error: (e as Error).message });
+        await setCampaignStatus(store, campaign, "GENERATION_FAILED", "quality-control-agent", { note: (e as Error).message });
       }
     }
 
@@ -194,6 +250,18 @@ export async function runCampaignPipeline(store: StorageProvider, campaignId: st
   } catch (e) {
     await recordRun(store, campaignId, "Supervisor", "failed", "Pipeline aborted", { error: (e as Error).message });
     await saveSupervisorStatus(store, campaignId, status);
+    // A campaign must never be left in GENERATING. Nothing polls it back out,
+    // and GENERATING → DRAFT/GENERATION_FAILED is the only way an admin can
+    // retry. Best-effort: if even this fails, the original error still wins.
+    try {
+      const current = await store.getCampaign(campaignId);
+      if (current && current.status === "GENERATING") {
+        await setCampaignStatus(store, current, "GENERATION_FAILED", "supervisor", { note: (e as Error).message });
+      }
+    } catch {
+      // Swallowed deliberately — reporting the true pipeline failure below
+      // matters more than why the status rescue also failed.
+    }
     throw e;
   }
 }

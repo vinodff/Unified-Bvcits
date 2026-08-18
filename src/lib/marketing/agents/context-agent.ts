@@ -38,6 +38,7 @@ export const FACT_LABELS: Record<string, string> = {
   organizers: "organizers",
   participants: "participation numbers",
   winners: "winners",
+  prizes: "prize breakdown",
   departments: "participating departments",
   achievements: "key achievements",
   statistics: "important statistics",
@@ -118,6 +119,10 @@ function parseTimeToken(token: string): string | null {
  */
 export function extractFactsFromMessage(rawText: string, existing: CampaignFact[]): ExtractResult {
   const text = norm(rawText);
+  // `lower` is for *matching* and membership tests only. Capturing groups must
+  // always be read off `text`: values extracted here are published verbatim in
+  // marketing copy, and capturing from the lowercased copy turned a chief guest
+  // into "ramesh kumar" and an achievements sentence into all-lowercase prose.
   const lower = text.toLowerCase();
   const existingFields = new Set(existing.map((f) => f.field));
   const facts: CampaignFact[] = [];
@@ -131,7 +136,7 @@ export function extractFactsFromMessage(rawText: string, existing: CampaignFact[
 
   // Title — quoted text, or "called X", "named X", "titled X"
   if (!existingFields.has("title")) {
-    let m = lower.match(/["'“”](.+?)["'“”]/);
+    let m = text.match(/["'“”](.+?)["'“”]/);
     if (m) add("title", m[1]);
     else {
       m = text.match(/called\s+(.+?)(?:[,.]|$)/i);
@@ -169,13 +174,13 @@ export function extractFactsFromMessage(rawText: string, existing: CampaignFact[
 
   // Venue — "at X", "venue is X", "held at X" (avoid catching "at 7 pm" or a trailing date)
   if (!existingFields.has("venue")) {
-    const venueMatch = lower.match(/(?:held\s+at|conducted\s+at|venue\s+(?:is|was|:)\s*)\s*(.+?)(?:[,.]|$|\s+on\s+\d)/i);
+    const venueMatch = text.match(/(?:held\s+at|conducted\s+at|venue\s+(?:is|was|:)\s*)\s*(.+?)(?:[,.]|$|\s+on\s+\d)/i);
     if (venueMatch) add("venue", venueMatch[1].trim().replace(/^the\s+/, ""));
   }
 
   // Chief guest
   if (!existingFields.has("chiefGuest")) {
-    const m = lower.match(/chief\s+guest\s+(?:was|is|being)\s+(?:dr\.?\s*|mr\.?\s*|mrs\.?\s*|prof\.?\s*)?([a-z][a-z.\s]*?)(?:[,.]|$)/i);
+    const m = text.match(/chief\s+guest\s+(?:was|is|being)\s+(?:dr\.?\s*|mr\.?\s*|mrs\.?\s*|prof\.?\s*)?([a-z][a-z.\s]*?)(?:[,.]|$)/i);
     if (m && m[1].length > 2) add("chiefGuest", m[1].replace(/\.\s*$/, "").trim());
   }
 
@@ -184,24 +189,55 @@ export function extractFactsFromMessage(rawText: string, existing: CampaignFact[
   if (!existingFields.has("winners")) {
     const end = "(?=\\.\\s|\\.$|\\n|$|\\s+[A-Z]\\d+|\\.\\s?[A-Z])";
     const endWon = "(?=\\.\\s|\\.$|\\n|$|\\s+[A-Z]\\d+|\\s+(?:at|in|on|during|first|the|1st)\\s)";
-    let m = lower.match(new RegExp(`winners?\\s+(?:were|was|are)\\s+(.+?)${end}`, "i"));
+    let m = text.match(new RegExp(`winners?\\s+(?:were|was|are)\\s+(.+?)${end}`, "i"));
     if (m) add("winners", splitList(m[1]));
     else {
-      m = lower.match(new RegExp(`winners?\\s*:\\s*(.+?)${end}`, "i"));
+      m = text.match(new RegExp(`winners?\\s*:\\s*(.+?)${end}`, "i"));
       if (m) add("winners", splitList(m[1]));
       else {
-        m = lower.match(new RegExp(`winning\\s+team\\s+was\\s+(.+?)${end}`, "i"));
+        m = text.match(new RegExp(`winning\\s+team\\s+was\\s+(.+?)${end}`, "i"));
         if (m) add("winners", splitList(m[1]));
         else {
-          m = lower.match(new RegExp(`^(.+?)\\s+won\\b${endWon}`, "i"));
+          m = text.match(new RegExp(`^(.+?)\\s+won\\b${endWon}`, "i"));
           if (m) add("winners", splitList(m[1]));
           else {
-            m = lower.match(new RegExp(`(.+?)\\s+won\\s+(?:first\\s+place|the\\s+event|the\\s+competition|1st|the\\s+hackathon)${endWon}`, "i"));
+            m = text.match(new RegExp(`(.+?)\\s+won\\s+(?:first\\s+place|the\\s+event|the\\s+competition|1st|the\\s+hackathon)${endWon}`, "i"));
             if (m) add("winners", splitList(m[1]));
           }
         }
       }
     }
+  }
+
+  // Prizes — "first prize 50000", "1st prize: Team Alpha", "runner-up ...".
+  // Captured as an ordered list of "position — value" pairs so the writing
+  // agent can render a prize table without re-parsing free text.
+  if (!existingFields.has("prizes")) {
+    const ORDINALS: [RegExp, string][] = [
+      [/\b(?:1st|first)\s+prize\b/i, "1st prize"],
+      [/\b(?:2nd|second)\s+prize\b/i, "2nd prize"],
+      [/\b(?:3rd|third)\s+prize\b/i, "3rd prize"],
+      [/\brunners?[-\s]?up\b/i, "Runner-up"],
+    ];
+    const found: string[] = [];
+    for (const [pattern, label] of ORDINALS) {
+      const at = text.search(pattern);
+      if (at === -1) continue;
+      // Take the clause following the marker, stopping at the next prize
+      // marker or sentence end so "first prize X and second prize Y" splits.
+      const after = text.slice(at).replace(pattern, "").replace(/^[\s:—-]+/, "");
+      const clause = after.split(/(?=\b(?:2nd|second|3rd|third|runners?[-\s]?up)\s+prize\b)|[.;]/i)[0];
+      const value = clause
+        .trim()
+        .replace(/^(?:is|was|goes to|went to|awarded to)\s+/i, "")
+        .replace(/\s+and\s*$/i, "")
+        // The clause split stops *before* the next prize marker, so the comma
+        // or conjunction that joined them is still trailing.
+        .replace(/[,;\s]+$/, "")
+        .trim();
+      if (value) found.push(`${label}: ${value}`);
+    }
+    if (found.length) add("prizes", found);
   }
 
   // Departments
@@ -223,27 +259,27 @@ export function extractFactsFromMessage(rawText: string, existing: CampaignFact[
 
   // Organizers
   if (!existingFields.has("organizers")) {
-    const m = lower.match(/organized\s+by\s+(.+?)(?:[,.]|$)/i);
+    const m = text.match(/organi[sz]ed\s+by\s+(.+?)(?:[,.]|$)/i);
     if (m) add("organizers", splitList(m[1]));
   }
 
   // Participants — "N students", "N teams"
   if (!existingFields.has("participants")) {
-    const m = lower.match(/(\d{1,5}[+]?)\s*(students|participants|teams)/i);
+    const m = text.match(/(\d{1,5}[+]?)\s*(students|participants|teams)/i);
     if (m) add("participants", m[0].trim());
   }
 
   // Achievements / statistics — sentences containing numbers or "achieved"
   if (!existingFields.has("achievements")) {
-    const sentences = lower.split(/(?<=[.!?])\s+/);
+    const sentences = text.split(/(?<=[.!?])\s+/);
     const hits = sentences.filter(
-      (s) => /\d+/.test(s) && /(achiev|won|record|selected|placed|secured|score)/.test(s)
+      (s) => /\d+/.test(s) && /(achiev|won|record|selected|placed|secured|score)/i.test(s)
     );
     if (hits.length) add("achievements", hits.slice(0, 2).join(" "));
   }
   if (!existingFields.has("statistics")) {
-    const sentences = lower.split(/(?<=[.!?])\s+/);
-    const hits = sentences.filter((s) => /\d+/.test(s) && /(students|teams|projects|companies|offers|packages?|lpa|percentage)/.test(s));
+    const sentences = text.split(/(?<=[.!?])\s+/);
+    const hits = sentences.filter((s) => /\d+/.test(s) && /(students|teams|projects|companies|offers|packages?|lpa|percentage)/i.test(s));
     if (hits.length && !facts.some((f) => f.field === "achievements" && hits.some((h) => f.value === h))) {
       add("statistics", hits.slice(0, 2).join(" "));
     }
@@ -256,10 +292,15 @@ export function extractFactsFromMessage(rawText: string, existing: CampaignFact[
   }
 
   // Description — first non-trivial sentence that isn't a known field pattern
+  // and hasn't already been claimed by achievements or statistics. Without the
+  // second check the same sentence lands in two facts and gets published twice.
   if (!existingFields.has("description")) {
+    const claimed = facts
+      .filter((f) => f.field === "achievements" || f.field === "statistics")
+      .map((f) => String(f.value));
     const sentences = text.split(/(?<=[.!?])\s+/).filter((s) => s.length > 30);
     const skip = /(chief guest|winners|venue|organized by|conducted|held at|won|departments?|participants)/i;
-    const candidate = sentences.find((s) => !skip.test(s));
+    const candidate = sentences.find((s) => !skip.test(s) && !claimed.some((c) => c.includes(s)));
     if (candidate) add("description", candidate);
   }
 

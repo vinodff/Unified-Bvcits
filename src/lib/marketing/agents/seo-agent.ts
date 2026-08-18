@@ -5,8 +5,28 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { CampaignFact, SeoMetadata } from "../domain";
 import { getLlm } from "../providers/llm";
+import { asString, asStringList, coerceShape, parseLlmJson } from "../providers/llm-json";
 import type { StorageProvider } from "../storage";
 import { factsToRecord } from "./strategy-agent";
+
+/**
+ * Route segments that exist but must never appear in public SEO metadata.
+ *
+ * The scan previously returned every top-level app directory, so generated
+ * articles were being told to link to /admin, /dashboard, /login and the
+ * placement portal. Those are authenticated surfaces: publishing them as
+ * "internal links" advertises the admin area to search engines and sends real
+ * visitors to a login wall.
+ */
+const NON_PUBLIC_ROUTES: ReadonlySet<string> = new Set([
+  "api",
+  "admin",
+  "dashboard",
+  "login",
+  "signup",
+  "logout",
+  "placement-portal",
+]);
 
 /** Scan the actual Next.js app directory so we only ever suggest real links. */
 export async function scanExistingRoutes(): Promise<string[]> {
@@ -15,8 +35,11 @@ export async function scanExistingRoutes(): Promise<string[]> {
   try {
     const entries = await fs.readdir(appDir, { withFileTypes: true });
     for (const e of entries) {
-      if (!e.isDirectory() || e.name.startsWith("[")) continue;
-      if (e.name === "api") continue;
+      if (!e.isDirectory()) continue;
+      // Dynamic segments ([slug]) and route groups ((marketing)) are not
+      // linkable URLs; private folders (_lib) are not routes at all.
+      if (/^[[(_]/.test(e.name)) continue;
+      if (NON_PUBLIC_ROUTES.has(e.name)) continue;
       routes.push(`/${e.name}`);
     }
   } catch {
@@ -29,6 +52,8 @@ export interface SeoResult {
   metadata: SeoMetadata;
   score: number;
   breakdown: Record<string, number>;
+  /** Fields the model failed to supply usably; empty means a clean response. */
+  repaired: string[];
 }
 
 const BREAKDOWN_KEYS = ["search intent", "originality", "information completeness", "title quality", "meta description", "internal linking", "image optimization", "readability"];
@@ -44,13 +69,14 @@ export async function generateSeo(campaignId: string, version: number, facts: Ca
     jsonSchemaHint: true,
   });
 
-  let metadata: SeoMetadata;
-  try {
-    metadata = JSON.parse(res.text) as SeoMetadata;
-  } catch {
+  // Built unconditionally: it is both the fallback when the model returns
+  // nothing usable, and the floor that a partial response is merged over. The
+  // previous `JSON.parse(...) as SeoMetadata` cast let a differently-shaped
+  // response through, and `metadata.primaryIntent.length` then threw.
+  const defaults: SeoMetadata = (() => {
     const title = String(factRecord.title ?? "BVCITS Event");
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    metadata = {
+    return {
       campaignId,
       contentVersion: version,
       seoTitle: `${title} — BVCITS`,
@@ -77,12 +103,40 @@ export async function generateSeo(campaignId: string, version: number, facts: Ca
       },
       relatedContent: ["/admissions", "/student-life", "/events"],
     };
-  }
+  })();
+
+  const parsed = parseLlmJson(res.text);
+  const { value, repaired } = parsed
+    ? coerceShape(parsed, defaults as unknown as Record<string, unknown>, {
+        seoTitle: { aliases: ["title", "metaTitle"], read: asString },
+        metaDescription: { aliases: ["description", "metaDesc"], read: asString },
+        primaryIntent: { aliases: ["searchIntent", "intent"], read: asString },
+        primaryTopic: { aliases: ["topic", "mainTopic"], read: asString },
+        supportingTopics: { aliases: ["secondaryTopics", "keywords"], read: asStringList },
+        slug: { aliases: ["urlSlug", "permalink"], read: asString },
+        h1: { aliases: ["heading", "pageTitle"], read: asString },
+        h2Structure: { aliases: ["h2s", "headings", "outline"], read: asStringList },
+        imageAltText: { aliases: ["altText", "imageAlt"], read: asString },
+        imageFilename: { aliases: ["fileName", "imageName"], read: asString },
+        ogTitle: { aliases: ["openGraphTitle"], read: asString },
+        ogDescription: { aliases: ["openGraphDescription"], read: asString },
+        ogImage: { aliases: ["openGraphImage"], read: asString },
+      } as never)
+    : { value: defaults as unknown as Record<string, unknown>, repaired: ["<entire response unparseable>"] };
+
+  const metadata = value as unknown as SeoMetadata;
+
+  // internalLinks and schemaJsonLd are deliberately never taken from the model:
+  // a hallucinated internal link is a 404 on the live site, and the schema block
+  // must match the facts exactly. Both stay deterministic.
+  metadata.internalLinks = defaults.internalLinks;
+  metadata.schemaJsonLd = defaults.schemaJsonLd;
+  metadata.relatedContent = defaults.relatedContent;
   metadata.campaignId = campaignId;
   metadata.contentVersion = version;
 
   const { score, breakdown } = assess(metadata, facts, existingLinks);
-  return { metadata, score, breakdown };
+  return { metadata, score, breakdown, repaired };
 }
 
 /**

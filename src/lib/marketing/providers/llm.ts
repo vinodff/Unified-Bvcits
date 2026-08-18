@@ -61,16 +61,48 @@ const DEFAULT_ROUTING: ModelRouting = {
 };
 
 /**
- * Routing rules. OpenAI-compatible provider is chosen per kind only when
- * OPENAI_API_KEY is present AND routing env (MARKETING_ROUTE_<KIND>) says "openai".
- * Everything defaults to the offline mock provider — the system works with zero keys.
+ * Agent kinds that stay on the deterministic mock provider even when a live
+ * model is configured.
+ *
+ * `extraction` turns an admin's sentence into stored facts, and
+ * `image_analysis` describes uploaded photos. Both feed the grounding layer
+ * that every other agent is checked against — a model that paraphrases "the
+ * chief guest was Dr Rao" into something slightly different, or hallucinates a
+ * detail about a photo, corrupts the source of truth rather than just the prose.
+ * Extraction is regex-based in context-agent.ts for exactly this reason.
+ *
+ * Set MARKETING_ROUTE_EXTRACTION=openai to override deliberately.
+ */
+const GROUNDING_KINDS: ReadonlySet<AgentKind> = new Set(["extraction", "image_analysis"]);
+
+/**
+ * Routing rules. A live provider needs OPENAI_API_KEY plus either
+ * MARKETING_ROUTE_ALL=openai (the usual case) or a per-kind
+ * MARKETING_ROUTE_<KIND>=openai. Everything defaults to the offline mock
+ * provider, so the system still works with zero keys.
+ *
+ * "openai" here means the OpenAI *protocol*, not the vendor: OPENAI_BASE_URL
+ * points at whichever compatible endpoint is in use. Google exposes one for
+ * Gemini, which is what this project runs on.
  */
 export function routingFor(kind: AgentKind): ModelRouting[AgentKind] {
-  const r = DEFAULT_ROUTING[kind];
-  if (!process.env.OPENAI_API_KEY) return r;
-  const override = process.env[`MARKETING_ROUTE_${kind.toUpperCase()}`];
-  if (override === "openai") return { provider: "openai", model: process.env[`MARKETING_MODEL_${kind.toUpperCase()}`] ?? "gpt-4o-mini" };
-  return r;
+  const fallback = DEFAULT_ROUTING[kind];
+  if (!process.env.OPENAI_API_KEY) return fallback;
+
+  const perKind = process.env[`MARKETING_ROUTE_${kind.toUpperCase()}`];
+  const routeAll = process.env.MARKETING_ROUTE_ALL;
+
+  // A per-kind setting always wins, so a single kind can be pinned back to
+  // mock while everything else runs live.
+  const live = perKind ? perKind === "openai" : routeAll === "openai" && !GROUNDING_KINDS.has(kind);
+  if (!live) return fallback;
+
+  const model =
+    process.env[`MARKETING_MODEL_${kind.toUpperCase()}`] ??
+    process.env.MARKETING_LLM_MODEL ??
+    "gpt-4o-mini";
+
+  return { provider: "openai", model };
 }
 
 export function getLlm(kind: AgentKind): LlmProvider {

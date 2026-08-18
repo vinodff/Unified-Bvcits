@@ -12,16 +12,18 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { ClipReveal, CountUp, Magnetic, Parallax, SpotlightCard, TextReveal, ZoomFrame } from "@/components/motion/Primitives";
 import { TiltCard } from "@/components/motion/TiltCard";
 import CustomCursor from "@/components/motion/CustomCursor";
+import { useScroll } from "motion/react";
 import { BtechGrid } from "@/components/home/BtechGrid";
 import HomeHeroScene from "@/components/home/HomeHeroScene";
-import { PlacementsRadials } from "@/components/home/PlacementsRadials";
-import { CampusGallery } from "@/components/home/CampusGallery";
+import { InteractivePlacementsSection } from "@/components/home/InteractivePlacementsSection";
+import { InteractiveCampusGallery } from "@/components/home/InteractiveCampusGallery";
+import { InteractivePortalsSection } from "@/components/home/InteractivePortalsSection";
+import { InteractiveAboutSection } from "@/components/home/InteractiveAboutSection";
 import {
-  A, aboutBlurb, accreditations, btechBranches, careerSteps, glance,
+  A, accreditations, btechBranches, careerSteps,
   instituteHighlights, notices, placementStats,
   programGroups, recognitions, recruiterOffers, topRecruiters, toppers, whyPillars,
 } from "@/data/home-content";
-import { portals } from "@/data/portals";
 
 /* Icon maps — keep data files free of JSX. */
 const pillarIcons = [BookOpen, TrendingUp, Rocket, Leaf];
@@ -30,6 +32,7 @@ const careerIcons = [Target, Handshake, UserCheck];
 const statIcons = [Trophy, Building2, TrendingUp, Users];
 
 export default function HomePage() {
+  
   return (
     <>
       <CustomCursor />
@@ -52,6 +55,9 @@ export default function HomePage() {
       {/* ---------- HERO (layered parallax scene) ---------- */}
       <HomeHeroScene />
 
+      {/* ---------- PLACEMENTS (Global Network) ---------- */}
+      <InteractivePlacementsSection />
+
       {/* ---------- Accreditation badges (small plates: sources are low-res) ---------- */}
       <section className="border-b border-surface-border bg-white py-10">
         <Stagger className="container-page grid grid-cols-2 items-stretch gap-4 md:grid-cols-4" gap={0.07}>
@@ -68,138 +74,46 @@ export default function HomePage() {
         </Stagger>
       </section>
 
-      {/* ---------- AUDIENCE ROUTER ----------
-          The front door of a multi-stakeholder platform: eight different groups
-          arrive here wanting eight different things, so the first real section
-          asks who you are instead of making everyone hunt the same mega-menu. */}
-      <section className="section bg-surface-light">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <Reveal><p className="eyebrow">One platform, every stakeholder</p></Reveal>
-            <TextReveal
-              text="Tell us who you are."
-              className="mt-3 font-display text-3xl font-extrabold tracking-[-0.015em] text-navy md:text-[2.5rem]"
-            />
-            <Reveal delay={0.15}>
-              <p className="mt-5 max-w-prose text-ink-soft">
-                Every audience gets its own entry point — the forms, records and contacts that
-                actually matter to you, without wading through the rest of the institute.
-              </p>
-            </Reveal>
-          </div>
-
-          <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.07}>
-            {portals.map((p, i) => (
-              <StaggerItem key={p.slug} className={i === 0 ? "sm:col-span-2" : undefined}>
-                <Link href={`/${p.slug}`} className="block h-full">
-                  <SpotlightCard
-                    className={`flex h-full flex-col rounded-2xl border p-6 shadow-card transition-colors ${
-                      i === 0
-                        ? "border-gold/30 bg-gradient-to-br from-gold-50 to-white hover:border-gold"
-                        : "border-surface-border bg-white hover:border-crimson/25"
-                    }`}
-                  >
-                    <span
-                      className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                        i === 0 ? "bg-gold text-black" : "bg-crimson-50 text-crimson"
-                      }`}
-                    >
-                      <p.icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="mt-5 font-display text-lg font-extrabold text-navy">{p.navLabel}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{p.summary}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-crimson">
-                      Open <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </SpotlightCard>
-                </Link>
-              </StaggerItem>
-            ))}
-          </Stagger>
-
-          <Reveal>
-            <Magnetic strength={0.2}>
-              <Link href="/others" className="btn-outline group mt-10">
-                Browse the full site index
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Magnetic>
-          </Reveal>
-        </div>
-      </section>
 
       {/* ---------- ABOUT + At a glance ---------- */}
-      <section className="section relative overflow-hidden bg-white">
-        <div className="container-page grid items-center gap-14 lg:grid-cols-2">
-          <ClipReveal className="rounded-[1.75rem]">
-            <Parallax amount={22}>
-              <ZoomFrame className="relative aspect-[4/3] rounded-[1.75rem] shadow-lift">
-                <Image
-                  src={A.about}
-                  alt="BVCITS students on campus"
-                  fill
-                  quality={88}
-                  sizes="(min-width:1024px) 46vw, 92vw"
-                  className="object-cover"
-                />
-              </ZoomFrame>
-            </Parallax>
-          </ClipReveal>
-
-          <div>
-            <Reveal><p className="eyebrow">About BVCITS</p></Reveal>
-            <TextReveal
-              text="Shaping confident engineers, innovators and future leaders."
-              className="mt-3 max-w-[18ch] font-display text-3xl font-extrabold leading-[1.1] tracking-[-0.015em] text-navy md:text-[2.5rem]"
-            />
-            <Reveal delay={0.15}>
-              <p className="mt-6 max-w-prose leading-relaxed text-ink-soft">{aboutBlurb}</p>
-            </Reveal>
-            <Stagger className="mt-9 grid grid-cols-2 gap-4" gap={0.09}>
-              {glance.map((g) => (
-                <StaggerItem key={g.label}>
-                  <SpotlightCard className="h-full rounded-2xl border border-surface-border bg-surface-light p-6">
-                    <div className="font-display text-3xl font-extrabold leading-none text-navy">
-                      <CountUp value={g.v} />
-                      <span className="text-gold-500">{g.suffix}</span>
-                    </div>
-                    <div className="mt-2 text-sm text-ink-soft">{g.label}</div>
-                  </SpotlightCard>
-                </StaggerItem>
-              ))}
-            </Stagger>
-            <Reveal delay={0.2}>
-              <Magnetic strength={0.2}>
-                <Link href="/about-us" className="btn-outline group mt-9">
-                  Explore the institution
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Magnetic>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <InteractiveAboutSection />
 
       {/* ---------- Career-ready learning ecosystem ---------- */}
       <section className="section bg-surface-light">
         <div className="container-page">
           <div className="max-w-2xl">
-            <Reveal><p className="eyebrow">Career-ready learning ecosystem</p></Reveal>
-            <TextReveal text="What makes BVCITS different" className="mt-3 font-display text-3xl font-extrabold tracking-[-0.015em] text-navy md:text-[2.5rem]" />
+            <Reveal><p className="eyebrow text-gold-600">Career-ready learning ecosystem</p></Reveal>
+            <TextReveal text="What makes BVCITS different" className="mt-3 font-display text-3xl font-extrabold tracking-tight text-navy md:text-[2.5rem]" />
           </div>
-          <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" gap={0.1}>
+          <Stagger className="mt-12 grid gap-5 grid-cols-1 md:grid-cols-3 lg:grid-cols-4" gap={0.1}>
             {whyPillars.map((p, i) => {
               const Icon = pillarIcons[i];
+              // Bento Box Grid Logic
+              const bentoClasses = 
+                i === 0 ? "md:col-span-2 md:row-span-2" :
+                i === 1 ? "md:col-span-1 lg:col-span-2" :
+                "md:col-span-1 lg:col-span-1";
+
               return (
-                <StaggerItem key={p.title}>
-                  <SpotlightCard className="flex h-full flex-col rounded-2xl border border-surface-border bg-white p-7 shadow-card">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-50 text-gold-600 transition-colors group-hover:bg-gold group-hover:text-black">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span className="mt-5 font-display text-xs font-extrabold tracking-[0.2em] text-gold-500">0{i + 1}</span>
-                    <h3 className="mt-1.5 text-lg">{p.title}</h3>
-                    <p className="mt-2.5 flex-1 text-sm leading-relaxed text-ink-soft">{p.body}</p>
-                    <span className="mt-5 block h-px w-full origin-left scale-x-0 bg-gradient-to-r from-crimson to-gold-400 transition-transform duration-500 group-hover:scale-x-100" />
+                <StaggerItem key={p.title} className={bentoClasses}>
+                  <SpotlightCard className={`group flex h-full flex-col rounded-[1.5rem] border border-surface-border bg-white p-8 shadow-card transition-all duration-300 hover:border-gold-500/40 hover:shadow-2xl hover:shadow-gold-500/10 ${i === 0 ? 'justify-between' : ''}`}>
+                    <div>
+                      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-form text-navy transition-colors duration-300 group-hover:bg-gold-500 group-hover:text-white">
+                        <Icon className="h-6 w-6" />
+                      </span>
+                      <span className="mt-6 block font-display text-xs font-extrabold tracking-[0.2em] text-gold-500">0{i + 1}</span>
+                      <h3 className={`mt-2 font-display font-bold text-navy ${i === 0 ? 'text-2xl md:text-3xl max-w-sm' : 'text-lg'}`}>{p.title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{p.body}</p>
+                    </div>
+                    {i === 0 && (
+                       <div className="mt-8 flex justify-end">
+                         {/* Hardware-like LED decorative elements */}
+                         <div className="flex gap-1.5 items-center">
+                           <span className="block h-1 w-6 rounded-full bg-surface-border transition-colors group-hover:bg-gold-200" />
+                           <span className="block h-1.5 w-1.5 rounded-full bg-surface-border transition-colors group-hover:bg-gold-500" />
+                         </div>
+                       </div>
+                    )}
                   </SpotlightCard>
                 </StaggerItem>
               );
@@ -252,158 +166,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---------- PLACEMENTS ---------- */}
-      <section className="section relative overflow-hidden bg-navy text-white">
-        <div aria-hidden className="pointer-events-none absolute -right-40 top-1/4 h-[30rem] w-[30rem] rounded-full bg-crimson/20 blur-[130px]" />
-        <div aria-hidden className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "30px 30px" }} />
-        <div className="container-page relative">
-          <div className="max-w-2xl">
-            <Reveal><p className="eyebrow text-gold-300">2026 Placement Highlights</p></Reveal>
-            <TextReveal text="Strong placements. Clear career direction." className="mt-3 font-display text-3xl font-extrabold leading-[1.1] tracking-[-0.015em] text-white md:text-[2.5rem]" />
-            <Reveal delay={0.15}>
-              <p className="mt-5 max-w-prose text-white/70">
-                Celebrating BVCITS placement success with strong recruiter offers, guided career support, and industry-ready student talent.
-              </p>
-            </Reveal>
-          </div>
+      {/* ---------- PORTALS ---------- */}
+      <InteractivePortalsSection />
 
-          <PlacementsRadials stats={placementStats} />
-
-          {/* Toppers — real photos, real names */}
-          <Stagger className="mt-14 grid gap-6 md:grid-cols-2" gap={0.14}>
-            {toppers.map((t) => (
-              <StaggerItem key={t.name}>
-                <SpotlightCard tint="245,184,0" className="flex items-center gap-5 rounded-[1.5rem] border border-white/10 bg-white/[0.07] p-6 backdrop-blur-md">
-                  <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-xl ring-2 ring-gold-400/40">
-                    <Image src={t.img} alt={t.name} fill quality={90} sizes="112px" className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
-                  </div>
-                  <div className="min-w-0">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-0.5 text-[11px] font-bold text-navy">
-                      <Trophy className="h-3 w-3" /> {t.tag}
-                    </span>
-                    <p className="mt-2 font-display text-lg font-extrabold text-white">{t.name}</p>
-                    <p className="text-xs text-white/55">{t.roll}</p>
-                    <p className="mt-1.5 font-display text-xl font-extrabold text-gold-300">{t.package}</p>
-                    <p className="text-xs text-white/65">Top Recruiter · {t.recruiter}</p>
-                  </div>
-                </SpotlightCard>
-              </StaggerItem>
-            ))}
-          </Stagger>
-
-          <div className="mt-14 grid gap-10 lg:grid-cols-2">
-            <Reveal direction="right">
-              <h3 className="flex items-center gap-2 text-white">
-                <BadgeCheck className="h-5 w-5 text-gold-300" /> More Recruiter Offers
-              </h3>
-              <ul className="mt-5">
-                {recruiterOffers.map((r, i) => (
-                  <li key={r.company} className="group/row flex items-center justify-between border-b border-white/10 py-3 text-sm transition-colors hover:border-gold-400/40">
-                    <span className="flex items-center gap-3">
-                      <span className="font-display text-[11px] text-white/35">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="font-medium text-white/90 transition-transform duration-300 group-hover/row:translate-x-1">{r.company}</span>
-                    </span>
-                    <span className="font-display font-semibold text-gold-300">{r.pkg}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-
-            <Reveal direction="left" delay={0.1}>
-              <h3 className="flex items-center gap-2 text-white">
-                <Target className="h-5 w-5 text-gold-300" /> Career Support
-              </h3>
-              <Stagger className="mt-5 space-y-3" gap={0.09}>
-                {careerSteps.map((c, i) => {
-                  const Icon = careerIcons[i];
-                  return (
-                    <StaggerItem key={c.no}>
-                      <SpotlightCard tint="245,184,0" className="flex gap-4 rounded-2xl border border-white/5 bg-white/[0.05] p-5">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-300">
-                          <Icon className="h-5 w-5" />
-                        </span>
-                        <span className="min-w-0">
-                          <span className="font-display text-xs font-extrabold tracking-widest text-gold-300">{c.no}</span>
-                          <p className="font-display font-bold text-white">{c.title}</p>
-                          <p className="mt-1.5 text-sm leading-relaxed text-white/65">{c.body}</p>
-                        </span>
-                      </SpotlightCard>
-                    </StaggerItem>
-                  );
-                })}
-              </Stagger>
-            </Reveal>
-          </div>
-
-          <Reveal>
-            <div className="mt-12 flex flex-wrap items-center gap-3">
-              <span className="text-sm font-semibold text-white/50">Top Recruiters:</span>
-              {topRecruiters.map((r) => (
-                <span key={r} className="rounded-lg border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-white/85 transition-all hover:-translate-y-0.5 hover:border-gold-400/50 hover:text-gold-200">
-                  {r}
-                </span>
-              ))}
-            </div>
-            <Magnetic>
-              <Link href="/placements-cell" className="btn-primary group mt-9 shadow-lg shadow-gold/25">
-                Explore Placements <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Magnetic>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ---------- CAMPUS LIFE (bento, aspect-driven) ---------- */}
-      <section className="section bg-white">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <Reveal><p className="eyebrow">Campus Life</p></Reveal>
-            <TextReveal text="Not Just Confined To Classrooms" className="mt-3 font-display text-3xl font-extrabold tracking-[-0.015em] text-navy md:text-[2.5rem]" />
-            <Reveal delay={0.15}><p className="mt-5 text-ink-soft">Experience campus beyond classrooms.</p></Reveal>
-          </div>
-
-          <ClipReveal className="mt-12">
-            <CampusGallery images={A.gallery} />
-          </ClipReveal>
-
-          <Reveal>
-            <Magnetic strength={0.2}>
-              <Link href="/campus-life" className="btn-outline group mt-10">
-                Explore Campus Life
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Magnetic>
-          </Reveal>
-        </div>
-      </section>
+      {/* ---------- CAMPUS LIFE (Interactive Parallax Gallery) ---------- */}
+      <InteractiveCampusGallery images={A.gallery} />
 
       {/* ---------- Institution highlights ---------- */}
-      <section className="section bg-surface-light">
-        <div className="container-page">
-          <Reveal><p className="eyebrow">Institution Highlights</p></Reveal>
-          <TextReveal text="Autonomous · NAAC 'A' Grade · BVTS" className="mt-3 font-display text-2xl font-extrabold tracking-[-0.015em] text-navy md:text-[2rem]" />
-          <Stagger className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4" gap={0.09}>
+      <section className="section relative overflow-hidden bg-navy text-white">
+        <div aria-hidden className="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-gold-500/10 blur-[120px]" />
+        
+        <div className="container-page relative z-10">
+          <Reveal><p className="eyebrow text-gold-400">Institution Highlights</p></Reveal>
+          <TextReveal text="Autonomous · NAAC 'A' Grade · BVTS" className="mt-3 font-display text-2xl font-extrabold tracking-tight text-white md:text-[2rem]" />
+          
+          <Stagger className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-4" gap={0.09}>
             {instituteHighlights.map((h, i) => {
               const Icon = statIcons[i];
               return (
                 <StaggerItem key={h.label}>
-                  <SpotlightCard className="h-full rounded-2xl border border-surface-border bg-white p-7 text-center shadow-card">
-                    <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-gold-50 text-gold-600">
-                      <Icon className="h-5 w-5" />
+                  <SpotlightCard tint="245,184,0" className="h-full flex flex-col items-center justify-center rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-7 text-center backdrop-blur-md transition-all hover:border-gold-500/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-gold-500/5">
+                    <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gold-500/10 text-gold-400 border border-gold-500/20">
+                      <Icon className="h-6 w-6" />
                     </span>
-                    <CountUp value={h.v} className="mt-4 block font-display text-2xl font-extrabold leading-none text-navy md:text-[1.75rem]" />
-                    <div className="mt-2 text-sm text-ink-soft">{h.label}</div>
+                    <CountUp value={h.v} className="mt-5 block font-display text-3xl font-extrabold leading-none text-white md:text-[2rem]" />
+                    <div className="mt-2 text-sm font-medium text-white/60">{h.label}</div>
                   </SpotlightCard>
                 </StaggerItem>
               );
             })}
           </Stagger>
+          
           <Reveal>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <span className="text-sm font-semibold text-ink-muted">Recognitions:</span>
+            <div className="mt-12 flex flex-wrap items-center gap-3">
+              <span className="text-sm font-semibold uppercase tracking-wider text-white/40 mr-2">Recognitions:</span>
               {recognitions.map((r) => (
-                <span key={r} className="inline-flex items-center gap-2 rounded-lg border border-surface-border bg-white px-4 py-2 text-sm font-semibold text-navy transition-all hover:-translate-y-0.5 hover:border-crimson/40 hover:text-crimson">
-                  <BadgeCheck className="h-4 w-4 text-gold-500" /> {r}
+                <span key={r} className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-semibold text-white/80 transition-all hover:-translate-y-0.5 hover:border-gold-400/50 hover:bg-white/[0.08] hover:text-white">
+                  <BadgeCheck className="h-4 w-4 text-gold-400" /> {r}
                 </span>
               ))}
             </div>
@@ -411,25 +210,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---------- CTA ---------- */}
-      <section className="relative overflow-hidden bg-navy">
-        <div aria-hidden className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gold-400/25 blur-[90px] motion-safe:animate-drift" />
-        <div aria-hidden className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <div className="container-page relative flex flex-col items-center justify-between gap-7 py-14 text-center md:flex-row md:text-left">
-          <Reveal direction="right">
-            <h2 className="font-display text-2xl font-extrabold text-white md:text-[2rem]">Admissions Open 2026–27</h2>
-            <p className="mt-2 text-white/85">Start your journey with BVCITS Amalapuram.</p>
+      {/* ---------- MEGA-CTA ---------- */}
+      <section className="relative overflow-hidden bg-gold-500 text-white">
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-gold-600 via-gold-500 to-white/30 mix-blend-overlay" />
+        {/* Glows and atmospheric light */}
+        <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 rounded-full bg-white/40 blur-[120px] motion-safe:animate-drift" />
+        <div aria-hidden className="pointer-events-none absolute -left-20 -bottom-20 h-96 w-96 rounded-full bg-navy/30 blur-[120px] motion-safe:animate-drift" style={{ animationDelay: "2s" }} />
+        
+        <div className="container-page relative flex flex-col items-center justify-between gap-10 py-24 text-center md:flex-row md:text-left lg:py-32">
+          <Reveal direction="right" className="max-w-2xl">
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-[3.5rem] leading-[1.1] drop-shadow-sm">
+              Ready to build the future?
+            </h2>
+            <p className="mt-5 text-lg font-medium text-white/95 drop-shadow-sm">
+              Admissions Open 2026–27. Start your journey with BVCITS Amalapuram.
+            </p>
           </Reveal>
           <Reveal direction="left" delay={0.1}>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Magnetic>
-                <Link href={site.applyUrl} className="btn-primary group shadow-lg shadow-gold/25">
-                  Apply for Admissions
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Magnetic strength={0.2}>
+                <Link href="/admissions" className="btn group bg-white text-gold-600 shadow-xl shadow-navy/20 hover:bg-surface-form hover:text-gold-500 hover:shadow-2xl hover:-translate-y-1 px-8 py-4 text-lg font-extrabold transition-all duration-300">
+                  Apply Now <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Magnetic>
               <Magnetic strength={0.25}>
-                <Link href="/contact-us" className="btn border border-white/60 text-white hover:bg-white/10">Contact Us</Link>
+                <Link href="/contact-us" className="btn border border-white/60 text-white hover:bg-white/10 px-6 py-4">Contact Us</Link>
               </Magnetic>
             </div>
           </Reveal>

@@ -88,6 +88,10 @@ export const primaryNav: NavItem[] = [
       },
     ],
   },
+  // Editorial content sits at the top level rather than inside "Others": it is
+  // the section prospective students and parents are most likely to reach from
+  // a search result, and burying it under an archive index would waste that.
+  { label: "Blog", href: "/blog" },
   {
     label: "Others",
     href: "/others",

@@ -8,20 +8,25 @@ import { CreateCampaign } from "./components/create-campaign";
 import { ReviewQueue } from "./components/review-queue";
 import { CalendarView } from "./components/calendar";
 import { CampaignDetailView } from "./components/campaign-detail";
+import { CampaignIntake } from "./components/campaign-intake";
 import { SocialAccounts } from "./components/social-accounts";
 import { MediaLibrary } from "./components/media-library";
 import { SeoPage } from "./components/seo-page";
 import { AnalyticsView } from "./components/analytics";
 import { Activity } from "./components/activity";
+import { BlogAgent } from "./components/blog-agent";
+import { BlogPostDetail } from "./components/blog-post-detail";
 import type { Campaign } from "@/lib/marketing/domain";
 
 export type SectionId =
   | "dashboard" | "create" | "queue" | "calendar" | "published" | "drafts"
-  | "accounts" | "media" | "seo" | "analytics" | "activity" | "campaign";
+  | "accounts" | "media" | "seo" | "analytics" | "activity" | "campaign" | "intake"
+  | "blog" | "blogPost";
 
 const NAV: { id: SectionId; label: string; icon: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: "◈" },
   { id: "create", label: "Create Campaign", icon: "＋" },
+  { id: "blog", label: "Blog Agent", icon: "✒" },
   { id: "queue", label: "Review Queue", icon: "✓" },
   { id: "calendar", label: "Calendar", icon: "▤" },
   { id: "published", label: "Published", icon: "●" },
@@ -40,6 +45,7 @@ export default function StudioApp() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [detail, setDetail] = useState<CampaignDetail | null>(null);
   const [filter, setFilter] = useState<string>("");
+  const [activePost, setActivePost] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const c = await api.campaigns();
@@ -60,7 +66,47 @@ export default function StudioApp() {
     setSection("campaign");
   }, []);
 
+  /**
+   * A campaign that has not been through the interview opens *in* the
+   * interview. Sending a DRAFT straight to the detail view is what let an
+   * admin hit "Run Agent Pipeline" on a campaign whose only fact was its title.
+   */
+  const openCampaignSmart = useCallback(async (id: string) => {
+    setActiveCampaign(id);
+    try {
+      const intake = await api.intake(id);
+      if (intake.phase !== "confirm" || !intake.canGenerate) {
+        setSection("intake");
+        return;
+      }
+    } catch {
+      // Intake state is an optimisation, not a gate — if it cannot be read,
+      // fall through to the normal detail view rather than blocking the admin.
+    }
+    setDetail(await api.detail(id));
+    setSection("campaign");
+  }, []);
+
   const reloadCampaign = useCallback(async (id: string) => {
+    setDetail(await api.detail(id));
+    void refresh();
+  }, [refresh]);
+
+  /**
+   * Leave the interview and start the pipeline. Navigation happens first so the
+   * admin lands on the campaign and watches the agents work, rather than
+   * staring at a frozen wizard for the length of the run.
+   */
+  const runPipeline = useCallback(async (id: string) => {
+    setActiveCampaign(id);
+    setDetail(await api.detail(id));
+    setSection("campaign");
+    try {
+      await api.generate(id);
+    } catch {
+      // The failure is recorded as an agent run and reflected in the campaign
+      // status; the detail view surfaces it. Nothing useful to do here.
+    }
     setDetail(await api.detail(id));
     void refresh();
   }, [refresh]);
@@ -114,19 +160,43 @@ export default function StudioApp() {
         </aside>
 
         <main className="min-w-0 flex-1">
-          {section === "dashboard" && <Dashboard campaigns={filtered} onOpen={openCampaign} onRefresh={refresh} onFilter={setFilter} />}
-          {section === "create" && <CreateCampaign onCreated={(id) => void openCampaign(id)} />}
+          {section === "dashboard" && <Dashboard campaigns={filtered} onOpen={openCampaignSmart} onRefresh={refresh} onFilter={setFilter} />}
+          {section === "create" && <CreateCampaign onCreated={(id) => { setActiveCampaign(id); setSection("intake"); }} />}
+          {section === "intake" && activeCampaign && (
+            <CampaignIntake
+              id={activeCampaign}
+              onGenerate={() => void runPipeline(activeCampaign)}
+              onOpenCampaign={() => void openCampaign(activeCampaign)}
+            />
+          )}
           {section === "queue" && <ReviewQueue campaigns={campaigns} onOpen={openCampaign} onRefresh={refresh} />}
           {section === "calendar" && <CalendarView campaigns={campaigns} onOpen={openCampaign} />}
           {section === "published" && <Dashboard campaigns={campaigns.filter((c) => c.status === "PUBLISHED")} onOpen={openCampaign} onRefresh={refresh} onFilter={(f) => setFilter(f)} />}
-          {section === "drafts" && <Dashboard campaigns={campaigns.filter((c) => ["DRAFT", "NEEDS_INFORMATION", "GENERATING", "CHANGES_REQUESTED", "GENERATION_FAILED"].includes(c.status))} onOpen={openCampaign} onRefresh={refresh} onFilter={(f) => setFilter(f)} />}
+          {section === "drafts" && <Dashboard campaigns={campaigns.filter((c) => ["DRAFT", "NEEDS_INFORMATION", "GENERATING", "CHANGES_REQUESTED", "GENERATION_FAILED"].includes(c.status))} onOpen={openCampaignSmart} onRefresh={refresh} onFilter={(f) => setFilter(f)} />}
+          {section === "blog" && (
+            <BlogAgent
+              onOpenPost={(id) => {
+                setActivePost(id);
+                setSection("blogPost");
+              }}
+            />
+          )}
+          {section === "blogPost" && activePost && (
+            <BlogPostDetail id={activePost} onBack={() => setSection("blog")} />
+          )}
           {section === "accounts" && <SocialAccounts />}
           {section === "media" && <MediaLibrary campaigns={campaigns} />}
           {section === "seo" && <SeoPage campaigns={campaigns} onOpen={openCampaign} />}
           {section === "analytics" && <AnalyticsView campaigns={campaigns} onOpen={openCampaign} />}
           {section === "activity" && <Activity />}
           {section === "campaign" && activeCampaign && (
-            <CampaignDetailView id={activeCampaign} detail={detail} onBack={() => setSection("dashboard")} onReload={() => reloadCampaign(activeCampaign)} />
+            <CampaignDetailView
+              id={activeCampaign}
+              detail={detail}
+              onBack={() => setSection("dashboard")}
+              onReload={() => reloadCampaign(activeCampaign)}
+              onOpenIntake={() => setSection("intake")}
+            />
           )}
         </main>
       </div>

@@ -29,6 +29,22 @@ describe("campaign state machine", () => {
     expect(canTransition("GENERATION_FAILED", "GENERATING")).toBe(true);
   });
 
+  // Regression: the quality gate moves a campaign GENERATING → CHANGES_REQUESTED
+  // when it finds critical issues. That transition was missing, so the gate threw
+  // mid-pipeline and left live campaigns stuck in GENERATING permanently.
+  it("lets the quality gate send a generating campaign back for changes", () => {
+    expect(canTransition("GENERATING", "CHANGES_REQUESTED")).toBe(true);
+    expect(transition("GENERATING", "CHANGES_REQUESTED")).toBe("CHANGES_REQUESTED");
+  });
+
+  // GENERATING must always have a way out, or a run that dies mid-flight
+  // (crash, redeploy, thrown gate) strands the campaign with no admin recourse.
+  it("always offers an escape from GENERATING", () => {
+    for (const to of ["READY_FOR_REVIEW", "CHANGES_REQUESTED", "NEEDS_INFORMATION", "GENERATION_FAILED", "DRAFT"] as CampaignStatus[]) {
+      expect(canTransition("GENERATING", to)).toBe(true);
+    }
+  });
+
   it("canPublish only from approved/scheduled/publishing states", () => {
     for (const s of ["APPROVED", "SCHEDULED", "PUBLISHING"] as CampaignStatus[]) expect(canPublish(s)).toBe(true);
     for (const s of ["DRAFT", "READY_FOR_REVIEW", "CHANGES_REQUESTED", "PUBLISHED", "GENERATION_FAILED"] as CampaignStatus[]) {

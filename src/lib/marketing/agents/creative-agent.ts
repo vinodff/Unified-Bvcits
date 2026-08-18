@@ -34,6 +34,20 @@ export async function generateCreatives(
   }
 
   const brand = await store.getBrand();
+
+  /*
+   * Retire the previous generation before composing a new one.
+   *
+   * Every pipeline run used to insert a fresh row per platform with a
+   * timestamped id, while writing to the same filename. Three runs left fifteen
+   * cards in the Media tab — most of them pointing at a file that had since
+   * been overwritten. Archiving first, plus the deterministic id below, means
+   * the library shows exactly one current creative per platform.
+   */
+  for (const stale of assets.filter((a) => a.aiGenerated && !a.archived)) {
+    await store.saveAsset({ ...stale, archived: true });
+  }
+
   const created: CampaignAsset[] = [];
   for (const job of jobs) {
     const spec = PLATFORM_SPECS[job.platform];
@@ -46,8 +60,11 @@ export async function generateCreatives(
     const stat = await fs.stat(outFile);
 
     const asset: CampaignAsset = {
-      id: `as_${campaignId.slice(-6)}_${job.platform}_${Date.now().toString(36)}`,
+      // Deterministic: one row per platform/variant/style, so regenerating
+      // upserts the existing creative rather than stacking another copy.
+      id: `as_${campaignId.slice(-6)}_${job.platform}_${job.variant}_${job.style}`,
       campaignId,
+      archived: false,
       type: "image",
       originalFile: outFile,
       processedFile: path.join(relDir, path.basename(outFile)),

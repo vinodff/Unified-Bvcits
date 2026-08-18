@@ -103,15 +103,18 @@ export const portals: Portal[] = [
     icon: GraduationCap,
     actions: [
       {
-        label: "Examination Results",
-        href: "/examinations/autonomous/results",
-        description: "Autonomous and JNTUK results as they are published.",
+        // Repointed from the /examinations/autonomous/results migration stub to
+        // the live lookup. This is now a real route in this app that answers
+        // the question the tile promises — the stub only listed notices.
+        label: "Check Your Results",
+        href: "/students/results",
+        description: "Enter your hall ticket number and date of birth. No account needed.",
         icon: Trophy,
       },
       {
         label: "Timetables",
-        href: "/examinations/autonomous/time-tables",
-        description: "Semester and examination schedules.",
+        href: "/students/timetable",
+        description: "Live class timetable with the current period highlighted.",
         icon: CalendarDays,
       },
       {
@@ -155,7 +158,7 @@ export const portals: Portal[] = [
           { label: "Autonomous Results", href: "/examinations/autonomous/results" },
           { label: "JNTUK Results", href: "/examinations/results" },
           { label: "Examination Notifications", href: "/examinations/autonomous/notifications" },
-          { label: "Timetables", href: "/examinations/autonomous/time-tables" },
+          { label: "Class Timetable", href: "/students/timetable" },
           { label: "Model Question Papers", href: "/examinations/model-question-papers" },
           { label: "Old Question Papers", href: "/examinations/old-question-papers" },
           { label: "Examination Rules", href: "/examinations/autonomous/examination-rules" },

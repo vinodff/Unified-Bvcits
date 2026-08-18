@@ -1,4 +1,3 @@
-import { site } from "@/lib/site";
 import { sectionLabel, type Department } from "@/data/departments";
 
 function Heading({ children }: { children: React.ReactNode }) {
@@ -177,7 +176,9 @@ export default function DeptSection({ dept, slug }: { dept: Department; slug: st
             {["I Year", "II Year", "III Year", "IV Year"].map((y) => (
               <li key={y} className="flex items-center justify-between rounded-lg border border-surface-border bg-white p-4">
                 <span className="font-medium text-navy">{dept.short} — {y} Syllabus</span>
-                <a href={site.liveUrl} target="_blank" rel="noreferrer" className="btn-outline !py-1.5 !px-3 text-xs">Download PDF</a>
+                <span className="rounded-md border border-dashed border-surface-border px-3 py-1.5 text-xs text-ink-soft">
+                  Not yet published
+                </span>
               </li>
             ))}
           </ul>
@@ -194,12 +195,8 @@ export default function DeptSection({ dept, slug }: { dept: Department; slug: st
             outcome-based education and accreditation processes.
           </p>
           <div className="mt-6 rounded-xl border border-dashed border-surface-border bg-surface-grey p-6 text-sm text-ink-soft">
-            Detailed records for this section are maintained by the department office and are being migrated into this
-            portal. For the current published version, visit{" "}
-            <a href={site.liveUrl} target="_blank" rel="noreferrer" className="font-semibold text-crimson underline">
-              bvcits.edu.in
-            </a>
-            .
+            Detailed records for this section are maintained by the department office and are being added to this
+            portal directly.
           </div>
         </div>
       );
