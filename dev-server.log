@@ -12,3 +12,18 @@
  ○ Compiling / ...
  ✓ Compiled / in 27.1s (6901 modules)
  GET / 200 in 151ms
+ GET / 200 in 177ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 646ms (157 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 6.9s (7034 modules)
+ GET /login 200 in 7466ms
+ GET /login 200 in 89ms
+ GET /login 200 in 49ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 3.2s (7126 modules)
+ GET /dashboard 200 in 1437ms
+ GET /dashboard 200 in 5406ms
+ ○ Compiling /dashboard/academics ...
+ ✓ Compiled /dashboard/academics in 4.2s (7131 modules)
+ GET /dashboard/academics 200 in 6047ms
