@@ -19,6 +19,7 @@ import {
   Users,
   MessageSquare,
   FileText,
+  FileSpreadsheet,
   Award,
 } from "@/components/ui/icons";
 
@@ -67,6 +68,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   if (can(user.role, "enquiries.read")) nav.push({ href: "/dashboard/enquiries", label: "Enquiries", icon: Search });
   if (can(user.role, "assistant.insights")) nav.push({ href: "/dashboard/insights", label: "Assistant Insights", icon: MessageSquare });
   if (can(user.role, "users.manage")) nav.push({ href: "/dashboard/users", label: "Users", icon: Users });
+  if (can(user.role, "results.publish")) nav.push({ href: "/admin/results", label: "Results Upload", icon: FileSpreadsheet });
   if (can(user.role, "marketing.studio")) nav.push({ href: "/admin/marketing-studio", label: "Marketing Studio", icon: Sparkles });
   if (can(user.role, "certificates.generate")) nav.push({ href: "/dashboard/certificates", label: "Certificates", icon: Award });
 

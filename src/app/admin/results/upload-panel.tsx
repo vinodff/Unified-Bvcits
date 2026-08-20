@@ -36,10 +36,7 @@ interface ImportResponse {
   issueCount: number;
   sheets: SheetReport[];
   newStudents: number;
-  dobFromSheet: number;
-  placeholderStudents: number;
   sampleHallTickets: string[];
-  defaultDob: string;
 }
 
 interface ErrorResponse {
@@ -48,11 +45,6 @@ interface ErrorResponse {
   sheets?: SheetReport[];
 }
 
-/** Today minus 18 years — a plausible default so the field is never empty. */
-function defaultDobSuggestion(): string {
-  const now = new Date();
-  return `${now.getFullYear() - 20}-01-01`;
-}
 
 export default function UploadPanel() {
   const router = useRouter();
@@ -187,12 +179,6 @@ export default function UploadPanel() {
           </select>
         </Field>
 
-        <Field
-          label="Fallback date of birth"
-          hint="Used only for students this sheet introduces who have no DOB on file"
-        >
-          <input type="date" name="defaultDob" defaultValue={defaultDobSuggestion()} className={INPUT_CLASS} />
-        </Field>
 
         <Field label="Internal note" hint="Not shown to students">
           <input type="text" name="notes" placeholder="Received from exam branch" className={INPUT_CLASS} maxLength={200} />
@@ -298,33 +284,10 @@ function ImportReport({ result }: { result: ImportResponse }) {
             {result.sampleHallTickets.map((hallTicket) => (
               <li key={hallTicket} className="font-mono">
                 {hallTicket}
-                <span className="ml-2 font-sans text-ink-muted">
-                  · date of birth{" "}
-                  <span className="font-mono">
-                    {result.placeholderStudents > 0 ? result.defaultDob : "as printed in the sheet"}
-                  </span>
-                </span>
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-ink-faint">
-            Publish the batch first — a draft deliberately returns &ldquo;not found&rdquo; to students.
-          </p>
         </div>
-      )}
-
-      {result.placeholderStudents > 0 && (
-        <p className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-          <span>
-            <strong>{result.placeholderStudents.toLocaleString()}</strong> student
-            {result.placeholderStudents === 1 ? "" : "s"} will sign in with the shared fallback date{" "}
-            <span className="font-mono">{result.defaultDob}</span>, because this sheet carried no date-of-birth
-            column. That is fine for testing, but anyone who knows a hall ticket can open those results. Upload a
-            sheet with a <span className="font-mono">Date of Birth</span> column to replace it with each
-            student&rsquo;s real date.
-          </span>
-        </p>
       )}
 
       {result.issueCount > 0 && (

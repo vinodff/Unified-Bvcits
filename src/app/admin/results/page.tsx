@@ -7,6 +7,7 @@ import { getServiceClient, getSessionUser } from "@/lib/auth/server";
 import { isSupabaseAdminConfigured } from "@/lib/supabase/client";
 import { SectionCard, StatTile } from "@/components/dashboard/ui";
 import {
+  ChevronLeft,
   ExternalLink,
   FileSpreadsheet,
   GraduationCap,
@@ -89,7 +90,6 @@ export default async function ResultsAdminPage() {
     passRows: Number(row.pass_rows ?? 0),
     failRows: Number(row.fail_rows ?? 0),
     absentRows: Number(row.absent_rows ?? 0),
-    placeholderDobStudents: Number(row.placeholder_dob_students ?? 0),
   }));
 
   const published = batches.filter((b) => b.status === "published");
@@ -152,20 +152,16 @@ export default async function ResultsAdminPage() {
       <aside className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
         <h2 className="flex items-center gap-2 text-sm font-bold text-amber-900">
           <ShieldAlert className="h-4 w-4" aria-hidden />
-          What hall ticket + date of birth does and does not protect
+          What hall ticket lookup does and does not protect
         </h2>
         <ul className="mt-2 space-y-1.5 text-sm text-amber-900">
           <li>
-            Hall ticket numbers run in sequence and a date of birth is guessable, so this is a convenience gate, not
-            a password. It is the same trade-off every university results portal makes.
+            Hall ticket numbers run in sequence, so this is a convenience gate, not
+            a password. It is the same trade-off many university results portals make.
           </li>
           <li>
-            The lookup is rate limited, gives one identical error for a wrong number and a wrong date, and returns
+            The lookup is rate limited, and returns
             only the one student&rsquo;s rows — there is no list to page through.
-          </li>
-          <li>
-            Students on the shared fallback date of birth are effectively protected by their hall ticket alone.
-            Upload a sheet with a <span className="font-mono">Date of Birth</span> column to fix that.
           </li>
           <li>Do not put anything in these sheets that should not be readable by someone with a hall ticket.</li>
         </ul>
@@ -183,12 +179,23 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <h1 className="text-2xl font-bold text-navy">Results upload</h1>
+        {/*
+          This page lives under /admin, outside the dashboard shell and its
+          sidebar, so without this there is no way back to the rest of the
+          dashboard except the browser's back button.
+        */}
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition hover:text-crimson-700"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          Back to dashboard
+        </Link>
+        <h1 className="mt-3 text-2xl font-bold text-navy">Results upload</h1>
         <p className="mt-1 max-w-3xl text-sm text-ink-muted">
           Drop the examination branch&rsquo;s spreadsheet in and it becomes a draft batch. Review the numbers, then
           publish — students then look their marks up at{" "}
-          <span className="font-mono text-ink">/students/results</span> with their hall ticket number and date of
-          birth. No student accounts required.
+          <span className="font-mono text-ink">/students/results</span> with their hall ticket number. No student accounts required.
         </p>
       </header>
       {children}

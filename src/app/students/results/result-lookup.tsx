@@ -30,7 +30,6 @@ type Status = "idle" | "loading" | "found" | "error";
 
 export default function ResultLookup() {
   const [hallTicket, setHallTicket] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [data, setData] = useState<LookupResponse | null>(null);
@@ -47,7 +46,7 @@ export default function ResultLookup() {
       const response = await fetch("/api/results/lookup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hallTicket, dateOfBirth }),
+        body: JSON.stringify({ hallTicket }),
       });
       const payload = await response.json();
 
@@ -70,7 +69,6 @@ export default function ResultLookup() {
     setData(null);
     setMessage(null);
     setHallTicket("");
-    setDateOfBirth("");
   }
 
   if (status === "found" && data) {
@@ -97,26 +95,6 @@ export default function ResultLookup() {
             placeholder="24H41A0101"
             className="w-full rounded-xl border border-surface-border px-4 py-3 font-mono text-lg uppercase tracking-wide text-ink outline-none transition placeholder:font-sans placeholder:text-base placeholder:normal-case placeholder:text-ink-faint focus:border-gold-400 focus:ring-2 focus:ring-gold-200"
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <label htmlFor="dateOfBirth" className="block text-sm font-semibold text-navy">
-            Date of birth
-          </label>
-          <input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            required
-            // A native date input always submits ISO, whatever the phone's
-            // locale displays — so the day-first vs month-first ambiguity that
-            // dogs the uploaded spreadsheets cannot happen here.
-            max={new Date().toISOString().slice(0, 10)}
-            className="w-full rounded-xl border border-surface-border px-4 py-3 text-lg text-ink outline-none transition focus:border-gold-400 focus:ring-2 focus:ring-gold-200"
-          />
-          <p className="text-xs text-ink-faint">As recorded on your admission form.</p>
         </div>
 
         <button

@@ -7,7 +7,7 @@ import { computeSgpa } from "./grading";
 import type { LookupBatch, LookupResponse, LookupSubject } from "./types";
 
 /**
- * The public results lookup: hall ticket + date of birth -> that student's
+ * The public results lookup: hall ticket -> that student's
  * published results, and nothing else.
  *
  * Runs on the service-role client because `anon` has no grant on any results
@@ -64,8 +64,7 @@ function one<T>(value: T | T[] | null): T | null {
 
 export async function lookupResults(
   supabase: SupabaseClient,
-  rawHallTicket: string,
-  dateOfBirth: string
+  rawHallTicket: string
 ): Promise<LookupOutcome> {
   // Normalised with the SAME function the importer used, so a student typing
   // lowercase or with a stray space matches the row that was imported.
@@ -76,10 +75,6 @@ export async function lookupResults(
     .from("result_students")
     .select("hall_ticket_no, student_name, branch")
     .eq("hall_ticket_no", hallTicketNo)
-    // The DOB is matched in the WHERE clause rather than fetched and compared
-    // in JS: the date never enters the application's memory, so it cannot end
-    // up in a log line, an error message or a serialized payload by accident.
-    .eq("date_of_birth", dateOfBirth)
     .maybeSingle();
 
   if (studentError) throw new Error(`Results lookup failed: ${studentError.message}`);

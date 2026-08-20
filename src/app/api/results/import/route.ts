@@ -61,10 +61,7 @@ export async function POST(req: NextRequest) {
     return bad(`Unsupported file type. Accepted: ${ACCEPTED_EXTENSIONS.join(", ")}`);
   }
 
-  const defaultDob = field(form, "defaultDob") ?? DEFAULT_PLACEHOLDER_DOB;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(defaultDob)) {
-    return bad("The fallback date of birth must be a calendar date.");
-  }
+  const defaultDob = DEFAULT_PLACEHOLDER_DOB;
 
   let parsed;
   try {
@@ -111,12 +108,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       ...outcome,
       sheets: parsed.sheets,
-      // Only the first 200 issues travel to the browser. A malformed file can
-      // produce one issue per row, and shipping 30,000 of them would make the
-      // response larger than the spreadsheet.
       issues: outcome.issues.slice(0, 200),
       issueCount: outcome.issues.length,
-      defaultDob,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

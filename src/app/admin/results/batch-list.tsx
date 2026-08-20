@@ -38,7 +38,6 @@ export interface BatchRow {
   passRows: number;
   failRows: number;
   absentRows: number;
-  placeholderDobStudents: number;
 }
 
 const STATUS_TONE: Record<BatchRow["status"], Tone> = {
@@ -108,14 +107,6 @@ function BatchCard({ batch }: { batch: BatchRow }) {
         <Stat label="Uploaded" value={formatDate(batch.createdAt)} />
       </dl>
 
-      {batch.placeholderDobStudents > 0 && (
-        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          {batch.placeholderDobStudents.toLocaleString()} student
-          {batch.placeholderDobStudents === 1 ? "" : "s"} in this batch still sign in with the shared fallback date
-          of birth. Re-upload with a <span className="font-mono">Date of Birth</span> column to give each student a
-          real one.
-        </p>
-      )}
 
       {batch.notes && <p className="mt-3 text-xs italic text-ink-faint">{batch.notes}</p>}
 

@@ -53,6 +53,11 @@ const CAPABILITY_CARDS: Record<
     body: "See the questions the campus assistant could not answer.",
     href: "/dashboard/insights",
   },
+  "results.publish": {
+    title: "Results upload",
+    body: "Drop the examination branch's Excel sheet in, then publish it to students.",
+    href: "/admin/results",
+  },
   "marketing.studio": {
     title: "Marketing Studio",
     body: "Plan, generate and schedule campaigns across social platforms.",
