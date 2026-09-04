@@ -51,23 +51,23 @@ export function AnalyticsView({ campaigns, onOpen }: { campaigns: Campaign[]; on
       ) : (
         <div className="space-y-2">
           {rows.map((r) => (
-            <Card key={`${r.campaignId}-${r.platform}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <Card key={`${r.campaignId}-${r.platform}`} className="flex flex-wrap items-center justify-between gap-3 py-3 transition hover:border-gold hover:shadow-sm">
               <button onClick={() => onOpen(r.campaignId)} className="min-w-0 flex-1 text-left">
-                <p className="truncate text-sm font-semibold text-brand-white hover:text-brand-gold">{r.campaignTitle}</p>
-                <p className="text-xs text-white/45">
+                <p className="truncate text-sm font-semibold text-navy hover:text-goldDark">{r.campaignTitle}</p>
+                <p className="text-xs text-ink-muted">
                   {r.platform} · due {fmtDate(r.scheduledFor)}
                   {r.publishedAt ? ` · at ${fmtDate(r.publishedAt)}` : ""}
                 </p>
               </button>
               <div className="flex items-center gap-2">
                 {r.platformPostId && (
-                  <span className="max-w-[180px] truncate text-[10px] text-white/35" title={r.platformPostId}>
+                  <span className="max-w-[180px] truncate text-[10px] text-ink-muted" title={r.platformPostId}>
                     {r.platformPostId}
                   </span>
                 )}
                 <Pill tone={r.status === "published" ? "success" : "danger"}>{r.status === "published" ? "published" : "failed"}</Pill>
               </div>
-              {r.error && <p className="w-full text-xs text-red-300">{r.error}</p>}
+              {r.error && <p className="w-full text-xs text-crimson">{r.error}</p>}
             </Card>
           ))}
         </div>

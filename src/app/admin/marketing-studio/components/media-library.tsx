@@ -43,12 +43,12 @@ export function MediaLibrary({ campaigns }: { campaigns: Campaign[] }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={mediaUrl(a.originalFile)} alt={a.campaignTitle} className="h-44 w-full object-cover" />
               <div className="p-3">
-                <p className="truncate text-sm font-semibold text-brand-white">{a.campaignTitle}</p>
+                <p className="truncate text-sm font-semibold text-navy">{a.campaignTitle}</p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <Pill tone={a.aiGenerated ? "success" : "neutral"}>{a.aiGenerated ? "AI composed" : "photograph"}</Pill>
-                  {a.platform && <span className="text-[10px] text-white/40">{a.platform}</span>}
+                  {a.platform && <span className="text-[10px] text-ink-muted">{a.platform}</span>}
                 </div>
-                {(a.observations ?? []).length > 0 && <p className="mt-1.5 truncate text-[10px] text-white/35">{a.observations![0]}</p>}
+                {(a.observations ?? []).length > 0 && <p className="mt-1.5 truncate text-[10px] text-ink-muted">{a.observations![0]}</p>}
               </div>
             </Card>
           ))}

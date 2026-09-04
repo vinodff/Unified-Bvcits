@@ -1,12 +1,12 @@
 "use client";
 
-// Shared UI primitives for the Marketing Studio — premium black + gold system.
+// Shared UI primitives for the Marketing Studio — clean white + brand colors system.
 
 import { useState, type ReactNode } from "react";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-brand-gold/15 bg-brand-black p-5 shadow-[0_1px_0_rgba(245,184,0,0.06)_inset] ${className}`}>
+    <div className={`rounded-2xl border border-surface-border bg-white p-5 shadow-card ${className}`}>
       {children}
     </div>
   );
@@ -16,8 +16,8 @@ export function SectionTitle({ eyebrow, title, right }: { eyebrow: string; title
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <p className="eyebrow text-brand-gold">{eyebrow}</p>
-        <h2 className="mt-1 font-display text-2xl font-extrabold tracking-[-0.01em] text-brand-white">{title}</h2>
+        <p className="eyebrow text-goldDark font-bold uppercase tracking-[0.14em] text-xs">{eyebrow}</p>
+        <h2 className="mt-1 font-display text-2xl font-extrabold tracking-[-0.01em] text-navy">{title}</h2>
       </div>
       {right}
     </div>
@@ -25,10 +25,10 @@ export function SectionTitle({ eyebrow, title, right }: { eyebrow: string; title
 }
 
 const TONES: Record<string, string> = {
-  success: "border-brand-gold/40 bg-brand-gold/10 text-brand-gold",
-  info: "border-white/15 bg-white/5 text-white/80",
-  danger: "border-brand-maroon/50 bg-brand-maroon/20 text-red-300",
-  neutral: "border-white/10 bg-white/5 text-white/60",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  info: "border-blue-200 bg-blue-50 text-blue-800",
+  danger: "border-red-200 bg-red-50 text-red-800",
+  neutral: "border-surface-border bg-surface-subtle text-ink-soft",
 };
 
 export function Pill({ tone = "neutral", children }: { tone?: keyof typeof TONES; children: ReactNode }) {
@@ -61,9 +61,9 @@ export function Button({
   className?: string;
 }) {
   const styles = {
-    primary: "bg-brand-gold text-brand-black hover:bg-gold-300",
-    ghost: "border border-white/15 text-white/85 hover:border-brand-gold/50 hover:text-brand-gold",
-    danger: "border border-brand-maroon/60 text-red-300 hover:bg-brand-maroon/20",
+    primary: "bg-gold text-navy font-bold shadow-sm hover:bg-gold-400 active:scale-[0.98]",
+    ghost: "border border-surface-border bg-white text-navy hover:bg-surface-subtle hover:border-gold hover:text-crimson shadow-xs",
+    danger: "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
   }[variant];
   return (
     <button
@@ -79,22 +79,22 @@ export function Button({
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-widest text-white/50">{label}</span>
+      <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-widest text-ink-soft">{label}</span>
       {children}
     </label>
   );
 }
 
-export const inputCls = "w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-brand-gold/60";
+export const inputCls = "w-full rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-sm text-navy placeholder:text-ink-muted outline-none transition focus:border-gold focus:ring-1 focus:ring-gold";
 
 export function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
-      <div className="my-8 w-full max-w-lg rounded-2xl border border-brand-gold/20 bg-[#121214] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-xs" onClick={onClose}>
+      <div className="my-8 w-full max-w-lg rounded-2xl border border-surface-border bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-display text-lg font-bold text-brand-white">{title}</h3>
-          <button onClick={onClose} className="text-white/50 hover:text-brand-gold" aria-label="Close">✕</button>
+          <h3 className="font-display text-lg font-bold text-navy">{title}</h3>
+          <button onClick={onClose} className="text-ink-muted hover:text-navy" aria-label="Close">✕</button>
         </div>
         {children}
       </div>
@@ -103,7 +103,7 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
 }
 
 export function Empty({ text }: { text: string }) {
-  return <div className="rounded-xl border border-dashed border-white/10 px-6 py-10 text-center text-sm text-white/40">{text}</div>;
+  return <div className="rounded-xl border border-dashed border-surface-border bg-surface-subtle px-6 py-10 text-center text-sm text-ink-muted">{text}</div>;
 }
 
 export function useBusy() {
@@ -125,5 +125,5 @@ export function useBusy() {
 
 export function ErrorNote({ message }: { message: string | null }) {
   if (!message) return null;
-  return <div className="rounded-lg border border-brand-maroon/50 bg-brand-maroon/15 px-3 py-2 text-sm text-red-200">{message}</div>;
+  return <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{message}</div>;
 }

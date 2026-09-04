@@ -170,11 +170,11 @@ export function CampaignDetailView({
     <div>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <button onClick={onBack} className="mb-1 text-xs text-white/40 hover:text-brand-gold">← Back to campaigns</button>
-          <h2 className="font-display text-2xl font-extrabold tracking-[-0.01em] text-brand-white">{campaign.title}</h2>
+          <button onClick={onBack} className="mb-1 text-xs font-semibold text-ink-muted hover:text-crimson transition">← Back to campaigns</button>
+          <h2 className="font-display text-2xl font-extrabold tracking-[-0.01em] text-navy">{campaign.title}</h2>
           <div className="mt-1.5 flex items-center gap-2">
             <StatusPill status={campaign.status} />
-            <span className="text-xs text-white/40">{campaign.type} · {campaign.id}</span>
+            <span className="text-xs text-ink-muted">{campaign.type} · {campaign.id}</span>
           </div>
         </div>
         <div className="flex gap-2">
@@ -183,12 +183,12 @@ export function CampaignDetailView({
         </div>
       </div>
 
-      <div className="mb-5 flex flex-wrap gap-1.5 border-b border-white/10 pb-px">
+      <div className="mb-5 flex flex-wrap gap-1.5 border-b border-surface-border pb-px">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`rounded-t-lg px-3.5 py-2 text-sm transition ${tab === t.id ? "border-b-2 border-brand-gold font-semibold text-brand-gold" : "text-white/50 hover:text-white"}`}
+            className={`rounded-t-lg px-3.5 py-2 text-sm transition ${tab === t.id ? "border-b-2 border-gold font-bold text-goldDark" : "text-ink-soft hover:text-navy"}`}
           >
             {t.label}
           </button>
@@ -204,9 +204,11 @@ export function CampaignDetailView({
             {supervisor ? (
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {Object.entries(supervisor.steps).map(([step, st]) => (
-                  <div key={step} className="rounded-lg bg-white/[0.03] px-3 py-2">
-                    <p className="text-[10px] uppercase tracking-widest text-white/45">{step.replace(/_/g, " ")}</p>
-                    <Pill tone={st === "done" || st === "approved" || st === "published" ? "success" : st === "failed" ? "danger" : "neutral"}>{st}</Pill>
+                  <div key={step} className="rounded-xl border border-surface-border bg-surface-subtle px-3 py-2.5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-ink-muted">{step.replace(/_/g, " ")}</p>
+                    <div className="mt-1">
+                      <Pill tone={st === "done" || st === "approved" || st === "published" ? "success" : st === "failed" ? "danger" : "neutral"}>{st}</Pill>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -214,7 +216,7 @@ export function CampaignDetailView({
               <Empty text="No pipeline state yet." />
             )}
             {!isReviewable && intake && !intake.canGenerate && (
-              <p className="mt-4 rounded-lg border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+              <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 font-medium">
                 The interview is not finished — {intake.answered} of {intake.total} answered
                 {intake.photosRequired && intake.photoCount === 0 ? ", and a photograph is still required" : ""}.
                 Agents run on what has been confirmed, so an incomplete interview produces boilerplate.
@@ -223,7 +225,7 @@ export function CampaignDetailView({
 
             <div className="mt-4 flex flex-wrap gap-2">
               {isReviewable ? (
-                <Button onClick={() => setApproveOpen(true)}>Approve & Schedule</Button>
+                <Button onClick={() => setApproveOpen(true)}>Approve &amp; Schedule</Button>
               ) : intake && !intake.canGenerate && onOpenIntake ? (
                 // Route back to the wizard instead of letting the button hit the
                 // server's 428 and dead-end on a raw error string.
@@ -248,7 +250,7 @@ export function CampaignDetailView({
               <Button variant="ghost" onClick={() => void api.tick()}>Run worker tick</Button>
             </div>
             {campaign.status === "GENERATING" && (
-              <p className="mt-3 text-xs text-white/40">
+              <p className="mt-3 text-xs text-ink-muted">
                 Stuck on Generating? A run that died mid-flight cannot resume — reset it to Draft and run again.
               </p>
             )}
@@ -259,11 +261,11 @@ export function CampaignDetailView({
               <SectionTitle eyebrow="Queue" title="Publish jobs" />
               <div className="space-y-2">
                 {platformJobs.map((j) => (
-                  <div key={j.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white/[0.03] px-3 py-2">
+                  <div key={j.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface-subtle border border-surface-border px-3.5 py-2.5">
                     <div>
-                      <p className="text-sm font-semibold text-brand-white">{j.platform}</p>
-                      <p className="text-xs text-white/40">v{j.contentVersion} · {fmtDate(j.scheduledFor)}{j.platformPostId ? ` · post ${j.platformPostId}` : ""}</p>
-                      {j.error && <p className="mt-0.5 text-xs text-red-300">{j.error}</p>}
+                      <p className="text-sm font-bold text-navy">{j.platform}</p>
+                      <p className="text-xs text-ink-muted">v{j.contentVersion} · {fmtDate(j.scheduledFor)}{j.platformPostId ? ` · post ${j.platformPostId}` : ""}</p>
+                      {j.error && <p className="mt-0.5 text-xs text-crimson font-medium">{j.error}</p>}
                     </div>
                     <StatusPill status={j.status} />
                   </div>
@@ -277,9 +279,9 @@ export function CampaignDetailView({
               <SectionTitle eyebrow="Audit" title="Recent activity" />
               <div className="max-h-56 space-y-1.5 overflow-y-auto text-xs">
                 {audit.slice(0, 12).map((a) => (
-                  <div key={a.id} className="flex justify-between gap-3 rounded bg-white/[0.02] px-2.5 py-1.5">
-                    <span className="text-white/60">{a.actor} · <span className="text-brand-gold">{a.action}</span></span>
-                    <span className="shrink-0 text-white/35">{fmtDate(a.at)}</span>
+                  <div key={a.id} className="flex justify-between gap-3 rounded-lg border border-surface-border bg-surface-subtle px-3 py-2">
+                    <span className="font-medium text-navy">{a.actor} · <span className="font-bold text-goldDark">{a.action}</span></span>
+                    <span className="shrink-0 text-ink-muted">{fmtDate(a.at)}</span>
                   </div>
                 ))}
               </div>
@@ -292,19 +294,19 @@ export function CampaignDetailView({
         <div className="grid gap-5 lg:grid-cols-2">
           <Card>
             <SectionTitle eyebrow="Assistant" title="AI Content Assistant" />
-            <p className="mb-3 text-xs text-white/45">
+            <p className="mb-3 text-xs text-ink-soft leading-relaxed">
               Answer the assistant's questions in natural language — it extracts facts deterministically. Admin answers override AI observations.
             </p>
             <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
               {chat.length === 0 && (
-                <p className="text-sm text-white/40">Start the conversation — e.g. paste the event description from your email.</p>
+                <p className="text-sm text-ink-muted">Start the conversation — e.g. paste the event description from your email.</p>
               )}
               {chat.map((c, i) => (
-                <div key={i} className={`rounded-xl px-3 py-2 text-sm ${c.role === "admin" ? "ml-8 bg-brand-gold/10 text-brand-gold" : "mr-8 bg-white/5 text-white/80"}`}>
+                <div key={i} className={`rounded-xl px-3.5 py-2.5 text-sm ${c.role === "admin" ? "ml-8 bg-goldLight/25 border border-gold/30 text-navy font-medium" : "mr-8 bg-surface-subtle border border-surface-border text-navy"}`}>
                   {c.text}
                 </div>
               ))}
-              {askBusy && <p className="text-xs text-white/40">Assistant is thinking…</p>}
+              {askBusy && <p className="text-xs text-ink-muted">Assistant is thinking…</p>}
             </div>
             <div className="mt-3 flex gap-2">
               <input value={msg} onChange={(e) => setMsg(e.target.value)} onKeyDown={(e) => e.key === "Enter" && ask()} placeholder="Reply to the assistant…" className={inputCls} />
@@ -319,10 +321,10 @@ export function CampaignDetailView({
             ) : (
               <div className="space-y-2">
                 {facts.map((f) => (
-                  <div key={f.field} className="rounded-lg bg-white/[0.03] p-2.5">
+                  <div key={f.field} className="rounded-xl border border-surface-border bg-surface-subtle p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">{f.field}</p>
-                      <span className="text-[9px] text-white/35">{f.source}{f.verified ? " · verified" : ""}</span>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-goldDark">{f.field}</p>
+                      <span className="text-[9px] text-ink-muted">{f.source}{f.verified ? " · verified" : ""}</span>
                     </div>
                     <input
                       defaultValue={factTexts[f.field] ?? String(f.value)}
@@ -330,7 +332,7 @@ export function CampaignDetailView({
                         setFactTexts((x) => ({ ...x, [f.field]: e.target.value }));
                         setDirtyFacts(true);
                       }}
-                      className="mt-1 w-full rounded bg-transparent text-sm text-white/85 outline-none focus:text-brand-gold"
+                      className="mt-1 w-full rounded bg-transparent text-sm font-semibold text-navy outline-none focus:text-goldDark"
                     />
                   </div>
                 ))}
@@ -364,10 +366,10 @@ export function CampaignDetailView({
             <ErrorNote message={uploadError} />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {assets.filter((a) => !a.aiGenerated).map((a) => (
-                <div key={a.id} className="group overflow-hidden rounded-xl border border-white/10">
+                <div key={a.id} className="group overflow-hidden rounded-xl border border-surface-border bg-white shadow-xs">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={mediaUrl(a.originalFile)} alt={a.metadata?.originalName as string ?? "photo"} className="h-36 w-full object-cover" />
-                  <div className="px-2 py-1.5 text-[10px] text-white/45">
+                  <div className="p-2 text-[10px] text-ink-muted">
                     {(a.observations ?? []).slice(0, 1).join(" ") || "No observations yet — run pipeline to analyze."}
                   </div>
                 </div>
@@ -379,10 +381,10 @@ export function CampaignDetailView({
             <SectionTitle eyebrow="Creatives" title="AI-composed brand graphics" />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {assets.filter((a) => a.aiGenerated).map((a) => (
-                <div key={a.id} className="overflow-hidden rounded-xl border border-brand-gold/20">
+                <div key={a.id} className="overflow-hidden rounded-xl border border-surface-border bg-white shadow-xs">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={mediaUrl(a.originalFile)} alt={`${a.metadata?.platform as string} creative`} className="h-44 w-full object-cover" />
-                  <div className="px-2 py-1.5 text-[10px] text-white/45">{(a.metadata?.platform as string) ?? "creative"} · {(a.metadata?.variant as string) ?? ""}</div>
+                  <div className="p-2 text-[10px] font-semibold text-ink-muted">{(a.metadata?.platform as string) ?? "creative"} · {(a.metadata?.variant as string) ?? ""}</div>
                 </div>
               ))}
               {assets.filter((a) => a.aiGenerated).length === 0 && <div className="col-span-full"><Empty text="Run the pipeline to compose platform graphics from your photos." /></div>}
@@ -397,10 +399,10 @@ export function CampaignDetailView({
             <SectionTitle eyebrow="SEO Agent" title="Metadata" />
             {seo ? (
               <div className="space-y-2 text-sm">
-                <p><span className="text-white/40">Title:</span> <span className="text-brand-white">{seo.seoTitle}</span></p>
-                <p><span className="text-white/40">Description:</span> <span className="text-white/75">{seo.metaDescription}</span></p>
-                <p><span className="text-white/40">Intent:</span> <span className="text-white/75">{(seo as { primaryIntent?: string }).primaryIntent ?? "—"}</span></p>
-                <p><span className="text-white/40">Internal links:</span> <span className="text-white/75">{(seo as { internalLinks?: { href: string }[] }).internalLinks?.map((l) => l.href).join(", ") ?? "—"}</span></p>
+                <p><span className="text-ink-muted">Title:</span> <span className="text-navy font-semibold">{seo.seoTitle}</span></p>
+                <p><span className="text-ink-muted">Description:</span> <span className="text-ink-soft">{seo.metaDescription}</span></p>
+                <p><span className="text-ink-muted">Intent:</span> <span className="text-ink-soft">{(seo as { primaryIntent?: string }).primaryIntent ?? "—"}</span></p>
+                <p><span className="text-ink-muted">Internal links:</span> <span className="text-ink-soft">{(seo as { internalLinks?: { href: string }[] }).internalLinks?.map((l) => l.href).join(", ") ?? "—"}</span></p>
               </div>
             ) : (
               <Empty text="Run the pipeline to generate SEO metadata." />
@@ -411,16 +413,16 @@ export function CampaignDetailView({
             {quality ? (
               <div>
                 <div className="mb-3 flex items-center gap-3">
-                  <span className={`font-display text-4xl font-extrabold ${quality.verdict === "pass" ? "text-brand-gold" : "text-red-400"}`}>{quality.overall}</span>
+                  <span className={`font-display text-4xl font-extrabold ${quality.verdict === "pass" ? "text-goldDark" : "text-crimson"}`}>{quality.overall}</span>
                   <div>
                     <Pill tone={quality.verdict === "pass" ? "success" : "danger"}>{quality.verdict === "pass" ? "PASS" : "NEEDS CORRECTION"}</Pill>
-                    <p className="mt-1 text-xs text-white/40">Transparent rule-based score — not a Google ranking.</p>
+                    <p className="mt-1 text-xs text-ink-muted">Transparent rule-based score — not a Google ranking.</p>
                   </div>
                 </div>
                 {quality.issues.length > 0 && (
-                  <ul className="space-y-1 text-xs text-white/60">
+                  <ul className="space-y-1 text-xs text-ink-soft">
                     {quality.issues.slice(0, 8).map((i, idx) => (
-                      <li key={idx} className="flex gap-2"><span className={i.severity === "critical" ? "text-red-400" : "text-amber-300"}>{i.severity === "critical" ? "●" : "○"}</span>{i.message}</li>
+                      <li key={idx} className="flex gap-2"><span className={i.severity === "critical" ? "text-crimson" : "text-amber-500"}>{i.severity === "critical" ? "●" : "○"}</span>{i.message}</li>
                     ))}
                   </ul>
                 )}
@@ -428,16 +430,16 @@ export function CampaignDetailView({
             ) : (
               <Empty text="Run the pipeline to run the quality gate." />
             )}
-            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
+            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-surface-border pt-4">
               <Button variant="ghost" onClick={revalidate} disabled={genBusy || content.length === 0}>
                 {genBusy ? "Re-checking…" : "Re-check quality & SEO"}
               </Button>
-              <p className="text-xs text-white/35">
+              <p className="text-xs text-ink-muted">
                 Scores are stored from the last run. Re-check to score the current content again.
               </p>
             </div>
             {revalidateMsg && (
-              <p className="mt-2 rounded-lg border border-brand-gold/25 bg-brand-gold/10 px-3 py-2 text-xs text-brand-gold">{revalidateMsg}</p>
+              <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">{revalidateMsg}</p>
             )}
           </Card>
         </div>
@@ -451,14 +453,14 @@ export function CampaignDetailView({
           ) : (
             <div className="space-y-2">
               {runs.slice().reverse().map((r) => (
-                <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white/[0.03] px-3 py-2">
+                <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-subtle border border-surface-border px-3 py-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-brand-white">{r.agentName}</p>
-                    <p className="truncate text-xs text-white/45">{r.summary}</p>
+                    <p className="text-sm font-semibold text-navy">{r.agentName}</p>
+                    <p className="truncate text-xs text-ink-muted">{r.summary}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Pill tone={r.status === "success" ? "success" : r.status === "failed" ? "danger" : "neutral"}>{r.status}</Pill>
-                    <span className="text-[10px] text-white/35">{r.durationMs != null ? `${r.durationMs}ms` : ""}</span>
+                    <span className="text-[10px] text-ink-muted">{r.durationMs != null ? `${r.durationMs}ms` : ""}</span>
                   </div>
                 </div>
               ))}
@@ -515,16 +517,16 @@ function ApproveModal({
 
   return (
     <Modal open={open} onClose={onClose} title="Approve & schedule">
-      <p className="mb-4 text-sm text-white/60">
+      <p className="mb-4 text-sm leading-relaxed text-ink-soft">
         Approving sends the campaign to the platform schedulers (Instagram/Facebook) or queues it for due-time publishing (LinkedIn/WhatsApp/website). Post-approval edits invalidate this approval automatically.
       </p>
-      {campaignStatus === "APPROVED" && <p className="mb-3 rounded-lg bg-amber-400/10 px-3 py-2 text-xs text-amber-300">Already approved — this re-approves with the new schedule.</p>}
+      {campaignStatus === "APPROVED" && <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">Already approved — this re-approves with the new schedule.</p>}
       <div className="mb-4 flex flex-wrap gap-2">
         {usable.map((p) => (
           <button
             key={p}
             onClick={() => toggle(p)}
-            className={`rounded-lg border px-3 py-1.5 text-sm transition ${platforms.includes(p) ? "border-brand-gold bg-brand-gold/15 text-brand-gold" : "border-white/15 text-white/50 hover:border-white/30"}`}
+            className={`rounded-lg border px-3 py-1.5 text-sm transition ${platforms.includes(p) ? "border-gold bg-goldLight/30 font-bold text-navy" : "border-surface-border text-ink-soft hover:border-gold hover:text-navy"}`}
           >
             {p}
           </button>

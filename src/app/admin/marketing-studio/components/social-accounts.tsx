@@ -49,7 +49,7 @@ export function SocialAccounts() {
         right={<Pill tone={mockMode ? "info" : "success"}>{mockMode ? "MOCK MODE — no real posts" : "PRODUCTION — real API calls"}</Pill>}
       />
       {mockMode && (
-        <p className="mb-4 rounded-xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+        <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Mock mode is active (default). Nothing is posted to real platforms — posts are recorded under <code>.data/marketing/mock-posts.json</code>. Set <code>MOCK_SOCIAL_MODE=false</code> plus the platform env keys to go live.
         </p>
       )}
@@ -60,8 +60,8 @@ export function SocialAccounts() {
             <Card key={p}>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-display text-base font-bold capitalize text-brand-white">{p}</p>
-                  <p className="mt-0.5 text-xs text-white/45">{acc?.label ?? "Not connected"}</p>
+                  <p className="font-display text-base font-bold capitalize text-navy">{p}</p>
+                  <p className="mt-0.5 text-xs text-ink-muted">{acc?.label ?? "Not connected"}</p>
                 </div>
                 {acc ? <StatusPill status={acc.status} /> : <Pill tone="neutral">offline</Pill>}
               </div>
@@ -73,7 +73,7 @@ export function SocialAccounts() {
                   <Pill tone={acc.capabilities.analytics ? "success" : "neutral"}>analytics</Pill>
                 </div>
               )}
-              <p className="mt-3 text-[11px] leading-relaxed text-white/40">{acc?.capabilities.note}</p>
+              <p className="mt-3 text-[11px] leading-relaxed text-ink-soft">{acc?.capabilities.note}</p>
               <div className="mt-3 flex gap-2">
                 {acc ? (
                   <>
@@ -90,7 +90,7 @@ export function SocialAccounts() {
           );
         })}
       </div>
-      <p className="mt-4 text-xs text-white/40">
+      <p className="mt-4 text-xs text-ink-muted">
         Capabilities shown are the ones verified against official API docs — Instagram & Facebook support API-side scheduling; LinkedIn & WhatsApp do not, so the worker publishes at the due time.
       </p>
     </div>

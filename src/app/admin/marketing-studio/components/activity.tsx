@@ -47,15 +47,15 @@ export function Activity() {
       ) : (
         <div className="space-y-2">
           {rows.map((r) => (
-            <Card key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <Card key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3 transition hover:border-gold hover:shadow-sm">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-brand-white">
-                  {r.agentName} <span className="ml-1 text-[10px] text-white/35">{r.campaignId}</span>
+                <p className="text-sm font-semibold text-navy">
+                  {r.agentName} <span className="ml-1 text-[10px] text-ink-muted">{r.campaignId}</span>
                 </p>
-                <p className="truncate text-xs text-white/50">{r.summary}</p>
+                <p className="truncate text-xs text-ink-soft">{r.summary}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-white/35">{fmtDate(r.startedAt)}</span>
+                <span className="text-[10px] text-ink-muted">{fmtDate(r.startedAt)}</span>
                 <Pill tone={r.status === "success" ? "success" : r.status === "failed" ? "danger" : "neutral"}>{r.status}</Pill>
               </div>
             </Card>

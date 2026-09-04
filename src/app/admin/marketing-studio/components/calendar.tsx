@@ -48,10 +48,10 @@ export function CalendarView({ campaigns, onOpen }: { campaigns: Campaign[]; onO
       ) : (
         <div className="space-y-2">
           {rows.map((r) => (
-            <Card key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <Card key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3 transition hover:border-gold hover:shadow-sm">
               <button onClick={() => onOpen(r.campaignId)} className="min-w-0 flex-1 text-left">
-                <p className="truncate text-sm font-semibold text-brand-white hover:text-brand-gold">{r.campaignTitle}</p>
-                <p className="text-xs text-white/45">{fmtDate(r.scheduledFor)} · {r.platform}{r.platformPostId ? ` · ${r.platformPostId}` : ""}</p>
+                <p className="truncate text-sm font-semibold text-navy hover:text-goldDark">{r.campaignTitle}</p>
+                <p className="text-xs text-ink-muted">{fmtDate(r.scheduledFor)} · {r.platform}{r.platformPostId ? ` · ${r.platformPostId}` : ""}</p>
               </button>
               <StatusPill status={r.status} />
             </Card>

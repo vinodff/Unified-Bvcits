@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { api, type CampaignDetail } from "./api";
 import { LoginScreen } from "./components/login-screen";
 import { Dashboard } from "./components/dashboard";
@@ -18,34 +19,66 @@ import { BlogAgent } from "./components/blog-agent";
 import { BlogPostDetail } from "./components/blog-post-detail";
 import type { Campaign } from "@/lib/marketing/domain";
 
+import type { ComponentType } from "react";
+import {
+  LayoutGrid,
+  Plus,
+  PenTool,
+  ClipboardCheck,
+  CalendarDays,
+  Send,
+  FileText,
+  Share2,
+  Image as ImageIcon,
+  Search,
+  BarChart3,
+  Activity as ActivityIcon,
+} from "lucide-react";
+
 export type SectionId =
   | "dashboard" | "create" | "queue" | "calendar" | "published" | "drafts"
   | "accounts" | "media" | "seo" | "analytics" | "activity" | "campaign" | "intake"
   | "blog" | "blogPost";
 
-const NAV: { id: SectionId; label: string; icon: string }[] = [
-  { id: "dashboard", label: "Dashboard", icon: "◈" },
-  { id: "create", label: "Create Campaign", icon: "＋" },
-  { id: "blog", label: "Blog Agent", icon: "✒" },
-  { id: "queue", label: "Review Queue", icon: "✓" },
-  { id: "calendar", label: "Calendar", icon: "▤" },
-  { id: "published", label: "Published", icon: "●" },
-  { id: "drafts", label: "Drafts", icon: "✎" },
-  { id: "accounts", label: "Social Accounts", icon: "⬢" },
-  { id: "media", label: "Media Library", icon: "▧" },
-  { id: "seo", label: "SEO", icon: "⌕" },
-  { id: "analytics", label: "Analytics", icon: "▥" },
-  { id: "activity", label: "Agent Activity", icon: "✦" },
+const NAV: { id: SectionId; label: string; icon: ComponentType<{ className?: string }> }[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+  { id: "create", label: "Create Campaign", icon: Plus },
+  { id: "blog", label: "AI Blog Agent", icon: PenTool },
+  { id: "queue", label: "Review Queue", icon: ClipboardCheck },
+  { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "published", label: "Published", icon: Send },
+  { id: "drafts", label: "Drafts", icon: FileText },
+  { id: "accounts", label: "Social Accounts", icon: Share2 },
+  { id: "media", label: "Media Library", icon: ImageIcon },
+  { id: "seo", label: "SEO & Audit", icon: Search },
+  { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "activity", label: "Agent Activity", icon: ActivityIcon },
 ];
 
 export default function StudioApp() {
+  const searchParams = useSearchParams();
   const [auth, setAuth] = useState<{ ok: boolean; dev: boolean } | null>(null);
-  const [section, setSection] = useState<SectionId>("dashboard");
+  const [section, setSection] = useState<SectionId>(() => {
+    const s = searchParams?.get("section") as SectionId | null;
+    return s && NAV.some((n) => n.id === s) ? s : "dashboard";
+  });
   const [activeCampaign, setActiveCampaign] = useState<string | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [detail, setDetail] = useState<CampaignDetail | null>(null);
   const [filter, setFilter] = useState<string>("");
-  const [activePost, setActivePost] = useState<string | null>(null);
+  const [activePost, setActivePost] = useState<string | null>(() => searchParams?.get("postId") ?? null);
+
+  useEffect(() => {
+    const s = searchParams?.get("section") as SectionId | null;
+    if (s && NAV.some((n) => n.id === s)) {
+      setSection(s);
+    }
+    const p = searchParams?.get("postId");
+    if (p) {
+      setActivePost(p);
+      setSection("blogPost");
+    }
+  }, [searchParams]);
 
   const refresh = useCallback(async () => {
     const c = await api.campaigns();
@@ -111,7 +144,7 @@ export default function StudioApp() {
     void refresh();
   }, [refresh]);
 
-  if (!auth) return <div className="min-h-screen bg-brand-black" />;
+  if (!auth) return <div className="min-h-screen bg-surface-subtle" />;
   if (!auth.ok) return <LoginScreen onLogin={setAuth} />;
 
   const filtered = filter
@@ -119,23 +152,23 @@ export default function StudioApp() {
     : campaigns.filter((c) => !c.deletedAt);
 
   return (
-    <div className="min-h-screen bg-brand-black text-white">
-      <div className="border-b border-brand-gold/15 bg-brand-black/90 backdrop-blur">
+    <div className="min-h-screen bg-surface-subtle text-navy">
+      <div className="border-b border-surface-border bg-white shadow-xs">
         <div className="container-page flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-gold font-display text-sm font-extrabold text-brand-black">B</span>
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-gold font-display text-sm font-extrabold text-navy shadow-sm">B</span>
             <div>
-              <p className="font-display text-sm font-bold leading-tight text-brand-white">Marketing Studio</p>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-brand-gold">BVCITS · AI Agent Suite</p>
+              <p className="font-display text-sm font-bold leading-tight text-navy">Marketing Studio Agent</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-crimson font-semibold">BVCITS · AI Agent Suite</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${auth.dev ? "bg-amber-400/15 text-amber-300" : "bg-emerald-400/15 text-emerald-300"}`}>
+            <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${auth.dev ? "bg-amber-50 text-amber-800 border border-amber-200" : "bg-emerald-50 text-emerald-800 border border-emerald-200"}`}>
               {auth.dev ? "DEV / MOCK MODE" : "PRODUCTION"}
             </span>
             <button
               onClick={() => void api.logout().then(() => setAuth({ ok: false, dev: false }))}
-              className="text-xs text-white/50 hover:text-brand-gold"
+              className="text-xs font-semibold text-ink-muted hover:text-crimson"
             >
               Sign out
             </button>
@@ -144,23 +177,40 @@ export default function StudioApp() {
       </div>
 
       <div className="container-page flex gap-6 py-8">
-        <aside className="hidden w-52 shrink-0 lg:block">
-          <nav className="sticky top-24 space-y-0.5">
-            {NAV.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => setSection(n.id)}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition ${section === n.id ? "bg-brand-gold text-brand-black font-semibold" : "text-white/60 hover:bg-white/5 hover:text-brand-gold"}`}
-              >
-                <span aria-hidden className="text-xs">{n.icon}</span>
-                {n.label}
-              </button>
-            ))}
+        <aside className="hidden w-56 shrink-0 lg:block">
+          <nav className="sticky top-24 space-y-1">
+            {NAV.map((n) => {
+              const Icon = n.icon;
+              const active = section === n.id;
+              return (
+                <button
+                  key={n.id}
+                  onClick={() => setSection(n.id)}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-xs transition ${
+                    active
+                      ? "border border-gold/40 bg-gold font-bold text-navy shadow-xs"
+                      : "border border-transparent font-medium text-ink-soft hover:border-surface-border hover:bg-white hover:text-navy"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 shrink-0 ${active ? "text-navy" : "text-ink-muted"}`} />
+                  <span>{n.label}</span>
+                </button>
+              );
+            })}
           </nav>
         </aside>
 
         <main className="min-w-0 flex-1">
-          {section === "dashboard" && <Dashboard campaigns={filtered} onOpen={openCampaignSmart} onRefresh={refresh} onFilter={setFilter} />}
+          {section === "dashboard" && (
+            <Dashboard
+              campaigns={filtered}
+              onOpen={openCampaignSmart}
+              onRefresh={refresh}
+              onFilter={setFilter}
+              onCreate={() => setSection("create")}
+              onOpenBlog={() => setSection("blog")}
+            />
+          )}
           {section === "create" && <CreateCampaign onCreated={(id) => { setActiveCampaign(id); setSection("intake"); }} />}
           {section === "intake" && activeCampaign && (
             <CampaignIntake

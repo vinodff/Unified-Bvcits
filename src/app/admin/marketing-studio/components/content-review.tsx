@@ -83,35 +83,35 @@ export function ContentReview({
             onClick={() => setActive(v.platform)}
             className={`rounded-lg border px-3 py-1.5 text-sm transition ${
               current.platform === v.platform
-                ? "border-brand-gold bg-brand-gold/15 font-semibold text-brand-gold"
-                : "border-white/15 text-white/55 hover:border-white/30 hover:text-white"
+                ? "border-gold bg-goldLight/30 font-bold text-goldDark"
+                : "border-surface-border bg-white text-ink-soft hover:border-gold hover:text-navy"
             }`}
           >
             {PLATFORM_LABEL[v.platform] ?? v.platform}
           </button>
         ))}
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs text-white/35">
+          <span className="text-xs text-ink-muted">
             {current.body.length.toLocaleString("en-IN")}
             {limit ? ` / ${limit.toLocaleString("en-IN")}` : ""} chars
           </span>
           {overLimit && <Pill tone="danger">Over limit</Pill>}
           <button
             onClick={() => setRaw((r) => !r)}
-            className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/60 transition hover:border-brand-gold/50 hover:text-brand-gold"
+            className="rounded-lg border border-surface-border bg-white px-3 py-1.5 text-xs font-semibold text-navy transition hover:border-gold hover:text-goldDark"
           >
             {raw ? "Show preview" : "Show raw text"}
           </button>
         </div>
       </div>
 
-      <p className="text-xs text-white/40">
+      <p className="text-xs text-ink-muted">
         This is how the post appears to someone scrolling {PLATFORM_LABEL[current.platform] ?? current.platform}.
         Engagement figures are placeholders for scale only.
       </p>
 
       {raw ? (
-        <pre className="max-h-[560px] overflow-y-auto whitespace-pre-wrap rounded-xl bg-white/[0.03] p-4 text-sm leading-relaxed text-white/75">
+        <pre className="max-h-[560px] overflow-y-auto whitespace-pre-wrap rounded-xl border border-surface-border bg-surface-subtle p-4 text-sm leading-relaxed text-navy">
           {current.body}
         </pre>
       ) : (
@@ -125,17 +125,17 @@ export function ContentReview({
         </PreviewStage>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
+      <div className="flex flex-wrap items-center gap-3 border-t border-surface-border pt-4">
         {reviewable ? (
           <>
             <Button onClick={onApprove} disabled={busy}>Approve &amp; schedule</Button>
             <Button variant="ghost" onClick={onRequestChanges} disabled={busy}>Request changes</Button>
-            <p className="text-xs text-white/35">
+            <p className="text-xs text-ink-muted">
               Approving records who signed off; publishing re-verifies it server-side.
             </p>
           </>
         ) : (
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-ink-muted">
             This campaign is {campaign.status.replace(/_/g, " ").toLowerCase()} — approval opens once the
             quality gate passes.
           </p>

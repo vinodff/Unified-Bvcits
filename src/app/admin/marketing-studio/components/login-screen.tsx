@@ -23,11 +23,11 @@ export function LoginScreen({ onLogin }: { onLogin: (a: { ok: boolean; dev: bool
   };
 
   return (
-    <div className="grid min-h-screen place-items-center bg-brand-black px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-brand-gold/20 bg-[#121214] p-8">
-        <p className="eyebrow text-brand-gold">Restricted</p>
-        <h1 className="mt-1 font-display text-2xl font-extrabold text-brand-white">Marketing Studio</h1>
-        <p className="mt-2 text-sm text-white/50">
+    <div className="grid min-h-screen place-items-center bg-surface-subtle px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-surface-border bg-white p-8 shadow-card">
+        <p className="eyebrow text-goldDark font-bold uppercase tracking-[0.14em] text-xs">Restricted</p>
+        <h1 className="mt-1 font-display text-2xl font-extrabold text-navy">Marketing Studio Agent</h1>
+        <p className="mt-2 text-sm text-ink-soft">
           Admin access only. No ADMIN_PIN is configured on this server, so any PIN unlocks the studio in DEV/MOCK mode.
         </p>
         <div className="mt-6 space-y-3">

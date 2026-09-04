@@ -63,7 +63,7 @@ export function CampaignIntake({
   };
 
   if (loadError) return <ErrorNote message={loadError} />;
-  if (!data) return <Card><p className="text-sm text-white/40">Loading the interview…</p></Card>;
+  if (!data) return <Card><p className="text-sm text-ink-muted">Loading the interview…</p></Card>;
 
   const step = editing ?? data.step;
   const phase = editing ? "gaps" : data.phase;
@@ -103,21 +103,21 @@ export function CampaignIntake({
       />
 
       <div className="mb-5">
-        <div className="mb-1.5 flex items-center justify-between text-[11px] uppercase tracking-widest text-white/45">
+        <div className="mb-1.5 flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
           <span>{data.campaign.title}</span>
           <span>{data.answered} of {data.total} answered</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-          <div className="h-full rounded-full bg-brand-gold transition-all duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-1.5 overflow-hidden rounded-full bg-surface-border">
+          <div className="h-full rounded-full bg-gold transition-all duration-500" style={{ width: `${pct}%` }} />
         </div>
       </div>
 
       <ErrorNote message={error} />
 
       {understood && understood.length > 0 && phase !== "describe" && (
-        <div className="mb-4 rounded-xl border border-brand-gold/25 bg-brand-gold/5 px-4 py-3">
-          <p className="text-xs text-white/70">
-            <span className="font-semibold text-brand-gold">Picked up from your description:</span>{" "}
+        <div className="mb-4 rounded-xl border border-gold/30 bg-goldLight/20 px-4 py-3">
+          <p className="text-xs text-ink-soft">
+            <span className="font-semibold text-goldDark">Picked up from your description:</span>{" "}
             {understood.join(", ")}.
           </p>
         </div>
@@ -125,7 +125,7 @@ export function CampaignIntake({
 
       {phase === "describe" && (
         <Card>
-          <p className="mb-3 text-sm text-white/65">
+          <p className="mb-3 text-sm text-ink-soft">
             Describe it the way you would to a colleague — what happened, when, where, who was involved,
             who won, what the prizes were. Anything you mention here I won&apos;t ask again.
           </p>
@@ -138,7 +138,7 @@ export function CampaignIntake({
             className={`${inputCls} resize-y leading-relaxed`}
           />
           <div className="mt-4 flex items-center justify-between gap-3">
-            <p className="text-xs text-white/35">
+            <p className="text-xs text-ink-muted">
               The more you write, the fewer questions follow.
             </p>
             <Button onClick={submitBrief} disabled={busy || brief.trim().length < 15}>
@@ -152,10 +152,10 @@ export function CampaignIntake({
         <Card>
           <div className="mb-1 flex items-center gap-2">
             <Pill tone={step.required ? "success" : "neutral"}>{step.required ? "Required" : "Optional"}</Pill>
-            {editing && <span className="text-[11px] text-white/40">editing an earlier answer</span>}
+            {editing && <span className="text-[11px] text-ink-muted">editing an earlier answer</span>}
           </div>
-          <p className="font-display text-lg font-bold text-brand-white">{step.prompt}</p>
-          {step.help && <p className="mt-1.5 text-xs leading-relaxed text-white/45">{step.help}</p>}
+          <p className="font-display text-lg font-bold text-navy">{step.prompt}</p>
+          {step.help && <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">{step.help}</p>}
 
           <div className="mt-4">
             <AnswerInput step={step} value={answer} onChange={setAnswer} onSubmit={submitAnswer} />
@@ -163,9 +163,9 @@ export function CampaignIntake({
 
           <div className="mt-4 flex items-center justify-between gap-3">
             {step.required ? (
-              <p className="text-xs text-white/35">This one is needed before generation can start.</p>
+              <p className="text-xs text-ink-muted">This one is needed before generation can start.</p>
             ) : (
-              <button onClick={skip} disabled={busy} className="text-xs text-white/45 underline-offset-4 hover:text-brand-gold hover:underline disabled:opacity-40">
+              <button onClick={skip} disabled={busy} className="text-xs text-ink-muted underline-offset-4 hover:text-goldDark hover:underline disabled:opacity-40">
                 I don&apos;t have this — skip
               </button>
             )}
@@ -178,10 +178,10 @@ export function CampaignIntake({
 
       {phase === "photos" && (
         <Card>
-          <p className="font-display text-lg font-bold text-brand-white">
+          <p className="font-display text-lg font-bold text-navy">
             {data.photosRequired ? "Upload the photographs" : "Add photos (optional)"}
           </p>
-          <p className="mt-1.5 text-xs leading-relaxed text-white/45">
+          <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">
             {data.photosRequired
               ? "At least one real photograph is required before generation starts. The creative agent composes your photos into posters — it never generates people or invents a scene."
               : "This campaign is dated in the future, so there may be nothing to upload yet."}
@@ -191,22 +191,22 @@ export function CampaignIntake({
           <button
             onClick={() => fileRef.current?.click()}
             disabled={busy}
-            className="mt-4 flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/15 px-6 py-12 transition hover:border-brand-gold/50 hover:bg-brand-gold/[0.03] disabled:opacity-40"
+            className="mt-4 flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-surface-border bg-surface-subtle px-6 py-12 transition hover:border-gold hover:bg-goldLight/10 disabled:opacity-40"
           >
-            <span className="text-2xl text-brand-gold">⇪</span>
-            <span className="text-sm font-semibold text-white/80">{busy ? "Uploading…" : "Choose photographs"}</span>
-            <span className="text-xs text-white/35">JPG or PNG · you can select several at once</span>
+            <span className="text-2xl text-goldDark">⇪</span>
+            <span className="text-sm font-semibold text-navy">{busy ? "Uploading…" : "Choose photographs"}</span>
+            <span className="text-xs text-ink-muted">JPG or PNG · you can select several at once</span>
           </button>
 
           {data.photoCount > 0 && (
-            <p className="mt-3 text-center text-xs text-brand-gold">
+            <p className="mt-3 text-center text-xs font-semibold text-goldDark">
               {data.photoCount} photo{data.photoCount === 1 ? "" : "s"} uploaded.
             </p>
           )}
 
           <div className="mt-4 flex items-center justify-between gap-3">
             {!data.photosRequired && (
-              <button onClick={skip} disabled={busy} className="text-xs text-white/45 underline-offset-4 hover:text-brand-gold hover:underline disabled:opacity-40">
+              <button onClick={skip} disabled={busy} className="text-xs text-ink-muted underline-offset-4 hover:text-goldDark hover:underline disabled:opacity-40">
                 No photos — continue
               </button>
             )}
@@ -219,12 +219,12 @@ export function CampaignIntake({
 
       {phase === "confirm" && (
         <Card>
-          <p className="mb-1 font-display text-lg font-bold text-brand-white">Everything I have on this campaign</p>
-          <p className="mb-4 text-xs text-white/45">
+          <p className="mb-1 font-display text-lg font-bold text-navy">Everything I have on this campaign</p>
+          <p className="mb-4 text-xs text-ink-muted">
             Click any row to correct it. Agents treat these as fact and publish them verbatim.
           </p>
 
-          <div className="divide-y divide-white/5 overflow-hidden rounded-xl border border-white/10">
+          <div className="divide-y divide-surface-border overflow-hidden rounded-xl border border-surface-border bg-surface-subtle">
             {data.summary.map((row) => (
               <button
                 key={row.field}
@@ -238,10 +238,10 @@ export function CampaignIntake({
                   setAnswer(row.value ?? "");
                 }}
                 disabled={row.field === "photos"}
-                className="flex w-full items-start justify-between gap-4 px-3.5 py-2.5 text-left transition hover:bg-white/[0.03] disabled:hover:bg-transparent"
+                className="flex w-full items-start justify-between gap-4 px-3.5 py-2.5 text-left transition hover:bg-white disabled:hover:bg-transparent"
               >
-                <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-brand-gold/80">{row.label}</span>
-                <span className={`min-w-0 flex-1 text-right text-sm ${row.value ? "text-white/80" : "text-white/30 italic"}`}>
+                <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-goldDark">{row.label}</span>
+                <span className={`min-w-0 flex-1 text-right text-sm ${row.value ? "text-navy font-medium" : "text-ink-muted italic"}`}>
                   {row.value ?? (row.skipped ? "skipped" : "not provided")}
                 </span>
               </button>
@@ -249,7 +249,7 @@ export function CampaignIntake({
           </div>
 
           {!data.canGenerate && (
-            <p className="mt-4 rounded-lg border border-brand-maroon/40 bg-brand-maroon/10 px-3 py-2 text-xs text-red-200">
+            <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
               Still blocked: {data.missingRequired.join(", ") || "a required photograph"}.
             </p>
           )}

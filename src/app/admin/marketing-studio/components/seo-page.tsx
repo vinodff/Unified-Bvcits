@@ -54,10 +54,10 @@ export function SeoPage({ campaigns, onOpen }: { campaigns: Campaign[]; onOpen: 
           {rows.filter((r) => r.seo).map((r) => (
             <Card key={r.campaignId}>
               <button onClick={() => onOpen(r.campaignId)} className="text-left">
-                <p className="font-display text-base font-bold text-brand-white hover:text-brand-gold">{r.campaignTitle}</p>
-                <p className="mt-1 text-sm text-white/75">{r.seo!.seoTitle}</p>
-                <p className="mt-0.5 text-xs text-white/45">{r.seo!.metaDescription}</p>
-                {r.slug && <p className="mt-1 text-[10px] text-white/35">/{r.slug}</p>}
+                <p className="font-display text-base font-bold text-navy hover:text-goldDark">{r.campaignTitle}</p>
+                <p className="mt-1 text-sm text-ink-soft">{r.seo!.seoTitle}</p>
+                <p className="mt-0.5 text-xs text-ink-muted">{r.seo!.metaDescription}</p>
+                {r.slug && <p className="mt-1 text-[10px] text-ink-muted">/{r.slug}</p>}
               </button>
               {r.quality && (
                 <div className="mt-2 flex items-center gap-2">
@@ -68,7 +68,7 @@ export function SeoPage({ campaigns, onOpen }: { campaigns: Campaign[]; onOpen: 
           ))}
         </div>
       )}
-      <p className="mt-4 text-xs text-white/40">
+      <p className="mt-4 text-xs text-ink-muted">
         The SEO score is a transparent in-house assessment (intent, originality, completeness, linking, alt text) — it is not a Google ranking.
       </p>
     </div>

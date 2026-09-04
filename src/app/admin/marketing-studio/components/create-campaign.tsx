@@ -45,7 +45,7 @@ export function CreateCampaign({ onCreated }: { onCreated: (id: string) => void 
           <Field label="Campaign type">
             <select value={type} onChange={(e) => setType(e.target.value)} className={inputCls}>
               {CAMPAIGN_TYPES.map((t) => (
-                <option key={t} value={t} className="bg-brand-black">
+                <option key={t} value={t} className="bg-white text-navy">
                   {CAMPAIGN_TYPE_LABELS[t]}
                 </option>
               ))}
@@ -57,7 +57,7 @@ export function CreateCampaign({ onCreated }: { onCreated: (id: string) => void 
           </Button>
         </div>
       </Card>
-      <p className="mt-4 text-center text-xs text-white/40">
+      <p className="mt-4 text-center text-xs text-ink-muted">
         Next you&apos;ll describe the event in your own words. Nothing is generated until the
         interview is complete — agents never write from a title alone.
       </p>

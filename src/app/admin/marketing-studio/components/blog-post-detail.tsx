@@ -38,8 +38,8 @@ function QualityPanel({ post }: { post: BlogPost }) {
       <Card>
         <div className="flex flex-wrap items-center gap-4">
           <div>
-            <p className="font-display text-4xl font-extrabold text-brand-gold">{quality.overall}</p>
-            <p className="text-[10px] uppercase tracking-widest text-white/40">out of 100</p>
+            <p className="font-display text-4xl font-extrabold text-goldDark">{quality.overall}</p>
+            <p className="text-[10px] uppercase tracking-widest text-ink-muted">out of 100</p>
           </div>
           <Pill tone={quality.verdict === "pass" ? "success" : "danger"}>
             {quality.verdict === "pass" ? "Passed the gate" : "Held for review"}
@@ -49,14 +49,14 @@ function QualityPanel({ post }: { post: BlogPost }) {
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           {Object.entries(quality.breakdown).map(([key, value]) => (
             <div key={key} className="flex items-center gap-3">
-              <span className="w-40 shrink-0 text-[11px] uppercase tracking-wide text-white/45">{key}</span>
-              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+              <span className="w-40 shrink-0 text-[11px] uppercase tracking-wide text-ink-soft">{key}</span>
+              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-border">
                 <span
-                  className="block h-full rounded-full bg-brand-gold"
+                  className="block h-full rounded-full bg-gold"
                   style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
                 />
               </span>
-              <span className="w-9 text-right text-[11px] text-white/55">{value}</span>
+              <span className="w-9 text-right text-[11px] text-ink-muted">{value}</span>
             </div>
           ))}
         </div>
@@ -64,30 +64,30 @@ function QualityPanel({ post }: { post: BlogPost }) {
 
       {quality.issues.length ? (
         <Card>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-muted">
             Findings ({quality.issues.length})
           </p>
           <ul className="mt-3 space-y-3">
             {quality.issues.map((issue, i) => (
               <li key={i} className="flex gap-3">
                 <Pill tone={issueTone(issue.severity)}>{issue.severity}</Pill>
-                <span className="flex-1 text-[13px] leading-relaxed text-white/70">{issue.message}</span>
+                <span className="flex-1 text-[13px] leading-relaxed text-ink-soft">{issue.message}</span>
               </li>
             ))}
           </ul>
         </Card>
       ) : (
         <Card>
-          <p className="text-[13px] text-white/60">No findings — nothing in the article tripped a check.</p>
+          <p className="text-[13px] text-ink-soft">No findings — nothing in the article tripped a check.</p>
         </Card>
       )}
 
       {quality.revisions.length ? (
         <Card>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-muted">
             What the revision pass fixed
           </p>
-          <ul className="mt-2 space-y-1.5 text-[13px] text-white/60">
+          <ul className="mt-2 space-y-1.5 text-[13px] text-ink-soft">
             {quality.revisions.map((r, i) => (
               <li key={i}>· {r}</li>
             ))}
@@ -97,15 +97,15 @@ function QualityPanel({ post }: { post: BlogPost }) {
 
       {/* Provenance. Every figure the writer was allowed to state about the
           college, so a suspicious number can be traced rather than argued about. */}
-      <details className="rounded-2xl border border-white/10 px-5 py-4">
-        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-widest text-white/40">
+      <details className="rounded-2xl border border-surface-border bg-surface-subtle px-5 py-4">
+        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
           Facts the writer was given ({Object.keys(post.grounding).length})
         </summary>
         <dl className="mt-3 grid gap-2 text-[12px] sm:grid-cols-2">
           {Object.entries(post.grounding).map(([k, v]) => (
-            <div key={k} className="rounded-lg bg-white/[0.03] px-3 py-2">
-              <dt className="text-[10px] uppercase tracking-widest text-white/35">{k}</dt>
-              <dd className="mt-0.5 text-white/65">{String(v)}</dd>
+            <div key={k} className="rounded-lg bg-surface-form border border-surface-border px-3 py-2">
+              <dt className="text-[10px] uppercase tracking-widest text-ink-muted">{k}</dt>
+              <dd className="mt-0.5 text-navy font-medium">{String(v)}</dd>
             </div>
           ))}
         </dl>
@@ -119,13 +119,13 @@ function SeoPanel({ post }: { post: BlogPost }) {
   return (
     <div className="space-y-5">
       <Card>
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">Google result preview</p>
-        <div className="mt-3 rounded-xl bg-white p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-muted">Google result preview</p>
+        <div className="mt-3 rounded-xl border border-surface-border bg-white p-4 shadow-xs">
           <p className="text-[13px] text-[#4d5156]">bvcits.edu.in › blog › {seo.slug}</p>
-          <p className="mt-0.5 text-[19px] leading-snug text-[#1a0dab]">{seo.seoTitle}</p>
+          <p className="mt-0.5 text-[19px] font-medium leading-snug text-[#1a0dab] hover:underline cursor-pointer">{seo.seoTitle}</p>
           <p className="mt-1 text-[13px] leading-snug text-[#4d5156]">{seo.metaDescription}</p>
         </div>
-        <p className="mt-2 text-[11px] text-white/35">
+        <p className="mt-2 text-[11px] text-ink-muted">
           Title {seo.seoTitle.length} chars · description {seo.metaDescription.length} chars
         </p>
       </Card>
@@ -133,35 +133,35 @@ function SeoPanel({ post }: { post: BlogPost }) {
       <Card>
         <dl className="grid gap-3 text-[13px] sm:grid-cols-2">
           <div>
-            <dt className="text-[10px] uppercase tracking-widest text-white/40">Target phrase</dt>
-            <dd className="mt-1 text-brand-gold">{seo.primaryKeyword || "—"}</dd>
+            <dt className="text-[10px] uppercase tracking-widest text-ink-muted">Target phrase</dt>
+            <dd className="mt-1 font-semibold text-goldDark">{seo.primaryKeyword || "—"}</dd>
           </div>
           <div>
-            <dt className="text-[10px] uppercase tracking-widest text-white/40">Supporting phrases</dt>
-            <dd className="mt-1 text-white/65">{seo.secondaryKeywords.join(" · ") || "—"}</dd>
+            <dt className="text-[10px] uppercase tracking-widest text-ink-muted">Supporting phrases</dt>
+            <dd className="mt-1 text-ink-soft">{seo.secondaryKeywords.join(" · ") || "—"}</dd>
           </div>
           <div>
-            <dt className="text-[10px] uppercase tracking-widest text-white/40">Internal links</dt>
-            <dd className="mt-1 text-white/65">{seo.internalLinks.map((l) => l.href).join(" · ") || "—"}</dd>
+            <dt className="text-[10px] uppercase tracking-widest text-ink-muted">Internal links</dt>
+            <dd className="mt-1 text-ink-soft">{seo.internalLinks.map((l) => l.href).join(" · ") || "—"}</dd>
           </div>
           <div>
-            <dt className="text-[10px] uppercase tracking-widest text-white/40">Sections</dt>
-            <dd className="mt-1 text-white/65">{seo.h2Structure.length} H2 headings</dd>
+            <dt className="text-[10px] uppercase tracking-widest text-ink-muted">Sections</dt>
+            <dd className="mt-1 text-ink-soft">{seo.h2Structure.length} H2 headings</dd>
           </div>
         </dl>
         {seo.repaired.length ? (
-          <p className="mt-4 rounded-lg border border-brand-maroon/40 bg-brand-maroon/10 px-3 py-2 text-[12px] text-red-200">
+          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-900">
             The model returned an unusable value for: {seo.repaired.join(", ")}. Those fields fell back to the
             deterministic defaults.
           </p>
         ) : null}
       </Card>
 
-      <details className="rounded-2xl border border-white/10 px-5 py-4">
-        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-widest text-white/40">
+      <details className="rounded-2xl border border-surface-border bg-surface-subtle px-5 py-4">
+        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
           Structured data (JSON-LD)
         </summary>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-black/50 p-4 text-[11px] leading-relaxed text-white/60">
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-surface-form border border-surface-border p-4 text-[11px] leading-relaxed text-navy">
           {JSON.stringify(seo.schemaJsonLd, null, 2)}
         </pre>
       </details>
@@ -227,7 +227,7 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
                   href={`/blog/${post.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-white/85 hover:border-brand-gold/50 hover:text-brand-gold"
+                  className="inline-flex items-center rounded-xl border border-surface-border bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-gold hover:text-goldDark shadow-xs"
                 >
                   View live ↗
                 </a>
@@ -244,7 +244,7 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2 text-[12px] text-white/45">
+      <div className="flex flex-wrap items-center gap-2 text-[12px] text-ink-muted">
         <Pill tone={post.status === "PUBLISHED" ? "success" : post.status === "FAILED" ? "danger" : "info"}>
           {post.status.replace(/_/g, " ")}
         </Pill>
@@ -263,20 +263,20 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
       {post.publishError ? <ErrorNote message={post.publishError} /> : null}
 
       {criticalCount ? (
-        <div className="rounded-xl border border-brand-maroon/50 bg-brand-maroon/15 px-4 py-3 text-[13px] text-red-200">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
           Held back: {criticalCount} critical finding{criticalCount === 1 ? "" : "s"} on the Quality tab. Fix the copy
           on the Edit tab, or publish anyway if you disagree with the check — the override is recorded against your
           name.
         </div>
       ) : null}
 
-      <div className="flex flex-wrap gap-1 border-b border-white/10">
+      <div className="flex flex-wrap gap-1 border-b border-surface-border">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`rounded-t-lg px-4 py-2 text-sm font-medium transition ${
-              tab === t.id ? "border-b-2 border-brand-gold text-brand-gold" : "text-white/50 hover:text-white/80"
+              tab === t.id ? "border-b-2 border-gold text-goldDark font-semibold" : "text-ink-muted hover:text-navy"
             }`}
           >
             {t.label}
@@ -285,7 +285,7 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
       </div>
 
       {tab === "preview" ? (
-        <div className="overflow-hidden rounded-2xl bg-white">
+        <div className="overflow-hidden rounded-2xl border border-surface-border bg-white shadow-card">
           {hero ? (
             <div className="relative aspect-[16/9] w-full">
               <Image src={hero.url} alt={hero.alt} fill sizes="900px" className="object-cover" unoptimized />
@@ -323,8 +323,8 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
               onChange={(e) => setDraft({ ...draft, bodyMd: e.target.value })}
             />
           </Field>
-          <p className="text-[12px] text-white/40">
-            The URL <span className="text-white/60">/blog/{post.slug}</span> is fixed — changing it would break every
+          <p className="text-[12px] text-ink-muted">
+            The URL <span className="font-mono text-navy font-medium">/blog/{post.slug}</span> is fixed — changing it would break every
             link already shared.
           </p>
           <div className="flex gap-2">
@@ -346,31 +346,31 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
       {tab === "activity" ? (
         <div className="space-y-4">
           <Card>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">Images</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-muted">Images</p>
             {images.length ? (
               <ul className="mt-3 space-y-2 text-[12px]">
                 {images.map((img) => (
-                  <li key={img.id} className="rounded-lg bg-white/[0.03] px-3 py-2">
-                    <span className="text-white/70">
+                  <li key={img.id} className="rounded-lg bg-surface-form border border-surface-border px-3 py-2">
+                    <span className="text-navy font-medium">
                       {img.placement}
                       {img.sectionIndex != null ? ` #${img.sectionIndex}` : ""} · {img.width}×{img.height}
                     </span>
                     <Pill tone={img.photoBacked ? "success" : "neutral"}>
                       {img.photoBacked ? "real photograph" : "brand graphic"}
                     </Pill>
-                    <span className="mt-1 block text-white/40">{img.sourceNote}</span>
+                    <span className="mt-1 block text-ink-muted">{img.sourceNote}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-[13px] text-white/45">No images were generated for this article.</p>
+              <p className="mt-2 text-[13px] text-ink-muted">No images were generated for this article.</p>
             )}
           </Card>
 
           {runs.length ? (
-            <div className="overflow-x-auto rounded-2xl border border-brand-gold/15">
+            <div className="overflow-x-auto rounded-2xl border border-surface-border bg-white shadow-xs">
               <table className="w-full min-w-[40rem] text-left text-sm">
-                <thead className="bg-white/5 text-[10px] uppercase tracking-widest text-white/45">
+                <thead className="border-b border-surface-border bg-surface-subtle text-[10px] uppercase tracking-widest text-ink-muted">
                   <tr>
                     <th className="px-4 py-3">Agent</th>
                     <th className="px-4 py-3">Status</th>
@@ -381,19 +381,19 @@ export function BlogPostDetail({ id, onBack }: { id: string; onBack: () => void 
                 </thead>
                 <tbody>
                   {runs.map((r) => (
-                    <tr key={r.id} className="border-t border-white/5">
-                      <td className="px-4 py-3 font-medium text-white/85">{r.agentName}</td>
+                    <tr key={r.id} className="border-t border-surface-border hover:bg-surface-subtle">
+                      <td className="px-4 py-3 font-medium text-navy">{r.agentName}</td>
                       <td className="px-4 py-3">
                         <Pill tone={r.status === "success" ? "success" : r.status === "failed" ? "danger" : "neutral"}>
                           {r.status}
                         </Pill>
                       </td>
-                      <td className="px-4 py-3 text-white/60">
+                      <td className="px-4 py-3 text-ink-soft">
                         {r.summary}
-                        {r.error ? <span className="mt-1 block text-red-300">{r.error}</span> : null}
+                        {r.error ? <span className="mt-1 block text-crimson">{r.error}</span> : null}
                       </td>
-                      <td className="px-4 py-3 text-white/45">{r.durationMs != null ? `${(r.durationMs / 1000).toFixed(1)}s` : "—"}</td>
-                      <td className="px-4 py-3 text-white/40">{fmtDate(r.startedAt)}</td>
+                      <td className="px-4 py-3 text-ink-muted">{r.durationMs != null ? `${(r.durationMs / 1000).toFixed(1)}s` : "—"}</td>
+                      <td className="px-4 py-3 text-ink-muted">{fmtDate(r.startedAt)}</td>
                     </tr>
                   ))}
                 </tbody>
