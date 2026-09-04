@@ -34,3 +34,12 @@ public/globe-sequence/
 public/hero-sequence/
 public/whiteai-sequence/
 supabase/.temp/
+
+# Local dev server output — noise, not source.
+dev-server*.log
+
+# Scratch output from image-agent runs.
+test_generated_image.jpg
+
+# .env.example is placeholders only and documents required config — keep it.
+!.env.example
