@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import BlogImage from "@/components/blog/BlogImage";
 import Markdown, { tableOfContents } from "@/components/blog/Markdown";
 import { Reveal } from "@/components/motion/Reveal";
 import { formatPublished, getPublished, listPublished, relatedPosts } from "@/lib/blog/public";
@@ -77,48 +77,45 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
       />
 
       <article>
-        <header className="relative isolate overflow-hidden bg-navy">
-          {post.heroImageUrl ? (
-            <Image
-              src={post.heroImageUrl}
-              alt=""
-              fill
-              priority
-              quality={82}
-              sizes="100vw"
-              className="object-cover object-center opacity-30"
-            />
-          ) : null}
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-navy-800/90" />
-
-          <div className="container-page relative py-14 md:py-20">
+        <header className="border-b border-surface-border bg-gradient-to-b from-surface-subtle via-white to-white py-12 md:py-16">
+          <div className="container-page">
             <Breadcrumb items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
 
             <div className="mt-6 max-w-3xl">
-              <span className="inline-flex rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-brand-black">
+              <span className="inline-flex rounded-full border border-gold/40 bg-goldLight/30 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-navy">
                 {post.category}
               </span>
-              <h1 className="mt-5 font-display text-3xl font-extrabold leading-[1.12] tracking-tight text-white md:text-5xl">
+              <h1 className="mt-4 font-display text-3xl font-extrabold leading-[1.15] tracking-tight text-navy md:text-5xl">
                 {post.title}
               </h1>
-              <p className="mt-5 text-base leading-relaxed text-white/75 md:text-lg">{post.excerpt}</p>
+              <p className="mt-4 text-base leading-relaxed text-ink-soft md:text-lg">{post.excerpt}</p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.14em] text-gold">
-                <span>{site.shortName} Editorial</span>
+              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                <span className="text-goldDark font-bold">{site.shortName} Editorial</span>
                 {published ? (
                   <>
-                    <span aria-hidden className="text-white/30">
-                      /
-                    </span>
+                    <span aria-hidden className="text-surface-border">/</span>
                     <time dateTime={post.publishedAt ?? undefined}>{published}</time>
                   </>
                 ) : null}
-                <span aria-hidden className="text-white/30">
-                  /
-                </span>
+                <span aria-hidden className="text-surface-border">/</span>
                 <span>{post.readingMinutes} min read</span>
               </div>
             </div>
+
+            {post.heroImageUrl ? (
+              <div className="mt-8 max-w-4xl overflow-hidden rounded-2xl border border-surface-border bg-surface-subtle shadow-card">
+                <BlogImage
+                  src={post.heroImageUrl}
+                  alt={post.title}
+                  category={post.category}
+                  title={post.title}
+                  aspectRatio="16/9"
+                  priority
+                  className="h-auto max-h-[480px] w-full object-cover"
+                />
+              </div>
+            ) : null}
           </div>
         </header>
 
@@ -199,22 +196,20 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
                   <Link
                     key={r.slug}
                     href={`/blog/${r.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-white transition hover:-translate-y-1 hover:border-crimson-300 hover:shadow-lg"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-white transition hover:-translate-y-1 hover:border-gold hover:shadow-lift"
                   >
-                    <div className="relative aspect-[16/9] w-full bg-surface-grey">
-                      {r.heroImageUrl ? (
-                        <Image
-                          src={r.heroImageUrl}
-                          alt=""
-                          fill
-                          sizes="(min-width: 1024px) 360px, 100vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : null}
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-subtle">
+                      <BlogImage
+                        src={r.heroImageUrl}
+                        alt={r.heroImageAlt ?? r.title}
+                        category={r.category}
+                        title={r.title}
+                        aspectRatio="16/9"
+                      />
                     </div>
                     <div className="flex flex-1 flex-col p-5">
                       <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-crimson">{r.category}</p>
-                      <h3 className="mt-2 font-display text-base font-bold leading-snug text-navy group-hover:text-crimson">
+                      <h3 className="mt-2 font-display text-base font-bold leading-snug text-navy group-hover:text-goldDark transition">
                         {r.title}
                       </h3>
                       <p className="mt-auto pt-4 text-xs text-ink-muted">{r.readingMinutes} min read</p>

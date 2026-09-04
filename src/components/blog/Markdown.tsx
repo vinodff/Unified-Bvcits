@@ -10,9 +10,9 @@
 // writer agent is instructed to produce, and a 200-line renderer we control
 // beats a dependency plus a sanitiser configuration to keep correct.
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import BlogImage from "./BlogImage";
 
 /** Only these protocols may appear in a link the model wrote. */
 function safeHref(href: string): string | null {
@@ -300,18 +300,17 @@ export default function Markdown({ source }: { source: string }) {
             );
           case "image":
             return (
-              <figure key={key} className="mt-10">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-surface-subtle ring-1 ring-surface-border">
-                  <Image
-                    src={block.src}
-                    alt={block.alt}
-                    fill
-                    sizes="(min-width: 1024px) 720px, 100vw"
-                    className="object-cover"
-                  />
-                </div>
+              <figure key={key} className="my-8 overflow-hidden rounded-2xl border border-surface-border bg-surface-subtle shadow-card">
+                <BlogImage
+                  src={block.src}
+                  alt={block.alt || "Article illustration"}
+                  title={block.alt || undefined}
+                  aspectRatio="16/9"
+                />
                 {block.alt ? (
-                  <figcaption className="mt-3 text-center text-sm text-ink-muted">{block.alt}</figcaption>
+                  <figcaption className="border-t border-surface-border bg-white px-4 py-2 text-center text-xs font-medium text-ink-muted">
+                    {block.alt}
+                  </figcaption>
                 ) : null}
               </figure>
             );

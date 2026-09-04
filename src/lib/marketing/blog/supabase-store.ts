@@ -247,9 +247,19 @@ function fromRun(r: BlogAgentRun): Row {
 export class SupabaseBlogStore implements BlogStore {
   private injected: SupabaseClient | null;
   private resolved: SupabaseClient | null = null;
+  private fallbackStore: BlogStore | null = null;
 
   constructor(client?: SupabaseClient) {
     this.injected = client ?? null;
+  }
+
+  private get fallback(): BlogStore {
+    if (!this.fallbackStore) {
+      // Lazy load to prevent circular imports
+      const { JsonFileBlogStore } = require("./store");
+      this.fallbackStore = new JsonFileBlogStore();
+    }
+    return this.fallbackStore!;
   }
 
   /** Resolved lazily so `next build` does not fail on a missing key. */
@@ -262,29 +272,63 @@ export class SupabaseBlogStore implements BlogStore {
   private async run<T>(
     label: string,
     fn: () => PromiseLike<{ data: unknown; error: { message: string; code?: string } | null }>,
-    map: (r: Row) => T
+    map: (r: Row) => T,
+    fallbackFn?: () => Promise<T[]>
   ): Promise<T[]> {
-    const { data, error } = await fn();
-    if (error) throw new Error(`Blog store ${label} failed: ${error.message}`);
-    return Array.isArray(data) ? (data as Row[]).map(map) : [];
+    try {
+      const { data, error } = await fn();
+      if (error) {
+        if (fallbackFn) return await fallbackFn();
+        throw new Error(`Blog store ${label} failed: ${error.message}`);
+      }
+      return Array.isArray(data) ? (data as Row[]).map(map) : [];
+    } catch (err) {
+      if (fallbackFn) return await fallbackFn();
+      throw new Error(`Blog store ${label} failed: ${(err as Error).message}`);
+    }
   }
 
   private async one<T>(
     label: string,
     fn: () => PromiseLike<{ data: unknown; error: { message: string; code?: string } | null }>,
-    map: (r: Row) => T
+    map: (r: Row) => T,
+    fallbackFn?: () => Promise<T | null>
   ): Promise<T | null> {
-    const { data, error } = await fn();
-    if (error) {
-      if (error.code === NO_ROWS) return null;
-      throw new Error(`Blog store ${label} failed: ${error.message}`);
+    try {
+      const { data, error } = await fn();
+      if (error) {
+        if (error.code === NO_ROWS) return null;
+        if (fallbackFn) return await fallbackFn();
+        throw new Error(`Blog store ${label} failed: ${error.message}`);
+      }
+      return data ? map(data as Row) : null;
+    } catch (err) {
+      if (fallbackFn) return await fallbackFn();
+      throw new Error(`Blog store ${label} failed: ${(err as Error).message}`);
     }
-    return data ? map(data as Row) : null;
   }
 
-  private async write(label: string, fn: () => PromiseLike<{ error: { message: string } | null }>): Promise<void> {
-    const { error } = await fn();
-    if (error) throw new Error(`Blog store ${label} failed: ${error.message}`);
+  private async write(
+    label: string,
+    fn: () => PromiseLike<{ error: { message: string } | null }>,
+    fallbackFn?: () => Promise<void>
+  ): Promise<void> {
+    try {
+      const { error } = await fn();
+      if (error) {
+        if (fallbackFn) {
+          await fallbackFn();
+          return;
+        }
+        throw new Error(`Blog store ${label} failed: ${error.message}`);
+      }
+    } catch (err) {
+      if (fallbackFn) {
+        await fallbackFn();
+        return;
+      }
+      throw new Error(`Blog store ${label} failed: ${(err as Error).message}`);
+    }
   }
 
   // ---- topics ----
@@ -298,22 +342,34 @@ export class SupabaseBlogStore implements BlogStore {
         query = query.order("proposed_on", { ascending: false }).order("score", { ascending: false });
         return q.limit ? query.limit(q.limit) : query;
       },
-      toTopic
+      toTopic,
+      () => this.fallback.listTopics(q)
     );
   }
 
   async getTopic(id: string): Promise<BlogTopic | null> {
-    return this.one("getTopic", () => this.client.from("blog_topics").select("*").eq("id", id).single(), toTopic);
+    return this.one(
+      "getTopic",
+      () => this.client.from("blog_topics").select("*").eq("id", id).single(),
+      toTopic,
+      () => this.fallback.getTopic(id)
+    );
   }
 
   async saveTopic(t: BlogTopic): Promise<void> {
-    await this.write("saveTopic", () => this.client.from("blog_topics").upsert(fromTopic(t), { onConflict: "id" }));
+    await this.write(
+      "saveTopic",
+      () => this.client.from("blog_topics").upsert(fromTopic(t), { onConflict: "id" }),
+      () => this.fallback.saveTopic(t)
+    );
   }
 
   async saveTopics(ts: BlogTopic[]): Promise<void> {
     if (!ts.length) return;
-    await this.write("saveTopics", () =>
-      this.client.from("blog_topics").upsert(ts.map(fromTopic), { onConflict: "id" })
+    await this.write(
+      "saveTopics",
+      () => this.client.from("blog_topics").upsert(ts.map(fromTopic), { onConflict: "id" }),
+      () => this.fallback.saveTopics(ts)
     );
   }
 
@@ -335,25 +391,44 @@ export class SupabaseBlogStore implements BlogStore {
         if (q.limit) query = query.range(from, from + q.limit - 1);
         return query;
       },
-      toPost
+      toPost,
+      () => this.fallback.listPosts(q)
     );
   }
 
   async getPost(id: string): Promise<BlogPost | null> {
-    return this.one("getPost", () => this.client.from("blog_posts").select("*").eq("id", id).single(), toPost);
+    return this.one(
+      "getPost",
+      () => this.client.from("blog_posts").select("*").eq("id", id).single(),
+      toPost,
+      () => this.fallback.getPost(id)
+    );
   }
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
-    return this.one("getPostBySlug", () => this.client.from("blog_posts").select("*").eq("slug", slug).single(), toPost);
+    return this.one(
+      "getPostBySlug",
+      () => this.client.from("blog_posts").select("*").eq("slug", slug).single(),
+      toPost,
+      () => this.fallback.getPostBySlug(slug)
+    );
   }
 
   async savePost(p: BlogPost): Promise<void> {
-    await this.write("savePost", () => this.client.from("blog_posts").upsert(fromPost(p), { onConflict: "id" }));
+    await this.write(
+      "savePost",
+      () => this.client.from("blog_posts").upsert(fromPost(p), { onConflict: "id" }),
+      () => this.fallback.savePost(p)
+    );
   }
 
   async slugAvailable(slug: string, exceptId?: string): Promise<boolean> {
-    const existing = await this.getPostBySlug(slug);
-    return !existing || existing.id === exceptId;
+    try {
+      const existing = await this.getPostBySlug(slug);
+      return !existing || existing.id === exceptId;
+    } catch {
+      return this.fallback.slugAvailable(slug, exceptId);
+    }
   }
 
   // ---- images ----
@@ -366,18 +441,25 @@ export class SupabaseBlogStore implements BlogStore {
           .select("*")
           .eq("post_id", postId)
           .order("section_index", { ascending: true, nullsFirst: true }),
-      toImage
+      toImage,
+      () => this.fallback.listImages(postId)
     );
   }
 
   async saveImage(i: BlogImage): Promise<void> {
-    await this.write("saveImage", () =>
-      this.client.from("blog_post_images").upsert(fromImage(i), { onConflict: "id" })
+    await this.write(
+      "saveImage",
+      () => this.client.from("blog_post_images").upsert(fromImage(i), { onConflict: "id" }),
+      () => this.fallback.saveImage(i)
     );
   }
 
   async deleteImages(postId: string): Promise<void> {
-    await this.write("deleteImages", () => this.client.from("blog_post_images").delete().eq("post_id", postId));
+    await this.write(
+      "deleteImages",
+      () => this.client.from("blog_post_images").delete().eq("post_id", postId),
+      () => this.fallback.deleteImages(postId)
+    );
   }
 
   // ---- runs ----
@@ -390,11 +472,16 @@ export class SupabaseBlogStore implements BlogStore {
         if (anchor.topicBatch) query = query.eq("topic_batch", anchor.topicBatch);
         return query.order("started_at", { ascending: false }).limit(limit);
       },
-      toRun
+      toRun,
+      () => this.fallback.listRuns(anchor, limit)
     );
   }
 
   async saveRun(r: BlogAgentRun): Promise<void> {
-    await this.write("saveRun", () => this.client.from("blog_agent_runs").upsert(fromRun(r), { onConflict: "id" }));
+    await this.write(
+      "saveRun",
+      () => this.client.from("blog_agent_runs").upsert(fromRun(r), { onConflict: "id" }),
+      () => this.fallback.saveRun(r)
+    );
   }
 }

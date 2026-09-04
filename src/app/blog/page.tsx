@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import PageBanner from "@/components/ui/PageBanner";
+import BlogImage from "@/components/blog/BlogImage";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { activeCategories, formatPublished, listPublished, type PostCard } from "@/lib/blog/public";
 import { site } from "@/lib/site";
@@ -37,33 +38,30 @@ function FeatureCard({ post }: { post: PostCard }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative block overflow-hidden rounded-3xl border border-surface-border bg-navy"
+      className="group relative block overflow-hidden rounded-3xl border border-surface-border bg-gradient-to-br from-[#08142c] via-[#0f2142] to-[#2a0d18] shadow-card"
     >
-      <div className="relative aspect-[21/9] w-full">
-        {post.heroImageUrl ? (
-          <Image
-            src={post.heroImageUrl}
-            alt={post.heroImageAlt ?? ""}
-            fill
-            priority
-            sizes="(min-width: 1024px) 1100px, 100vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-800 to-navy-700" />
-        )}
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-transparent" />
+      <div className="relative aspect-[21/9] w-full bg-navy overflow-hidden">
+        <BlogImage
+          src={post.heroImageUrl}
+          alt={post.heroImageAlt ?? post.title}
+          category={post.category}
+          title={post.title}
+          aspectRatio="21/9"
+          priority
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#08142c]/90 via-[#08142c]/40 to-transparent pointer-events-none" />
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
-        <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-brand-black">
+      <div className="absolute inset-x-0 bottom-0 p-6 md:p-10 pointer-events-none">
+        <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-navy shadow-xs">
           {post.category}
         </span>
-        <h2 className="mt-4 max-w-3xl font-display text-2xl font-bold leading-tight text-white md:text-4xl">
+        <h2 className="mt-3 max-w-3xl font-display text-2xl font-extrabold leading-tight text-white md:text-4xl">
           {post.title}
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75 md:text-base">{post.excerpt}</p>
-        <p className="mt-4 text-xs uppercase tracking-[0.16em] text-gold">
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/80 md:text-base">{post.excerpt}</p>
+        <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-gold">
           {formatPublished(post.publishedAt)} · {post.readingMinutes} min read
         </p>
       </div>
@@ -75,30 +73,26 @@ function ArticleCard({ post }: { post: PostCard }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-white transition hover:-translate-y-1 hover:border-crimson-300 hover:shadow-xl hover:shadow-navy/5"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-surface-border bg-white transition hover:-translate-y-1 hover:border-gold hover:shadow-lift"
     >
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-grey">
-        {post.heroImageUrl ? (
-          <Image
-            src={post.heroImageUrl}
-            alt={post.heroImageAlt ?? ""}
-            fill
-            sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-navy to-navy-700" />
-        )}
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-subtle">
+        <BlogImage
+          src={post.heroImageUrl}
+          alt={post.heroImageAlt ?? post.title}
+          category={post.category}
+          title={post.title}
+          aspectRatio="16/9"
+        />
       </div>
 
       <div className="flex flex-1 flex-col p-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-crimson">{post.category}</p>
-        <h3 className="mt-2 font-display text-lg font-bold leading-snug text-navy group-hover:text-crimson">
+        <h3 className="mt-2 font-display text-lg font-bold leading-snug text-navy group-hover:text-goldDark transition">
           {post.title}
         </h3>
-        <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-soft">{post.excerpt}</p>
-        <p className="mt-5 flex items-center gap-2 text-xs text-ink-muted">
-          <span className="rounded-full bg-surface-grey px-2 py-0.5 font-medium">{AUDIENCE_LABEL[post.audience]}</span>
+        <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-soft">{post.excerpt}</p>
+        <p className="mt-4 flex items-center gap-2 text-xs text-ink-muted border-t border-surface-border pt-3">
+          <span className="rounded-md bg-surface-subtle px-2 py-0.5 font-medium text-navy">{AUDIENCE_LABEL[post.audience]}</span>
           <span aria-hidden>·</span>
           <span>{post.readingMinutes} min read</span>
         </p>

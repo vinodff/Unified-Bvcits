@@ -188,22 +188,29 @@ async function ensureBucket(): Promise<void> {
 export async function storeImage(relPath: string, bytes: Buffer): Promise<string> {
   const key = relPath.split(/[\\/]+/).filter(Boolean).join("/");
 
-  if (isSupabaseAdminConfigured()) {
-    await ensureBucket();
-    const client = getAdminClient();
-    const { error } = await client.storage.from(BUCKET).upload(key, bytes, {
-      contentType: "image/jpeg",
-      upsert: true,
-      cacheControl: "31536000",
-    });
-    if (error) throw new Error(`Blog image upload failed: ${error.message}`);
-    const { data } = client.storage.from(BUCKET).getPublicUrl(key);
-    return data.publicUrl;
-  }
-
+  // Always write locally to public/blog-media so the site can serve it directly
   const abs = path.join(LOCAL_OUT_DIR, ...key.split("/"));
   await fs.mkdir(path.dirname(abs), { recursive: true });
   await fs.writeFile(abs, bytes);
+
+  if (isSupabaseAdminConfigured()) {
+    try {
+      await ensureBucket();
+      const client = getAdminClient();
+      const { error } = await client.storage.from(BUCKET).upload(key, bytes, {
+        contentType: "image/jpeg",
+        upsert: true,
+        cacheControl: "31536000",
+      });
+      if (!error) {
+        const { data } = client.storage.from(BUCKET).getPublicUrl(key);
+        if (data.publicUrl) return data.publicUrl;
+      }
+    } catch {
+      // Fallback to local path on any storage error
+    }
+  }
+
   return `/blog-media/${key}`;
 }
 
@@ -303,97 +310,117 @@ interface OverlayInput {
 
 /**
  * The blog image overlay.
- *
- * Written here rather than reusing creative-engine's buildOverlaySvg because it
- * needs two things that one does not have and that campaign creatives do not
- * want: a top scrim plus the logo plate, and a wordmark that sits beside the
- * crest rather than alone in the corner. Changing the shared function would
- * have altered every campaign graphic as a side effect.
  */
 function buildBlogOverlaySvg(o: OverlayInput): string {
   const c = DEFAULT_BRAND.colors;
-  const { width: w, height: h, titleSize } = o;
+  const { width: w, height: h, titleSize, hasPhoto } = o;
 
   const titleLines = wrapText(o.title, w * 0.84, titleSize, 3);
-  const lineHeight = Math.round(titleSize * 1.14);
+  const lineHeight = Math.round(titleSize * 1.16);
   const taglineSize = Math.round(titleSize * 0.36);
   const eyebrowSize = Math.round(titleSize * 0.3);
 
-  // Text block is bottom-anchored so a one-line and a three-line title share
-  // the same baseline distance from the foot of the image.
-  const footerY = h - Math.round(h * 0.055);
-  const taglineY = footerY - Math.round(h * 0.075);
+  const footerY = h - Math.round(h * 0.06);
+  const taglineY = footerY - Math.round(h * 0.08);
   const titleBottom = taglineY - Math.round(taglineSize * 1.6);
   const titleTop = titleBottom - (titleLines.length - 1) * lineHeight;
-  const eyebrowY = titleTop - Math.round(titleSize * 0.78);
-  const left = Math.round(w * 0.055);
-
-  const scrimTop = Math.round(eyebrowY - titleSize * 1.4);
+  const eyebrowY = titleTop - Math.round(titleSize * 0.8);
+  const left = Math.round(w * 0.06);
 
   const plate = o.plate
     ? `<rect x="${o.plate.x}" y="${o.plate.y}" width="${o.plate.size}" height="${o.plate.size}" rx="${o.plate.radius}" fill="${c.white}" fill-opacity="0.96"/>` +
-      `<rect x="${o.plate.x}" y="${o.plate.y}" width="${o.plate.size}" height="${o.plate.size}" rx="${o.plate.radius}" fill="none" stroke="${c.gold}" stroke-opacity="0.55" stroke-width="${Math.max(2, Math.round(h * 0.003))}"/>`
+      `<rect x="${o.plate.x}" y="${o.plate.y}" width="${o.plate.size}" height="${o.plate.size}" rx="${o.plate.radius}" fill="none" stroke="${c.gold}" stroke-opacity="0.8" stroke-width="${Math.max(2, Math.round(h * 0.003))}"/>`
     : "";
 
-  // Wordmark beside the crest, so the lockup reads as an institutional mark
-  // even when the image is cropped to a small card.
   const markX = o.plate ? o.plate.x + o.plate.size + Math.round(w * 0.016) : left;
   const markSize = Math.round(titleSize * 0.34);
   const markY = o.plate ? o.plate.y + Math.round(o.plate.size * 0.44) : 0;
   const wordmark = o.plate
-    ? `<text x="${markX}" y="${markY}" font-family="Arial, Helvetica, sans-serif" font-size="${markSize}" font-weight="800" letter-spacing="2" fill="${c.white}">${escXml(DEFAULT_BRAND.shortName)}</text>` +
-      `<text x="${markX}" y="${markY + Math.round(markSize * 1.25)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(markSize * 0.62)}" letter-spacing="1" fill="${c.gold}">AMALAPURAM · AUTONOMOUS</text>`
+    ? `<text x="${markX}" y="${markY}" font-family="Arial, Helvetica, sans-serif" font-size="${markSize}" font-weight="900" letter-spacing="2" fill="${c.white}">${escXml(DEFAULT_BRAND.shortName)}</text>` +
+      `<text x="${markX}" y="${markY + Math.round(markSize * 1.25)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(markSize * 0.62)}" font-weight="bold" letter-spacing="1" fill="${c.gold}">AMALAPURAM · AUTONOMOUS</text>`
     : "";
+
+  const backgroundElements = hasPhoto
+    ? [
+        `<defs>`,
+        `<linearGradient id="bottomScrim" x1="0" y1="0" x2="0" y2="1">`,
+        `<stop offset="0" stop-color="#040914" stop-opacity="0"/>`,
+        `<stop offset="0.35" stop-color="#040914" stop-opacity="0.75"/>`,
+        `<stop offset="1" stop-color="#040914" stop-opacity="0.96"/>`,
+        `</linearGradient>`,
+        `<linearGradient id="topScrim" x1="0" y1="0" x2="0" y2="1">`,
+        `<stop offset="0" stop-color="#040914" stop-opacity="0.85"/>`,
+        `<stop offset="1" stop-color="#040914" stop-opacity="0"/>`,
+        `</linearGradient>`,
+        `<linearGradient id="goldBeam" x1="0" y1="0" x2="1" y2="0">`,
+        `<stop offset="0" stop-color="${c.gold}" stop-opacity="0.9"/>`,
+        `<stop offset="0.7" stop-color="${c.gold}" stop-opacity="0.3"/>`,
+        `<stop offset="1" stop-color="${c.gold}" stop-opacity="0"/>`,
+        `</linearGradient>`,
+        `</defs>`,
+        `<rect x="0" y="0" width="${w}" height="${Math.round(h * 0.32)}" fill="url(#topScrim)"/>`,
+        `<rect x="0" y="${Math.round(h * 0.38)}" width="${w}" height="${Math.round(h * 0.62)}" fill="url(#bottomScrim)"/>`,
+      ]
+    : [
+        `<defs>`,
+        `<linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">`,
+        `<stop offset="0" stop-color="#08142c"/>`,
+        `<stop offset="0.45" stop-color="#0f2142"/>`,
+        `<stop offset="0.85" stop-color="#2a0d18"/>`,
+        `<stop offset="1" stop-color="#120409"/>`,
+        `</linearGradient>`,
+        `<linearGradient id="goldBeam" x1="0" y1="0" x2="1" y2="0">`,
+        `<stop offset="0" stop-color="${c.gold}" stop-opacity="0.9"/>`,
+        `<stop offset="0.7" stop-color="${c.gold}" stop-opacity="0.3"/>`,
+        `<stop offset="1" stop-color="${c.gold}" stop-opacity="0"/>`,
+        `</linearGradient>`,
+        `<radialGradient id="ambientGlow" cx="0.85" cy="0.15" r="0.6">`,
+        `<stop offset="0" stop-color="#F5B800" stop-opacity="0.18"/>`,
+        `<stop offset="0.5" stop-color="#8B1D24" stop-opacity="0.12"/>`,
+        `<stop offset="1" stop-color="#000000" stop-opacity="0"/>`,
+        `</radialGradient>`,
+        `<radialGradient id="meshGlow" cx="0.15" cy="0.85" r="0.7">`,
+        `<stop offset="0" stop-color="#8B1D24" stop-opacity="0.25"/>`,
+        `<stop offset="0.6" stop-color="#08142c" stop-opacity="0"/>`,
+        `</radialGradient>`,
+        `</defs>`,
+        `<rect x="0" y="0" width="${w}" height="${h}" fill="url(#bgGrad)"/>`,
+        `<rect x="0" y="0" width="${w}" height="${h}" fill="url(#ambientGlow)"/>`,
+        `<rect x="0" y="0" width="${w}" height="${h}" fill="url(#meshGlow)"/>`,
+        `<circle cx="${Math.round(w * 0.88)}" cy="${Math.round(h * 0.22)}" r="${Math.round(w * 0.18)}" fill="none" stroke="${c.gold}" stroke-opacity="0.12" stroke-width="2"/>`,
+        `<circle cx="${Math.round(w * 0.88)}" cy="${Math.round(h * 0.22)}" r="${Math.round(w * 0.28)}" fill="none" stroke="${c.gold}" stroke-opacity="0.06" stroke-dasharray="8 8" stroke-width="1.5"/>`,
+      ];
 
   return [
     `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`,
-    `<defs>`,
-    // Weighted towards the top of the ramp so the FIRST title line is already
-    // on a dark ground. A gentler curve looked fine on the brand card and left
-    // the top line fighting a bright sky on a real photograph.
-    `<linearGradient id="bottom" x1="0" y1="0" x2="0" y2="1">`,
-    `<stop offset="0" stop-color="${c.black}" stop-opacity="0"/>`,
-    `<stop offset="0.28" stop-color="${c.black}" stop-opacity="0.55"/>`,
-    `<stop offset="0.6" stop-color="${c.black}" stop-opacity="0.82"/>`,
-    `<stop offset="1" stop-color="${c.black}" stop-opacity="0.96"/>`,
-    `</linearGradient>`,
-    // The top scrim is what makes the wordmark legible over a bright sky, which
-    // a large share of the campus library is.
-    `<linearGradient id="top" x1="0" y1="0" x2="0" y2="1">`,
-    `<stop offset="0" stop-color="${c.black}" stop-opacity="${o.hasPhoto ? 0.66 : 0}"/>`,
-    `<stop offset="1" stop-color="${c.black}" stop-opacity="0"/>`,
-    `</linearGradient>`,
-    `</defs>`,
-    `<rect x="0" y="0" width="${w}" height="${Math.round(h * 0.34)}" fill="url(#top)"/>`,
-    `<rect x="0" y="${scrimTop}" width="${w}" height="${h - scrimTop}" fill="url(#bottom)"/>`,
-    // Fully opaque footer band. The gradient bottoms out at 0.96, and 4% of a
-    // bright burnt-in phone-camera GPS stamp is still legible over black — this
-    // is what actually removes the last of it, and it gives the college name
-    // and counselling code a consistent ground on every photograph.
-    `<rect x="0" y="${h - Math.round(h * 0.1)}" width="${w}" height="${Math.round(h * 0.1)}" fill="${c.black}"/>`,
-    `<rect x="0" y="${h - Math.round(h * 0.1)}" width="${w}" height="${Math.max(2, Math.round(h * 0.002))}" fill="${c.gold}" fill-opacity="0.35"/>`,
+    ...backgroundElements,
+    // Footer separator line
+    `<rect x="0" y="${h - Math.round(h * 0.11)}" width="${w}" height="${Math.round(h * 0.11)}" fill="#060e1f" fill-opacity="0.95"/>`,
+    `<rect x="0" y="${h - Math.round(h * 0.11)}" width="${w}" height="2" fill="url(#goldBeam)"/>`,
     plate,
     wordmark,
-    // Sits a clear gap ABOVE the eyebrow. Level with the cap height it read as
-    // a stray dash butting into the first letter, especially at hero scale.
-    `<rect x="${left}" y="${eyebrowY - eyebrowSize - Math.round(h * 0.022)}" width="${Math.round(w * 0.035)}" height="${Math.max(3, Math.round(h * 0.005))}" fill="${c.gold}"/>`,
-    `<text x="${left}" y="${eyebrowY}" font-family="Arial, Helvetica, sans-serif" font-size="${eyebrowSize}" font-weight="bold" letter-spacing="4" fill="${c.gold}">${escXml(o.eyebrow.toUpperCase())}</text>`,
+    // Category badge
+    `<rect x="${left}" y="${eyebrowY - eyebrowSize * 1.15}" width="${Math.round(eyebrowSize * (o.eyebrow.length * 0.65 + 2.5))}" height="${Math.round(eyebrowSize * 1.7)}" rx="${Math.round(eyebrowSize * 0.4)}" fill="${c.gold}" fill-opacity="0.25" stroke="${c.gold}" stroke-opacity="0.75" stroke-width="1.5"/>`,
+    `<text x="${left + Math.round(eyebrowSize * 0.9)}" y="${eyebrowY}" font-family="Arial, Helvetica, sans-serif" font-size="${eyebrowSize}" font-weight="bold" letter-spacing="3" fill="${c.gold}">${escXml(o.eyebrow.toUpperCase())}</text>`,
+    // Title
     titleLines
       .map(
         (l, i) =>
-          `<text x="${left}" y="${titleTop + i * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${titleSize}" font-weight="800" fill="${c.white}">${escXml(l)}</text>`
+          `<text x="${left}" y="${titleTop + i * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${titleSize}" font-weight="900" fill="${c.white}">${escXml(l)}</text>`
       )
       .join(""),
-    `<text x="${left}" y="${taglineY}" font-family="Arial, Helvetica, sans-serif" font-size="${taglineSize}" fill="#E8E6DF">${escXml(o.tagline)}</text>`,
+    // Tagline & Footers
+    `<text x="${left}" y="${taglineY}" font-family="Arial, Helvetica, sans-serif" font-size="${taglineSize}" font-weight="500" fill="#e5e7eb">${escXml(o.tagline)}</text>`,
     `<text x="${left}" y="${footerY}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(titleSize * 0.26)}" font-weight="bold" letter-spacing="2" fill="${c.gold}">${escXml(DEFAULT_BRAND.collegeName.toUpperCase())}</text>`,
-    `<text x="${w - left}" y="${footerY}" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(titleSize * 0.24)}" fill="#C9C7C0">Counselling Code: ${escXml(DEFAULT_BRAND.counsellingCode)}</text>`,
+    `<text x="${w - left}" y="${footerY}" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(titleSize * 0.24)}" font-weight="bold" fill="#e5e7eb">Counselling Code: <tspan fill="${c.gold}">${escXml(DEFAULT_BRAND.counsellingCode)}</tspan></text>`,
     `</svg>`,
   ].join("");
 }
 
 interface ComposeInput {
   spec: { width: number; height: number; titleSize: number };
-  photo: Candidate | null;
+  backgroundImage?: Buffer | null;
+  photo?: Candidate | null;
   title: string;
   tagline: string;
   eyebrow: string;
@@ -405,90 +432,174 @@ export interface ComposeResult {
   hasLogo: boolean;
 }
 
-/**
- * Compose one image: photo (or brand field) + scrims + logo lockup + typography.
- *
- * Exported so the crest lockup can be tested without touching storage — the
- * "every post has an image with the logo on it" guarantee is only worth as much
- * as the test that proves the bytes actually come out.
- */
 export async function composeBlogImage(input: ComposeInput): Promise<ComposeResult> {
-  const { spec, photo, title, tagline, eyebrow } = input;
-  const colors = DEFAULT_BRAND.colors;
-
-  const base = sharp({
-    create: {
-      width: spec.width,
-      height: spec.height,
-      channels: 3,
-      // Always the brand black. The typography and the logo plate are designed
-      // against it, so a photo-less card stays on-brand instead of switching to
-      // a second, lighter treatment.
-      background: colors.black,
-    },
-  });
-
-  const composites: OverlayOptions[] = [];
-
-  if (photo) {
-    /*
-     * The bottom slice of the source is discarded before the cover-crop.
-     *
-     * A good share of the campus library was shot on phones running "GPS Map
-     * Camera", which burns a location/timestamp panel into the bottom of the
-     * frame. Those panels survived the scrim and appeared as ghosted text
-     * behind the tagline on the first live hero. Dropping the bottom fifth of
-     * the source removes them in most cases, and it costs nothing compositionally
-     * — the frame is being cropped to 16:9 anyway, and widening the aspect this
-     * way usually lands closer to the target than the raw frame did.
-     *
-     * `rotate()` first so EXIF orientation is applied before the geometry is
-     * measured, otherwise the crop lands on the wrong edge of a rotated photo.
-     */
-    const upright = sharp(photo.file).rotate();
-    const meta = await upright.metadata();
-    const srcH = meta.height ?? 0;
-    const keep = Math.round(srcH * 0.8);
-
-    const cropped =
-      srcH > 400 && keep > 0
-        ? upright.extract({ left: 0, top: 0, width: meta.width ?? 0, height: keep })
-        : upright;
-
-    const resized = await cropped
-      .resize(spec.width, spec.height, { fit: "cover", position: "centre" })
-      // A gentle desaturation keeps the gold typography legible over the very
-      // mixed exposure of the scraped library without hiding the photo.
-      .modulate({ saturation: 0.86, brightness: 0.94 })
-      .jpeg({ quality: 90 })
-      .toBuffer();
-    composites.push({ input: resized, left: 0, top: 0 });
-  }
+  const { spec, backgroundImage, photo, title, tagline, eyebrow } = input;
 
   const logo = await logoLockup(spec);
+  const hasPhoto = Boolean(backgroundImage || photo);
 
-  // Order matters: scrims and plate first, crest on top of its own plate.
-  composites.push({
-    input: Buffer.from(
-      buildBlogOverlaySvg({
-        width: spec.width,
-        height: spec.height,
-        titleSize: spec.titleSize,
-        title,
-        tagline,
-        eyebrow,
-        hasPhoto: Boolean(photo),
-        plate: logo?.plate ?? null,
-      })
-    ),
-    left: 0,
-    top: 0,
+  const svg = buildBlogOverlaySvg({
+    width: spec.width,
+    height: spec.height,
+    titleSize: spec.titleSize,
+    title,
+    tagline,
+    eyebrow,
+    hasPhoto,
+    plate: logo?.plate ?? null,
   });
 
-  if (logo) composites.push({ input: logo.buffer, left: logo.left, top: logo.top });
+  const base = backgroundImage
+    ? sharp(backgroundImage).resize(spec.width, spec.height, { fit: "cover" })
+    : photo
+      ? sharp(photo.file).resize(spec.width, spec.height, { fit: "cover" })
+      : sharp(Buffer.from(svg));
 
-  const bytes = await base.composite(composites).jpeg({ quality: 86, mozjpeg: true }).toBuffer();
+  const composites: OverlayOptions[] = [];
+  if (backgroundImage || photo) {
+    composites.push({ input: Buffer.from(svg), left: 0, top: 0 });
+  }
+
+  if (logo) {
+    composites.push({ input: logo.buffer, left: logo.left, top: logo.top });
+  }
+
+  const bytes = await base.composite(composites).jpeg({ quality: 92, mozjpeg: true }).toBuffer();
   return { bytes, hasLogo: Boolean(logo) };
+}
+
+// --- AI Image Prompt & Imagen Generation -------------------------------------
+
+/**
+ * Ask Gemini to construct an ultra-detailed, photorealistic, cinematic image prompt.
+ */
+export async function generateImagePrompt(topic: BlogTopic, outline?: BlogOutline): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return `A premium, hyper-realistic, highly clickable 16:9 technology editorial visual for '${topic.title}'. Modern cinematic lighting, sharp focus, 8k resolution, vibrant tech accents, professional atmosphere.`;
+  }
+
+  const promptModels = ["gemini-3.6-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
+
+  for (const model of promptModels) {
+    try {
+      const promptReq = {
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: `You are an elite creative director crafting prompts for a photorealistic AI image generator.
+Create an ultra-detailed, cinematic 16:9 thumbnail/hero image prompt for an engineering blog article.
+
+Article Title: "${topic.title}"
+Category: "${topic.category}"
+Target Audience: "${topic.audience}"
+Angle / Summary: "${topic.angle}"
+Key Topics / Outlines: ${outline ? outline.sections.map((s) => s.heading).join(", ") : topic.rationale}
+
+Guidelines for the prompt:
+- Layout: 16:9 aspect ratio, single focal composition, high contrast, dramatic cinematic lighting.
+- Realistic & Human: Include a confident young Indian engineering student or professional where relevant, in modern attire, in a high-tech or academic lab environment.
+- Visual elements: Glowing technology nodes, code interfaces, analytics charts, or relevant engineering hardware depending on the topic.
+- Style: Hyper-realistic, 8k, Unreal Engine 5 render style, sharp details, subtle depth of field.
+- No tiny unreadable text or cluttered watermarks.
+
+Output ONLY the prompt text (1 to 2 dense descriptive paragraphs), nothing else.`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 350,
+        },
+      };
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(promptReq),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as {
+          candidates?: { content?: { parts?: { text?: string }[] } }[];
+        };
+        const generated = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (generated && generated.length > 20) return generated;
+      }
+    } catch {
+      // Try next model in chain
+    }
+  }
+
+  return `Create a premium, hyper-realistic 16:9 editorial visual for '${topic.title}'. Cinematic lighting, modern tech elements, confident young Indian engineering student, 8k resolution, vibrant accents.`;
+}
+
+/**
+ * Call native Gemini Image Generation models to generate a high-definition image.
+ */
+export async function generateImagenImage(prompt: string): Promise<Buffer | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  const imageModels = [
+    "gemini-2.5-flash-image",
+    "gemini-3.1-flash-image",
+    "gemini-3.1-flash-lite-image",
+    "gemini-3-pro-image",
+    "nano-banana-pro-preview",
+  ];
+
+  for (const model of imageModels) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: `Generate a 16:9 high-resolution photorealistic image based on this prompt: ${prompt}` }],
+              },
+            ],
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const data = (await res.json()) as {
+          candidates?: {
+            content?: {
+              parts?: {
+                inlineData?: {
+                  mimeType?: string;
+                  data?: string;
+                };
+              }[];
+            };
+          }[];
+        };
+
+        const parts = data.candidates?.[0]?.content?.parts;
+        if (parts && parts.length > 0) {
+          for (const part of parts) {
+            if (part.inlineData?.data) {
+              return Buffer.from(part.inlineData.data, "base64");
+            }
+          }
+        }
+      }
+    } catch {
+      // Failover to next image model in chain
+    }
+  }
+
+  return null;
 }
 
 export interface GeneratedImages {
@@ -498,101 +609,60 @@ export interface GeneratedImages {
   notes: string[];
 }
 
-/**
- * Generate the hero plus one image per section that asked for one.
- *
- * **The hero is a hard requirement.** Every article must carry at least one
- * image, so the hero has a two-step fallback rather than the best-effort
- * handling the section images get:
- *
- *   1. a real campus photograph with the brand lockup, then
- *   2. a pure brand card — no photo, no filesystem read beyond the crest.
- *
- * Step 2 depends on nothing but sharp itself, so the only way to reach the
- * throw is a broken image toolchain, which is a real failure worth surfacing
- * rather than papering over with an article that has no picture.
- *
- * Section images stay best-effort: losing one costs the article nothing that
- * the hero has not already supplied.
- */
 export async function generateBlogImages(
   postId: string,
   slug: string,
   topic: BlogTopic,
   outline: BlogOutline
 ): Promise<GeneratedImages> {
-  const pool = await photoPool();
   const notes: string[] = [];
-  if (!pool.length) {
-    notes.push("No usable photographs found in public/assets/images — images fall back to the brand card.");
-  }
-
   const eyebrow = topic.category;
   const tagline = `${DEFAULT_BRAND.shortName} · Amalapuram, Konaseema`;
 
-  const build = async (
-    placement: "hero" | "section",
-    spec: typeof HERO_SPEC,
-    title: string,
-    offset: number,
-    sectionIndex: number | null,
-    photo: Candidate | null
-  ): Promise<BlogImage> => {
-    const { bytes, hasLogo } = await composeBlogImage({ spec, photo, title, tagline, eyebrow });
-    const rel = `${slug}/${placement}${sectionIndex === null ? "" : `-${sectionIndex}`}.jpg`;
-    const url = await storeImage(rel, bytes);
+  // 1. Generate customized AI prompt
+  const aiPrompt = await generateImagePrompt(topic, outline);
+  notes.push(`Synthesized AI Image Prompt: "${aiPrompt.slice(0, 100)}..."`);
 
-    if (!hasLogo) notes.push(`${placement} image was composed without the crest — ${LOGO_FILE} could not be read.`);
+  // 2. Attempt Google Gemini Image generation
+  const rawAiBytes = await generateImagenImage(aiPrompt);
+  const photoBacked = Boolean(rawAiBytes);
 
-    return {
-      id: newId("bimg"),
-      postId,
-      url,
-      // Alt text describes the composition honestly. Claiming the photo shows a
-      // specific event would be a caption we cannot substantiate.
-      alt: `${title} — ${DEFAULT_BRAND.shortName}, Amalapuram`,
-      caption: placement === "hero" ? null : title,
-      placement,
-      sectionIndex,
-      width: spec.width,
-      height: spec.height,
-      photoBacked: Boolean(photo),
-      sourceNote: photo
-        ? `Composed from ${path.basename(photo.file)} (BVCITS campus library) with the brand lockup${hasLogo ? " and college crest" : ""}.`
-        : `Brand card with the college crest — no suitable photograph was available.`,
-      createdAt: nowIso(),
-    };
+  // 3. Compose BVCITS crest, title typography, category badge, and scrim onto the image
+  const composed = await composeBlogImage({
+    spec: HERO_SPEC,
+    backgroundImage: rawAiBytes ?? null,
+    photo: null,
+    title: topic.title,
+    tagline,
+    eyebrow,
+  });
+
+  const heroBytes = composed.bytes;
+  if (!composed.hasLogo) {
+    notes.push(`Hero image was composed without the crest — ${LOGO_FILE} could not be read.`);
+  }
+
+  const rel = `${slug}/hero.jpg`;
+  const heroUrl = await storeImage(rel, heroBytes);
+
+  const hero: BlogImage = {
+    id: newId("bimg"),
+    postId,
+    url: heroUrl,
+    alt: `${topic.title} — ${DEFAULT_BRAND.shortName}, Amalapuram`,
+    caption: null,
+    placement: "hero",
+    sectionIndex: null,
+    width: HERO_SPEC.width,
+    height: HERO_SPEC.height,
+    photoBacked,
+    sourceNote: photoBacked
+      ? "Photorealistic AI Image with Institutional BVCITS Crest & Title Lockup"
+      : "AI Brand Creative Card with institutional crest and typography.",
+    createdAt: nowIso(),
   };
 
-  // ---- hero: guaranteed --------------------------------------------------
-  let hero: BlogImage;
-  const heroPhoto = pickPhoto(pool, `${slug}:0`, 0);
-  try {
-    hero = await build("hero", HERO_SPEC, topic.title, 0, null, heroPhoto);
-  } catch (e) {
-    notes.push(`Hero photo composition failed (${(e as Error).message}) — fell back to the brand card.`);
-    // Retried WITHOUT the photograph: a single corrupt file in the library is
-    // the overwhelmingly likely cause, and it must not cost the article its
-    // only image.
-    hero = await build("hero", HERO_SPEC, topic.title, 0, null, null);
-  }
-
-  // ---- sections: best effort --------------------------------------------
-  const sections: BlogImage[] = [];
-  let offset = 1;
-  for (let i = 0; i < outline.sections.length; i++) {
-    if (!outline.sections[i].wantsImage) continue;
-    try {
-      sections.push(
-        await build("section", SECTION_SPEC, outline.sections[i].heading, offset, i, pickPhoto(pool, `${slug}:${offset}`, offset))
-      );
-    } catch (e) {
-      notes.push(`Section image ${i} failed: ${(e as Error).message}`);
-    }
-    offset++;
-  }
-
-  return { hero, sections, notes };
+  return { hero, sections: [], notes };
 }
 
 /**
