@@ -91,6 +91,7 @@ export const CAPABILITIES = [
   "enquiries.read",
   "assistant.insights",
   "marketing.studio",
+  "blog.agent",
   "users.manage",
   "opportunities.read",
   "opportunities.moderate",
@@ -127,6 +128,7 @@ const CAPABILITY_MATRIX: Record<UserRole, readonly Capability[]> = {
     "assistant.insights",
     "opportunities.read",
     "opportunities.moderate",
+    "blog.agent",
     // Read-only institutional oversight, same flavour as enquiries/insights —
     // not academics.record, management does not mark attendance or enter marks.
     "academics.manage",
@@ -144,6 +146,7 @@ const CAPABILITY_MATRIX: Record<UserRole, readonly Capability[]> = {
     "enquiries.read",
     "assistant.insights",
     "marketing.studio",
+    "blog.agent",
     "users.manage",
     "opportunities.read",
     "opportunities.moderate",
