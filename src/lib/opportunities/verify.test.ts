@@ -18,6 +18,12 @@ function candidate(overrides: Partial<OpportunityCandidate> = {}): OpportunityCa
     applyUrl: "https://boards.greenhouse.io/example/jobs/1234",
     deadline: "2026-09-30",
     description: "Twelve-week internship for final-year students.",
+    // A real posting states where it is, and since region.ts was added a
+    // location-less row is held for review rather than published. These cases
+    // are about trust and seniority, so the fixture states a location to keep
+    // the region gate out of what they are measuring — the gate has its own
+    // suite in region.test.ts.
+    location: "Bengaluru, India",
     ...overrides,
   };
 }
@@ -250,6 +256,33 @@ describe("verifyCandidate", () => {
       now: NOW,
       reachability: "ok",
     });
+
+    expect(result.status).toBe("verified");
+  });
+
+  it("rejects a posting located outside India", () => {
+    const result = verifyCandidate(
+      candidate({ title: "Software Engineer Intern", location: "Santa Clara, California" }),
+      { now: NOW, reachability: "ok" }
+    );
+
+    expect(result.status).toBe("rejected");
+    expect(result.signals.join(" ")).toContain("outside India");
+  });
+
+  it("holds a posting that never stated a location", () => {
+    // Not rejected: it may well be Indian, and dropping it on a formatting
+    // quirk would lose a real opportunity. A human decides instead.
+    const result = verifyCandidate(candidate({ location: null }), { now: NOW, reachability: "ok" });
+
+    expect(result.status).toBe("pending");
+  });
+
+  it("publishes an online hackathon regardless of where the organiser sits", () => {
+    const result = verifyCandidate(
+      candidate({ kind: "hackathon", title: "Global AI Hackathon", location: "Online", applyUrl: "https://devpost.com/h/1" }),
+      { now: NOW, reachability: "ok" }
+    );
 
     expect(result.status).toBe("verified");
   });

@@ -91,9 +91,15 @@ export interface OpportunityRecord extends OpportunityCandidate {
   deadline: string | null;
   status: OpportunityStatus;
   sourceTier: SourceTier;
-  trustScore: number;
   signals: readonly string[];
   discoveredAt: string;
+  /**
+   * How many distinct sources carried this same listing. 1 means "seen once";
+   * higher is corroboration, and is worth showing a student.
+   */
+  corroborations: number;
+  /** When the liveness sweep last proved this link still works. */
+  lastCheckedAt: string | null;
 }
 
 /** The slice of a student's profile that ranking actually uses. */

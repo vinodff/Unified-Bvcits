@@ -62,7 +62,14 @@ const OFFICIAL_CAREER_HOSTS = [
   "summerofcode.withgoogle.com",
 ] as const;
 
-/** Hackathon, competition and open-source-programme platforms. */
+/**
+ * Hackathon, competition and open-source-programme platforms.
+ *
+ * The Indian ones matter as much as the American ones here. Without
+ * hack2skill/dorahacks/codechef on this list the hackathon searches ran, found
+ * real events, and parked every one of them at `pending` — which is why the
+ * board filled with jobs while the other kinds stayed empty.
+ */
 const OFFICIAL_PROGRAMME_HOSTS = [
   "devpost.com",
   "mlh.io",
@@ -73,6 +80,14 @@ const OFFICIAL_PROGRAMME_HOSTS = [
   "topcoder.com",
   "codeforces.com",
   "hackathon.com",
+  "hack2skill.com",
+  "dorahacks.io",
+  "codechef.com",
+  "hackerrank.com",
+  "outreachy.org",
+  // Statutory bodies that run student programmes directly but sit on a .org
+  // rather than the .gov.in / .ac.in suffixes handled below.
+  "aicte-india.org",
 ] as const;
 
 /**
@@ -108,6 +123,11 @@ const AGGREGATOR_HOSTS = [
   "freshersworld.com",
   "cutshort.io",
   "instahyre.com",
+  // Scholarship aggregators. Large and legitimate, but they republish schemes
+  // from awarding bodies, so a student should confirm on the official portal —
+  // exactly what the aggregator tier's "second-hand" flag says.
+  "buddy4study.com",
+  "vidyasaarathi.co.in",
 ] as const;
 
 /**

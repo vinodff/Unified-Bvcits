@@ -24,6 +24,25 @@ export const metadata: Metadata = {
 /** Postgres reports an absent table this way; 0006 has not been applied yet. */
 const TABLE_MISSING = "PGRST205";
 
+/**
+ * "Checked 2h ago" — the freshness half of the trust signal.
+ *
+ * Rounded rather than exact: a student is deciding whether the link is worth
+ * clicking, and "2h ago" answers that where a timestamp does not.
+ */
+function verifiedLabel(lastCheckedAt: string | null): string {
+  if (!lastCheckedAt) return "Awaiting first check";
+  const checked = new Date(lastCheckedAt);
+  if (Number.isNaN(checked.getTime())) return "Awaiting first check";
+
+  const minutes = Math.floor((Date.now() - checked.getTime()) / 60_000);
+  if (minutes < 60) return "Link checked just now";
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `Link checked ${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return days === 1 ? "Link checked yesterday" : `Link checked ${days}d ago`;
+}
+
 function deadlineTone(days: number | null): string {
   if (days === null) return "text-ink-muted";
   if (days <= 3) return "text-crimson font-semibold";
@@ -182,6 +201,14 @@ export default async function OpportunitiesPage({
                         Second-hand listing
                       </span>
                     )}
+                    {opportunity.corroborations > 1 && (
+                      <span
+                        className="rounded-full bg-navy/5 px-2 py-0.5 text-xs font-semibold text-navy"
+                        title="This listing was found on more than one independent source"
+                      >
+                        Seen on {opportunity.corroborations} sources
+                      </span>
+                    )}
                     {canModerate && opportunity.status !== "verified" && (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
                         {opportunity.status}
@@ -221,6 +248,19 @@ export default async function OpportunitiesPage({
                       ))}
                     <span className="text-ink-muted" title="Match score for your profile">
                       · {score.total}/100 match
+                    </span>
+                    {/* The agent's own evidence. A student deciding whether to
+                        trust a link cares more that it was confirmed working
+                        this morning than that it scored 72/100. */}
+                    <span
+                      className="text-ink-muted"
+                      title={
+                        opportunity.lastCheckedAt
+                          ? `Link confirmed working at ${new Date(opportunity.lastCheckedAt).toLocaleString("en-IN")}`
+                          : "Not yet re-checked by the agent"
+                      }
+                    >
+                      · {verifiedLabel(opportunity.lastCheckedAt)}
                     </span>
                   </div>
 

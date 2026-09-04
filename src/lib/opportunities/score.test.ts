@@ -15,9 +15,10 @@ function record(overrides: Partial<OpportunityRecord> = {}): OpportunityRecord {
     skills: ["python", "backend"],
     status: "verified",
     sourceTier: "official",
-    trustScore: 0,
     signals: [],
     discoveredAt: "2026-08-14T00:00:00Z",
+    corroborations: 1,
+    lastCheckedAt: null,
     ...overrides,
   };
 }

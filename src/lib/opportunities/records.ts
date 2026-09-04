@@ -10,7 +10,7 @@ import type { OpportunityRecord, SourceTier, WorkMode } from "./types";
 
 /** The column list the portal selects. Exported so the query cannot drift. */
 export const OPPORTUNITY_COLUMNS =
-  "id, title, organization, kind, apply_url, source_url, location, work_mode, eligibility, skills, description, deadline, posted_at, status, source_tier, signals, discovered_at";
+  "id, title, organization, kind, apply_url, source_url, location, work_mode, eligibility, skills, description, deadline, posted_at, status, source_tier, signals, discovered_at, corroborations, last_checked_at";
 
 function asStringArray(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
@@ -51,8 +51,9 @@ export function fromRow(row: Record<string, unknown>): OpportunityRecord | null 
     postedAt: typeof row.posted_at === "string" ? row.posted_at : null,
     status: row.status === "verified" || row.status === "rejected" ? row.status : "pending",
     sourceTier: asSourceTier(row.source_tier),
-    trustScore: 0,
     signals: asStringArray(row.signals),
     discoveredAt: typeof row.discovered_at === "string" ? row.discovered_at : new Date().toISOString(),
+    corroborations: typeof row.corroborations === "number" ? row.corroborations : 1,
+    lastCheckedAt: typeof row.last_checked_at === "string" ? row.last_checked_at : null,
   };
 }

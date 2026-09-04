@@ -11,6 +11,7 @@
 // pays ₹2,000 to a fake "placement drive" loses money and trust in the portal.
 
 import { classifyHost } from "./sources";
+import { regionVerdict } from "./region";
 import type { OpportunityCandidate, OpportunityStatus, SourceTier } from "./types";
 
 /** Query parameters that carry no identity — dropped before fingerprinting. */
@@ -281,6 +282,20 @@ export function verifyCandidate(
     };
   }
 
+  // Wrong country is the same class of miss as wrong seniority: everything
+  // about the listing is true, it just is not reachable by the student reading
+  // it. See region.ts for why `unknown` is held rather than dropped.
+  const region = regionVerdict(candidate);
+  if (!region.acceptable) {
+    return {
+      status: "rejected",
+      sourceTier,
+      signals: [region.signal ?? "outside India"],
+      canonicalUrl,
+    };
+  }
+  if (region.signal) signals.push(region.signal);
+
   if (!isDeadlineSane(candidate.deadline, options.now)) {
     return {
       status: "rejected",
@@ -333,6 +348,13 @@ export function verifyCandidate(
     if ((options.corroborations ?? 1) < 1) {
       return { status: "pending", sourceTier, signals, canonicalUrl };
     }
+  }
+
+  // A listing that never said where it is has cleared every other check, so it
+  // is probably fine — but "probably" is not good enough to put in front of a
+  // student as an Indian opportunity. A human decides.
+  if (region.needsReview) {
+    return { status: "pending", sourceTier, signals, canonicalUrl };
   }
 
   return { status: "verified", sourceTier, signals, canonicalUrl };
