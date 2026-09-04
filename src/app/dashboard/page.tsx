@@ -24,10 +24,48 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const CAPABILITY_CARDS: Record<
-  string,
-  { title: string; body: string; href: string }
-> = {
+interface CapabilityCard {
+  title: string;
+  body: string;
+  href: string;
+  isAgent?: boolean;
+  badge?: string;
+}
+
+const CAPABILITY_CARDS: Record<string, CapabilityCard> = {
+  "marketing.studio": {
+    title: "Marketing Studio Agent",
+    body: "Plan, generate and schedule multi-platform campaigns with autonomous creative agents.",
+    href: "/admin/marketing-studio",
+    isAgent: true,
+    badge: "Campaign Agent",
+  },
+  "blog.agent": {
+    title: "AI Blog Post Agent",
+    body: "Autonomous topic discovery, article drafting, SEO optimization, and live publishing.",
+    href: "/admin/marketing-studio?section=blog",
+    isAgent: true,
+    badge: "Editorial Agent",
+  },
+  "exams.create": {
+    title: "Placement Portal Agent — Admin Console",
+    body: "Run the 5-agent AI pipeline: web research, question extraction, paper prediction, and generation.",
+    href: "/placement-portal/admin",
+    isAgent: true,
+    badge: "Exam Research Agent",
+  },
+  "opportunities.moderate": {
+    title: "Opportunities Agent",
+    body: "Autonomous web scouting, deduplication, scoring, and real-time liveness monitoring for tech internships & hackathons.",
+    href: "/dashboard/opportunities/agent",
+    isAgent: true,
+    badge: "Discovery Agent",
+  },
+  "exams.review": {
+    title: "Placement Portal — Review Workspace",
+    body: "Faculty gate: approve predicted papers, edit questions and publish to students.",
+    href: "/placement-portal/review",
+  },
   "announcements.write": {
     title: "Post an announcement",
     body: "Publish a notice to students, parents or a specific department.",
@@ -49,7 +87,7 @@ const CAPABILITY_CARDS: Record<
     href: "/dashboard/enquiries",
   },
   "assistant.insights": {
-    title: "Assistant insights",
+    title: "Campus Assistant Insights",
     body: "See the questions the campus assistant could not answer.",
     href: "/dashboard/insights",
   },
@@ -58,25 +96,10 @@ const CAPABILITY_CARDS: Record<
     body: "Drop the examination branch's Excel sheet in, then publish it to students.",
     href: "/admin/results",
   },
-  "marketing.studio": {
-    title: "Marketing Studio",
-    body: "Plan, generate and schedule campaigns across social platforms.",
-    href: "/admin/marketing-studio",
-  },
   "users.manage": {
     title: "Manage users",
     body: "Assign roles and deactivate accounts.",
     href: "/dashboard/users",
-  },
-  "exams.create": {
-    title: "Placement Portal — Admin Console",
-    body: "Enter an exam name and run the AI pipeline: research, extract, review, generate.",
-    href: "/placement-portal/admin",
-  },
-  "exams.review": {
-    title: "Placement Portal — Review Workspace",
-    body: "Approve predicted papers, edit questions and publish to students.",
-    href: "/placement-portal/review",
   },
 };
 
@@ -196,9 +219,11 @@ export default async function DashboardPage({
   const snapshot = user.role === "student" ? await loadStudentSnapshot(supabase, user.id, user.department) : null;
 
   const portal = portalBySlug.get(ROLE_PORTAL[user.role].replace("/", ""));
-  const actionCards = capabilitiesFor(user.role)
+  const allCards = capabilitiesFor(user.role)
     .filter((c) => c in CAPABILITY_CARDS)
     .map((c) => CAPABILITY_CARDS[c]);
+  const agentCards = allCards.filter((c) => c.isAgent);
+  const standardTools = allCards.filter((c) => !c.isAgent);
 
   return (
     <div className="space-y-8">
@@ -275,13 +300,58 @@ export default async function DashboardPage({
         </section>
       )}
 
-      {actionCards.length > 0 && (
+      {/* AI Agents Suite Row */}
+      {agentCards.length > 0 && (
+        <section aria-labelledby="agents-heading" className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-gold ring-4 ring-goldLight/40 animate-pulse" />
+              <h2 id="agents-heading" className="font-display text-sm font-bold uppercase tracking-wider text-navy">
+                Autonomous AI Agents
+              </h2>
+            </div>
+            <span className="rounded-full border border-gold/40 bg-goldLight/20 px-3 py-0.5 text-xs font-bold text-goldDark">
+              {agentCards.length} Autonomous Agents
+            </span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {agentCards.map((card) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-surface-border bg-gradient-to-br from-white via-white to-surface-subtle p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-lift"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-display text-sm font-bold text-navy transition group-hover:text-goldDark">
+                      {card.title}
+                    </h3>
+                    {card.badge && (
+                      <span className="shrink-0 rounded-full border border-gold/30 bg-goldLight/20 px-2 py-0.5 text-[9px] font-bold text-goldDark">
+                        {card.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-ink-soft">{card.body}</p>
+                </div>
+                <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-goldDark transition group-hover:translate-x-1">
+                  <span>Launch agent</span>
+                  <span aria-hidden>→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Standard Management & Admin Tools */}
+      {standardTools.length > 0 && (
         <section aria-labelledby="tools-heading">
           <h2 id="tools-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">
-            Your tools
+            Management & Administrative Tools
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {actionCards.map((card) => (
+            {standardTools.map((card) => (
               <Link
                 key={card.href}
                 href={card.href}

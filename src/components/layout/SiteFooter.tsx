@@ -70,7 +70,7 @@ export default function SiteFooter() {
             </a>
             {" · "}
             <Link href="/admin/marketing-studio" className="hover:text-gold-300">
-              Marketing Studio
+              Marketing Studio Agent
             </Link>
           </p>
         </div>

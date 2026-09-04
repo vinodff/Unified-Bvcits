@@ -32,7 +32,7 @@ export function PortalShell({ isSignedIn, role, nav, children }: PortalShellProp
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
           <div>
             <Link href="/placement-portal" className="font-display text-lg font-extrabold text-navy">
-              Placement Portal
+              Placement Portal Agent
             </Link>
             <p className="text-xs text-ink-muted">
               AI-predicted exam practice · BVCITS Training &amp; Placement Cell

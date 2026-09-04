@@ -174,8 +174,9 @@ const NOTICE_TEXT: Record<VoiceNotice, { te: string; en: string }> = {
   },
 };
 
-function timestamp(): string {
-  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function timestamp(lang: "te" | "en" = "en"): string {
+  const locale = lang === "te" ? "te-IN" : "en-IN";
+  return new Date().toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 }
 
 export default function BvcitsAssistantModal({
@@ -201,6 +202,7 @@ export default function BvcitsAssistantModal({
   /** Read inside the voice callback, which is registered once. */
   const langRef = useRef(preferredLang);
   const voiceEnabledRef = useRef(voiceEnabled);
+  const conversationModeRef = useRef(false);
   /**
    * Read after the awaited answer returns. Answering can take several seconds, and the
    * panel may have been closed in the meantime — without this the assistant started
@@ -219,10 +221,12 @@ export default function BvcitsAssistantModal({
   }, [isOpen]);
 
   /** Declared before the voice hook so the utterance callback can reach it. */
-  const handleSendRef = useRef<(text: string) => Promise<void>>(async () => {});
+  const handleSendRef = useRef<
+    (text: string, opts?: { viaVoice?: boolean }) => Promise<void>
+  >(async () => {});
 
   const handleUtterance = useCallback((text: string) => {
-    void handleSendRef.current(text);
+    void handleSendRef.current(text, { viaVoice: true });
   }, []);
 
   const handleNotice = useCallback((next: VoiceNotice) => {
@@ -257,6 +261,10 @@ export default function BvcitsAssistantModal({
     setLanguage(preferredLang === "te" ? "te-IN" : "en-IN");
   }, [preferredLang, setLanguage]);
 
+  useEffect(() => {
+    conversationModeRef.current = conversationMode;
+  }, [conversationMode]);
+
   /** Seeds the welcome message. Also runs after a reset, which used to blank the window. */
   const seedWelcome = useCallback(() => {
     const welcome = welcomeReply();
@@ -272,7 +280,7 @@ export default function BvcitsAssistantModal({
         spokenEn: welcome.spokenEnglish,
         actionCards: [],
         quickReplies: welcome.quickReplies,
-        timestamp: timestamp(),
+        timestamp: timestamp(langRef.current),
       },
     ]);
   }, []);
@@ -322,9 +330,14 @@ export default function BvcitsAssistantModal({
   }, []);
 
   const handleSend = useCallback(
-    async (rawText: string) => {
+    async (rawText: string, opts?: { viaVoice?: boolean }) => {
       const query = rawText.trim();
       if (!query) return;
+
+      // Hidden staff ledger access: let staff type "ledger" to open it
+      if (/ledger|staff.*appointment|appointment.*ledger/i.test(query)) {
+        setShowStaffLedger(true);
+      }
 
       stopSpeaking();
       setNotice(null);
@@ -338,7 +351,7 @@ export default function BvcitsAssistantModal({
           sender: "user",
           textTe: query,
           textEn: query,
-          timestamp: timestamp(),
+          timestamp: timestamp(lang),
         },
       ]);
       setInputText("");
@@ -369,7 +382,7 @@ export default function BvcitsAssistantModal({
           spokenEn: answer.spokenEnglish,
           actionCards: answer.actionCards,
           quickReplies: answer.quickReplies,
-          timestamp: timestamp(),
+          timestamp: timestamp(lang),
         },
       ]);
 
@@ -381,7 +394,15 @@ export default function BvcitsAssistantModal({
         endTurn(false);
         return;
       }
+      // Typed messages must not auto-trigger voice unless the user explicitly
+      // enabled voice mode (mic conversation on). Voice-originated turns (via
+      // handleUtterance) may speak whenever voice replies are enabled.
+      // Manual "Listen" button bypasses this via handleReplay.
       if (!voiceEnabledRef.current) {
+        endTurn();
+        return;
+      }
+      if (!opts?.viaVoice && !conversationModeRef.current) {
         endTurn();
         return;
       }
@@ -427,12 +448,12 @@ export default function BvcitsAssistantModal({
             payload: {
               hodInfo: hod,
               department: hod.department,
-              defaultDate: "Tomorrow (రేపు)",
+              defaultDate: langRef.current === "te" ? "Tomorrow (రేపు)" : "Tomorrow",
               availableSlots: hod.slots,
             },
           },
         ],
-        timestamp: timestamp(),
+        timestamp: timestamp(langRef.current),
       },
     ]);
   }, []);
@@ -495,7 +516,7 @@ export default function BvcitsAssistantModal({
                     showStatus
                   />
                   <div>
-                    <h3 className="text-sm font-bold">BVCITS సహాయకుడు</h3>
+                    <h3 className="text-sm font-bold">{preferredLang === "te" ? "BVCITS సహాయకుడు" : "BVCITS Assistant"}</h3>
                     <p className="text-xs" aria-live="polite">
                       <span
                         className={
@@ -618,7 +639,7 @@ export default function BvcitsAssistantModal({
                         >
                           <div className="max-w-[80%]">
                             <div className="rounded-2xl rounded-tr-sm bg-crimson px-4 py-2.5 text-white shadow-sm">
-                              <p className="text-sm">{msg.textTe}</p>
+                              <p className="text-sm">{preferredLang === "te" ? msg.textTe : msg.textEn}</p>
                             </div>
                             <p className="mr-1 mt-1 text-right text-[10px] text-gray-400">
                               {msg.timestamp}
@@ -681,6 +702,7 @@ export default function BvcitsAssistantModal({
                                           key={key}
                                           payload={payload}
                                           onNavigate={onClose}
+                                          lang={preferredLang}
                                         />
                                       );
                                     case "hod_contact":
@@ -689,16 +711,17 @@ export default function BvcitsAssistantModal({
                                           key={key}
                                           hod={payload}
                                           onBookAppointment={handleBookAppointment}
+                                          lang={preferredLang}
                                         />
                                       );
                                     case "appointment_booking":
-                                      return <AppointmentBookingCard key={key} payload={payload} />;
+                                      return <AppointmentBookingCard key={key} payload={payload} lang={preferredLang} />;
                                     case "fee_breakdown":
-                                      return <FeeBreakdownCard key={key} payload={payload} />;
+                                      return <FeeBreakdownCard key={key} payload={payload} lang={preferredLang} />;
                                     case "placements_showcase":
-                                      return <PlacementsShowcaseCard key={key} payload={payload} />;
+                                      return <PlacementsShowcaseCard key={key} payload={payload} lang={preferredLang} />;
                                     case "bus_routes":
-                                      return <BusRoutesCard key={key} payload={payload} />;
+                                      return <BusRoutesCard key={key} payload={payload} lang={preferredLang} />;
                                     default:
                                       return null;
                                   }
@@ -864,7 +887,9 @@ export default function BvcitsAssistantModal({
                     ? preferredLang === "te"
                       ? "🎙️ సంభాషణ మోడ్ — మాట్లాడండి, నేను జవాబిచ్చాక మళ్ళీ వింటాను"
                       : "🎙️ Conversation mode — I'll listen again after each answer"
-                    : "📍 BVCITS అమలాపురం · 📞 +91 99854 22678"}
+                    : preferredLang === "te"
+                      ? "📍 BVCITS అమలాపురం · 📞 +91 99854 22678"
+                      : "📍 BVCITS Amalapuram · 📞 +91 99854 22678"}
                 </p>
               </div>
             </motion.div>
@@ -875,6 +900,7 @@ export default function BvcitsAssistantModal({
       <StaffAppointmentLedgerModal
         isOpen={showStaffLedger}
         onClose={() => setShowStaffLedger(false)}
+        lang={preferredLang}
       />
     </>
   );

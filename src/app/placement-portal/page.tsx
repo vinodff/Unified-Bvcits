@@ -45,12 +45,14 @@ export default async function PlacementPortalLanding() {
   return (
     <div>
       {/* Hero */}
-      <section className="rounded-3xl bg-navy px-6 py-14 text-white sm:px-12 sm:py-20">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Placement Preparation Portal</p>
-        <h1 className="mt-4 max-w-3xl font-display text-3xl font-extrabold leading-tight sm:text-5xl">
+      <section className="rounded-3xl border border-surface-border bg-gradient-to-br from-white via-surface-subtle to-surface-form p-6 shadow-card sm:p-12 sm:py-16">
+        <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-goldLight/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-goldDark">
+          Placement Preparation Portal Agent
+        </div>
+        <h1 className="mt-4 max-w-3xl font-display text-3xl font-extrabold leading-tight text-navy sm:text-5xl">
           AI-powered predicted exam papers, reviewed by faculty, attempted like the real thing.
         </h1>
-        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
+        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-ink-soft sm:text-base">
           Enter an exam name — TCS NQT, Wipro NLTH, Infosys SP. The system researches real
           patterns and previous-year questions, a senior AI reviewer builds a predicted paper,
           faculty approve it, and you practise in a fully proctored exam environment.
@@ -58,14 +60,14 @@ export default async function PlacementPortalLanding() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href={cta.href}
-            className="rounded-xl bg-gold px-6 py-3 font-display text-sm font-bold text-navy transition hover:-translate-y-0.5 hover:bg-gold-400"
+            className="rounded-xl bg-gold px-6 py-3 font-display text-sm font-bold text-navy shadow-sm transition hover:-translate-y-0.5 hover:bg-gold-400"
           >
             {cta.label}
           </Link>
           {!user && (
             <Link
               href="/signup"
-              className="rounded-xl border border-white/25 px-6 py-3 font-display text-sm font-bold text-white transition hover:bg-white/10"
+              className="rounded-xl border border-surface-border bg-white px-6 py-3 font-display text-sm font-bold text-navy shadow-xs transition hover:border-gold hover:bg-surface-subtle"
             >
               Create a student account
             </Link>
@@ -78,9 +80,9 @@ export default async function PlacementPortalLanding() {
             ["0", "leaked answers to students"],
             ["100%", "faculty-approved before publish"],
           ].map(([value, label]) => (
-            <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="font-display text-xl font-extrabold text-gold">{value}</p>
-              <p className="mt-1 text-xs text-white/60">{label}</p>
+            <div key={label} className="rounded-2xl border border-surface-border bg-white p-4 shadow-xs">
+              <p className="font-display text-xl font-extrabold text-goldDark">{value}</p>
+              <p className="mt-1 text-xs text-ink-soft">{label}</p>
             </div>
           ))}
         </div>

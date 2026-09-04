@@ -62,6 +62,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   nav.push({ href: "/dashboard/opportunities", label: "Opportunities", icon: Briefcase });
+  if (can(user.role, "opportunities.moderate")) {
+    nav.push({ href: "/dashboard/opportunities/agent", label: "Opportunities Agent", icon: Sparkles });
+  }
 
   if (can(user.role, "academics.record")) nav.push({ href: "/dashboard/classes", label: "My Classes", icon: ClipboardCheck });
   if (can(user.role, "academics.manage")) nav.push({ href: "/dashboard/academics", label: "Academics", icon: BarChart3 });
@@ -69,7 +72,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   if (can(user.role, "assistant.insights")) nav.push({ href: "/dashboard/insights", label: "Assistant Insights", icon: MessageSquare });
   if (can(user.role, "users.manage")) nav.push({ href: "/dashboard/users", label: "Users", icon: Users });
   if (can(user.role, "results.publish")) nav.push({ href: "/admin/results", label: "Results Upload", icon: FileSpreadsheet });
-  if (can(user.role, "marketing.studio")) nav.push({ href: "/admin/marketing-studio", label: "Marketing Studio", icon: Sparkles });
+  if (can(user.role, "marketing.studio")) nav.push({ href: "/admin/marketing-studio", label: "Marketing Studio Agent", icon: Sparkles });
   if (can(user.role, "certificates.generate")) nav.push({ href: "/dashboard/certificates", label: "Certificates", icon: Award });
 
   nav.push({ href: "/dashboard/profile", label: "My Profile", icon: UserIcon });
